@@ -15,6 +15,9 @@ void Chessboard::InitializeBoardList(){
             else {
                 new_square.m_color_light = j%2==0 ? true : false;
             }
+            if(i==0 || i==1 || i==6 || i==7){
+                new_square.m_is_occupied = true;
+            }
             line_squares.push_back(new_square);
         }
         this->m_boardlist.push_back(line_squares);
