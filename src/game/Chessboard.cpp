@@ -25,8 +25,7 @@ void Chessboard::CreateBoard(){
     this->InitializeBoardList();
     int id {0};
     for(int i {0}; i<8; i++){
-        for(int j {0}; i<8; i++){
-            char name;
+        for(int j {0}; j<8; j++){
             if(this->m_boardlist[i][j].m_color_light){
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
                 // if(i==0) name = '0';else name = 'i';
@@ -36,11 +35,15 @@ void Chessboard::CreateBoard(){
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
             }
             ImGui::PushID(id);
-            if (ImGui::Button(&name, ImVec2{100.f, 100.f}))
-                    std::cout << "Clicked button\n";
+            if (ImGui::Button(" ", ImVec2{100.f, 100.f}))
+                    std::cout << "Clicked button : " << i << " and " << j << std::endl;
             ImGui::PopID();
             ImGui::PopStyleColor();
             id++;
+
+            if (j < 7) {
+                ImGui::SameLine(); // Rester sur la même ligne pour les colonnes
+            }
         }
     }
 }
