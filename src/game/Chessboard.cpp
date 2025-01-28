@@ -5,6 +5,7 @@
 #include "quick_imgui/quick_imgui.hpp"
 
 void Chessboard::InitializeBoardList(){
+    std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     for(int i {0}; i<8; i++){
         std::vector<Square> line_squares;
         for(int j {0}; j<8; j++){
@@ -18,6 +19,7 @@ void Chessboard::InitializeBoardList(){
             if(i==0 || i==1 || i==6 || i==7){
                 new_square.m_is_occupied = true;
             }
+            new_square.m_coords = std::pair<char, int>( j_as_chars[j], 8-i);
             line_squares.push_back(new_square);
         }
         this->m_boardlist.push_back(line_squares);
@@ -39,7 +41,7 @@ void Chessboard::CreateBoard(){
             }
             ImGui::PushID(id);
             if (ImGui::Button(" ", ImVec2{100.f, 100.f}))
-                    std::cout << "Clicked button : " << i << " and " << j << std::endl;
+                    std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << " and " << this->m_boardlist[i][j].m_coords.second << std::endl;
             ImGui::PopID();
             ImGui::PopStyleColor();
             id++;
