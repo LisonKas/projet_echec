@@ -33,22 +33,33 @@ void Chessboard::CreateBoard(){
         for(int j {0}; j<8; j++){
             if(this->m_boardlist[i][j].m_color_light){
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                // if(i==0) name = '0';else name = 'i';
             }
             else {
-                // if(i==0) name = '0';else name = 'i';
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
             }
             ImGui::PushID(id);
-            if (ImGui::Button(" ", ImVec2{100.f, 100.f}))
-                    std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << " and " << this->m_boardlist[i][j].m_coords.second << std::endl;
+
+            if (ImGui::Button(" ", ImVec2{100.f, 100.f})) //button_label.c_str()
+                    std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << "" << this->m_boardlist[i][j].m_coords.second << std::endl;
             ImGui::PopID();
             ImGui::PopStyleColor();
             id++;
 
             if (j < 7) {
-                ImGui::SameLine(); // Rester sur la même ligne pour les colonnes
+                ImGui::SameLine(); 
             }
         }
     }
 }
+
+
+
+/* Ici c'est pour que les coordonnées apparaissent sur les cases
+            char coord_x = this->m_boardlist[i][j].m_coords.first;
+            int coord_y = this->m_boardlist[i][j].m_coords.second;
+
+            std::string button_label = "(";
+            button_label += coord_x; 
+            button_label += ",";
+            button_label += std::to_string(coord_y);
+            button_label += ")"; */
