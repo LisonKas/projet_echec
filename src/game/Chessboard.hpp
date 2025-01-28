@@ -8,8 +8,7 @@ class Chessboard {
         std::vector<std::vector<Square>> m_boardlist;
 
     public:
-        //std::vector<Piece> m_WhitePieces;
-        //std::vector<Piece> m_BlackPieces;
+        //std::vector<Piece> m_pieces;
 
     public:
         void InitializeBoardList();
