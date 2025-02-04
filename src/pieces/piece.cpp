@@ -4,3 +4,11 @@ Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
     : m_team(team), m_status(true), m_coords(coords), m_type(type) {}
 
 Piece::~Piece() {}
+
+std::pair<int,int> Piece::getCoords() const{
+    return m_coords;
+}
+
+PieceType Piece::getType() const{
+    return m_type;
+}

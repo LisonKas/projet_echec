@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include "quick_imgui/quick_imgui.hpp"
-#include <memory>
 #include <utility>
 
 void Chessboard::InitializeBoardList(){
@@ -52,6 +51,7 @@ void Chessboard::CreateBoard(){
             }
         }
     }
+    m_pieces.PiecesAppear();
 }
 
 

@@ -27,8 +27,9 @@ public:
     void promote();
 
     // GETTERS
-    std::pair<int, int> getCoords();
+    std::pair<int, int> getCoords() const;
     bool                getStatus();
+    PieceType getType() const;
 
     // CONSTRUCTOR
     Piece() = default;
@@ -37,58 +38,3 @@ public:
     // DESTRUCTOR
     ~Piece();
 };
-
-// class Bishop : public Piece {
-//     Bishop();
-//     Bishop(bool team, std::pair<int, int> coords)
-//     : Piece(team, coords)
-//     {
-//     }
-//     ~Bishop();
-// };
-
-// class King : public Piece {
-//     King();
-//     King(bool team, std::pair<int, int> coords)
-//     : Piece(team, coords)
-//     {
-//     }
-//     ~King();
-// };
-
-// class Knight : public Piece {
-//     Knight();
-//     Knight(bool team, std::pair<int, int> coords)
-//     : Piece(team, coords)
-//     {
-//     }
-//     ~Knight();
-// };
-
-// class Pawn : public Piece {
-//     public:
-//         Pawn();
-//         Pawn(bool team, std::pair<int, int> coords)
-//         : Piece(team, coords)
-//         {
-//         }
-//         ~Pawn();
-// };
-
-// class Queen : public Piece {
-//     Queen();
-//     Queen(bool team, std::pair<int, int> coords)
-//     : Piece(team, coords)
-//     {
-//     }
-//     ~Queen();
-// };
-
-// class Rook : public Piece {
-//     Rook();
-//     Rook(bool team, std::pair<int, int> coords)
-//     : Piece(team, coords)
-//     {
-//     }
-//     ~Rook();
-// };

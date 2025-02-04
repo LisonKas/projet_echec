@@ -9,4 +9,5 @@ class AllPieces {
 
     public :
         void InitializeAllPieces();
+        void PiecesAppear();
 };
