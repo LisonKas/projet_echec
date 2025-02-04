@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "quick_imgui/quick_imgui.hpp"
+#include <memory>
+#include <utility>
 
 void Chessboard::InitializeBoardList(){
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -24,10 +26,10 @@ void Chessboard::InitializeBoardList(){
         }
         this->m_boardlist.push_back(line_squares);
     }
+    m_pieces.InitializeAllPieces();
 }
 
 void Chessboard::CreateBoard(){
-    this->InitializeBoardList();
     int id {0};
     for(int i {0}; i<8; i++){
         for(int j {0}; j<8; j++){

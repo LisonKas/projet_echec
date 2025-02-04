@@ -2,13 +2,14 @@
 #include <iostream>
 #include <vector>
 #include "Square.hpp"
+#include "../pieces/AllPieces.hpp"
 
 class Chessboard {
     private:
         std::vector<std::vector<Square>> m_boardlist;
 
     public:
-        //std::vector<Piece> m_pieces;
+        AllPieces m_pieces;
 
     public:
         void InitializeBoardList();

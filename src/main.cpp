@@ -7,6 +7,7 @@ int main()
 {
     float value{0.f};
     App app;
+    app.InitializeGame();
 
     quick_imgui::loop(
         "Chess",

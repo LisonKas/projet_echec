@@ -8,6 +8,7 @@ class App {
         Chessboard m_chessboard;
 
     public:
+        void InitializeGame();
         void StartGame();
         void Update();
         void CloseGame();
