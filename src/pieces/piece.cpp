@@ -25,4 +25,6 @@ std::vector<std::pair<int, int>> Piece::getZone() const
     case PieceType::Pawn:
         zone.push_back({m_coords.first, m_coords.second + 1});
     }
+
+    return zone;
 };
