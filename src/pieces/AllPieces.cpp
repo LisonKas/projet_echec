@@ -38,32 +38,32 @@ void AllPieces::PiecesAppear(){
         
         switch(m_black_pieces[i].getType()){
             case PieceType::Pawn:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 + 65 , coords.first * 100 + 70)); 
                 ImGui::Text("B_Pawn");
                 break;
 
             case PieceType::Rook:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 70)); 
                 ImGui::Text("B_Rook");
                 break;
 
             case PieceType::Knight:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 70)); 
                 ImGui::Text("B_Knight");
                 break;
 
             case PieceType::Bishop:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 70)); 
                 ImGui::Text("B_Bishop");
                 break;
 
             case PieceType::Queen:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 70)); 
                 ImGui::Text("B_Queen");
                 break;
 
             case PieceType::King:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 70)); 
                 ImGui::Text("B_King");
                 break;
 
@@ -77,32 +77,32 @@ void AllPieces::PiecesAppear(){
     
         switch (m_white_pieces[i].getType()) {
             case PieceType::Pawn:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 + 65, coords.first * 100 + 100)); 
                 ImGui::Text("W_Pawn");
                 break;
 
             case PieceType::Rook:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 100)); 
                 ImGui::Text("W_Rook");
                 break;
 
             case PieceType::Knight:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 100)); 
                 ImGui::Text("W_Knight");
                 break;
 
             case PieceType::Bishop:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 100)); 
                 ImGui::Text("W_Bishop");
                 break;
 
             case PieceType::Queen:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 100)); 
                 ImGui::Text("W_Queen");
                 break;
 
             case PieceType::King:
-                ImGui::SetCursorPos(ImVec2(coords.first * 100 + 35, (8 - coords.second) * 100 + 65)); 
+                ImGui::SetCursorPos(ImVec2((8 - coords.second) * 100 - 20, coords.first * 100 + 100)); 
                 ImGui::Text("W_King");
                 break;
 
