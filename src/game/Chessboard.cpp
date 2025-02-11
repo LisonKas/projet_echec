@@ -24,9 +24,9 @@ void Chessboard::InitializeBoardList(){
             }
             new_square.m_coords = std::pair<char, int>( j_as_chars[j], 8-i);
             line_squares.push_back(new_square);
+            id++;
         }
         this->m_boardlist.push_back(line_squares);
-        id++;
     }
     m_pieces.InitializeAllPieces();
 }
@@ -43,9 +43,10 @@ void Chessboard::CreateBoard(){
             ImGui::PushID(m_boardlist[i][j].m_id);
 
             std::string piece_label = m_pieces.PiecesAppear(i, j);
-            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) //button_label.c_str()
-                    std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << "" << this->m_boardlist[i][j].m_coords.second << std::endl;
+            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})){
+                    std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << "" << this->m_boardlist[i][j].m_coords.second << " et tableau : " << i << " " << j << std::endl;
                     //m_pieces.fonction qui regarde c'est quelle pièce(m_boardlist);
+            }
             ImGui::PopID();
             ImGui::PopStyleColor();
 
