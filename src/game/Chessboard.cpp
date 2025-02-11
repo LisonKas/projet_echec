@@ -7,10 +7,12 @@
 
 void Chessboard::InitializeBoardList(){
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    int id {1};
     for(int i {0}; i<8; i++){
         std::vector<Square> line_squares;
         for(int j {0}; j<8; j++){
             Square new_square;
+            new_square.m_id = id;
             if(i%2==0){
                 new_square.m_color_light = j%2==0 ? false : true;
             }
@@ -24,12 +26,12 @@ void Chessboard::InitializeBoardList(){
             line_squares.push_back(new_square);
         }
         this->m_boardlist.push_back(line_squares);
+        id++;
     }
     m_pieces.InitializeAllPieces();
 }
 
 void Chessboard::CreateBoard(){
-    int id {0};
     for(int i {0}; i<8; i++){
         for(int j {0}; j<8; j++){
             if(this->m_boardlist[i][j].m_color_light){
@@ -38,13 +40,12 @@ void Chessboard::CreateBoard(){
             else {
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
             }
-            ImGui::PushID(id);
+            ImGui::PushID(m_boardlist[i][j].m_id);
 
             if (ImGui::Button(" ", ImVec2{100.f, 100.f})) //button_label.c_str()
                     std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << "" << this->m_boardlist[i][j].m_coords.second << std::endl;
             ImGui::PopID();
             ImGui::PopStyleColor();
-            id++;
 
             if (j < 7) {
                 ImGui::SameLine(); 
