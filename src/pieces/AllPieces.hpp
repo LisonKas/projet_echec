@@ -11,4 +11,5 @@ class AllPieces {
     public :
         void InitializeAllPieces();
         std::string PiecesAppear(int x, int y);
+        //void verifPieceandCase(&boardlist) --> piece.getZone( &boarlist)
 };

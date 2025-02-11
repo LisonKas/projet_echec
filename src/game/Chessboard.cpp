@@ -45,6 +45,7 @@ void Chessboard::CreateBoard(){
             std::string piece_label = m_pieces.PiecesAppear(i, j);
             if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) //button_label.c_str()
                     std::cout << "Clicked button : " << this->m_boardlist[i][j].m_coords.first << "" << this->m_boardlist[i][j].m_coords.second << std::endl;
+                    //m_pieces.fonction qui regarde c'est quelle pièce(m_boardlist);
             ImGui::PopID();
             ImGui::PopStyleColor();
 
