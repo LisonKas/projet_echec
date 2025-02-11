@@ -1,6 +1,7 @@
 #pragma once
 #include "piece.hpp"
 #include <vector>
+#include <iostream>
 
 class AllPieces {
     public :
@@ -9,5 +10,5 @@ class AllPieces {
 
     public :
         void InitializeAllPieces();
-        void PiecesAppear();
+        std::string PiecesAppear(int x, int y);
 };
