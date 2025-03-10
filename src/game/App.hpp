@@ -3,8 +3,7 @@
 
 class App {
     private :
-        //3D_RENDERER m_renderer;
-        //SOUND_MANAGER m_sound;
+        // Renderer3D m_renderer;
         Chessboard m_chessboard;
 
     public:
