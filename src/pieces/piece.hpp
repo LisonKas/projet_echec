@@ -14,6 +14,7 @@ enum class PieceType {
 class Piece {
 private:
     bool                m_team;
+    int                 m_direction;
     bool                m_status;
     std::pair<int, int> m_coords;
     PieceType           m_type;
