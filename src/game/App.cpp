@@ -7,8 +7,10 @@ void App::InitializeGame(){
     m_chessboard.InitializeBoardList();
 }
 
-void App::StartGame(){
+void App::StartGame() {
     ImGui::Begin("Game");
-    m_chessboard.CreateBoard();
+        m_chessboard.CreateBoard();
+    ImGui::End();
+    ImGui::Begin("3DRenderer");
     ImGui::End();
 }

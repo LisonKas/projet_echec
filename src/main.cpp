@@ -1,20 +1,22 @@
 #include <imgui.h>
 #include <iostream>
-#include "quick_imgui/quick_imgui.hpp"
 #include "game/App.hpp"
+#include "quick_imgui/quick_imgui.hpp"
 
 int main()
 {
     float value{0.f};
     App app;
-    app.InitializeGame();
-
+    
     quick_imgui::loop(
         "Chess",
-        /* init: */ [&]() {},
+        /* init: */ [&]() {
+            app.InitializeGame();
+        },
         /* loop: */
         [&]() {
             app.StartGame();
+            // glClear(GL_COLOR_BUFFER_BIT);
 
             // ImGui::ShowDemoWindow(); // This opens a window which shows tons of examples of what you can do with ImGui. You should check it out! Also, you can use the "Item Picker" in the top menu of that demo window: then click on any widget and it will show you the corresponding code directly in your IDE!
 
