@@ -24,7 +24,7 @@ private:
 
 public:
     // ACTIONS
-    void move(std::pair<int, int>);
+    void move(const std::pair<int, int>& newCoords);
     void take(Piece enemy);
     void promote();
 

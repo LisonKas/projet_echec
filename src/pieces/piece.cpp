@@ -44,3 +44,8 @@ std::vector<std::pair<int, int>> Piece::getZone() const
 
     return zone;
 }
+
+void Piece::move(const std::pair<int, int>& newCoords)
+{
+    m_coords = newCoords;
+}

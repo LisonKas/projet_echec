@@ -4,7 +4,6 @@
 #include "../pieces/AllPieces.hpp"
 #include "Square.hpp"
 
-
 class Chessboard {
 private:
     std::vector<std::vector<Square>> m_boardlist;
