@@ -5,7 +5,6 @@
 #include <vector>
 #include "quick_imgui/quick_imgui.hpp"
 
-
 void Chessboard::InitializeBoardList()
 {
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -65,31 +64,50 @@ void Chessboard::CreateBoard()
             std::string piece_label = m_pieces.PiecesAppear(i, j);
             if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f}))
             {
-                std::cout << "Clicked on: " << i << "," << j << std::endl;
-                // m_pieces.fonction qui regarde c'est quelle pièce(m_boardlist);
+                std::pair<int, int> clickedSquare = {i, j};
 
-                // Vérifier si une pièce est présente
-                Piece* selectedPiece = m_pieces.GetPieceAt(i, j);
-                if (selectedPiece)
+                // Vérifier si on clique sur une case valide
+                if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
                 {
-                    if (m_selectedPiece == std::make_pair(i, j))
+                    // Déplacer la pièce
+                    Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
+                    if (selectedPiece)
                     {
-                        // Si on reclique sur la même pièce, on désélectionne
+                        selectedPiece->move(clickedSquare);
+                        // Mettre à jour l'échiquier
+                        m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
+                        m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
+
+                        // Désélectionner
                         m_selectedPiece = {-1, -1};
                         m_highlightedSquares.clear();
-                    }
-                    else
-                    {
-                        // Sélectionner la pièce et récupérer ses déplacements
-                        m_selectedPiece      = {i, j};
-                        m_highlightedSquares = selectedPiece->getZone();
                     }
                 }
                 else
                 {
-                    // Si on clique ailleurs, on désélectionne tout
-                    m_selectedPiece = {-1, -1};
-                    m_highlightedSquares.clear();
+                    // Vérifier si on clique sur une pièce
+                    Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
+                    if (selectedPiece)
+                    {
+                        if (m_selectedPiece == clickedSquare)
+                        {
+                            // Désélectionner si on reclique sur la même pièce
+                            m_selectedPiece = {-1, -1};
+                            m_highlightedSquares.clear();
+                        }
+                        else
+                        {
+                            // Sélectionner et obtenir les mouvements possibles
+                            m_selectedPiece      = clickedSquare;
+                            m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
+                        }
+                    }
+                    else
+                    {
+                        // Désélectionner si on clique sur une case vide non valide
+                        m_selectedPiece = {-1, -1};
+                        m_highlightedSquares.clear();
+                    }
                 }
             }
 
