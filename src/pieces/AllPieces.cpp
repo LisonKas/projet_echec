@@ -76,18 +76,18 @@ std::string AllPieces::PiecesAppear(int x, int y)
     return "";
 }
 
-Piece* AllPieces::GetPieceAt(int x, int y)
+Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
 {
     for (auto& piece : m_black_pieces)
     {
-        if (piece.getCoords() == std::make_pair(x, y))
+        if (piece.getCoords() == coords)
         {
             return &piece;
         }
     }
     for (auto& piece : m_white_pieces)
     {
-        if (piece.getCoords() == std::make_pair(x, y))
+        if (piece.getCoords() == coords)
         {
             return &piece;
         }

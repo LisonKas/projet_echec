@@ -5,7 +5,6 @@
 #include <vector>
 #include "quick_imgui/quick_imgui.hpp"
 
-
 void Chessboard::InitializeBoardList()
 {
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -69,7 +68,7 @@ void Chessboard::CreateBoard()
                 // m_pieces.fonction qui regarde c'est quelle pièce(m_boardlist);
 
                 // Vérifier si une pièce est présente
-                Piece* selectedPiece = m_pieces.GetPieceAt(i, j);
+                Piece* selectedPiece = m_pieces.GetPieceAt({i, j});
                 if (selectedPiece)
                 {
                     if (m_selectedPiece == std::make_pair(i, j))

@@ -11,6 +11,6 @@ public:
 public:
     void        InitializeAllPieces();
     std::string PiecesAppear(int x, int y);
-    Piece*      GetPieceAt(int x, int y);
+    Piece*      GetPieceAt(std::pair<int, int> coords);
     // void verifPieceandCase(&boardlist) --> piece.getZone( &boarlist)
 };

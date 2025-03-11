@@ -24,16 +24,23 @@ std::vector<std::pair<int, int>> Piece::getZone() const
     {
     case PieceType::Pawn:
         // First round
-        if (m_coords.second == 1 + 5 * m_team)
+        if (m_coords.first == 1 + 5 * m_team)
         {
-            zone.push_back({m_coords.first, m_coords.second + m_direction});
-            zone.push_back({m_coords.first, m_coords.second + 2 * m_direction});
+            zone.push_back({m_coords.first + m_direction, m_coords.second});
+            zone.push_back({m_coords.first + 2 * m_direction, m_coords.second});
         }
         else
         {
-            zone.push_back({m_coords.first - 1, m_coords.second + m_direction});
-            zone.push_back({m_coords.first + 1, m_coords.second + m_direction});
+            zone.push_back({m_coords.first + m_direction, m_coords.second - 1});
+            zone.push_back({m_coords.first + m_direction, m_coords.second + 1});
         }
     }
+
+    for (const std::pair<int, int>& e : zone) // Utilisation correcte du type
+    {
+        std::cout << e.first << " " << e.second << " "; // Ajout d'un espace pour la lisibilité
+    }
+    std::cout << std::endl; // Pour bien séparer chaque affichage
+
     return zone;
 }
