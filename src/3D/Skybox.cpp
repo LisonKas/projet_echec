@@ -1,60 +1,61 @@
-// #include "Skybox.hpp"
-// #include <iostream>
-// #include <vector>
+#include "Skybox.hpp"
+#include <iostream>
+#include <vector>
+//#include "glad/glad.h"
 
-// GLfloat skyboxVertices[] = {
+GLfloat skyboxVertices[] = {
 //     // Positions
-//     -1.0f,  1.0f, -1.0f,
-//     -1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
-//      1.0f,  1.0f, -1.0f,
-//     -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
 
-//     -1.0f, -1.0f,  1.0f,
-//     -1.0f, -1.0f, -1.0f,
-//     -1.0f,  1.0f, -1.0f,
-//     -1.0f,  1.0f, -1.0f,
-//     -1.0f,  1.0f,  1.0f,
-//     -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
 
-//      1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
 
-//     -1.0f, -1.0f,  1.0f,
-//     -1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f, -1.0f,  1.0f,
-//     -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
 
-//     -1.0f,  1.0f, -1.0f,
-//      1.0f,  1.0f, -1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//     -1.0f,  1.0f,  1.0f,
-//     -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
 
-//     -1.0f, -1.0f, -1.0f,
-//     -1.0f, -1.0f,  1.0f,
-//      1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
-//     -1.0f, -1.0f,  1.0f,
-//      1.0f, -1.0f,  1.0f
-// };
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
+};
 
-// std::vector<std::string> faces = {
-//     "right.jpg",
-//     "left.jpg",
-//     "top.jpg",
-//     "bottom.jpg",
-//     "front.jpg",
-//     "back.jpg"
-// };
+std::vector<std::string> faces = {
+    "right.jpg",
+    "left.jpg",
+    "top.jpg",
+    "bottom.jpg",
+    "front.jpg",
+    "back.jpg"
+};
 
 // void Skybox::InitializeSkybox() {
 //     // Generate and bind the VAO
@@ -66,8 +67,8 @@
 //     glEnableVertexAttribArray(0);
 //     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-//     // Load the cubemap texture
-//     this->m_Texture = loadCubemap(faces);
+//     //Load the cubemap texture
+//     // this->m_Texture = loadCubemap();
 // }
 
 // void Skybox::DrawSkybox() {

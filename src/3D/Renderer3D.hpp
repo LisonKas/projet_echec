@@ -3,7 +3,7 @@
 
 class Renderer3D {
     private:
-        // Skybox m_skybox;
+        Skybox m_skybox;
 
     public:
         void initialize();
