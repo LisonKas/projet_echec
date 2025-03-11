@@ -5,6 +5,7 @@
 
 void App::InitializeGame(){
     m_chessboard.InitializeBoardList();
+    m_renderer.initialize();
 }
 
 void App::StartGame() {
@@ -12,5 +13,6 @@ void App::StartGame() {
         m_chessboard.CreateBoard();
     ImGui::End();
     ImGui::Begin("3DRenderer");
+        m_renderer.render();
     ImGui::End();
 }

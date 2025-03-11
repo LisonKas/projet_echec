@@ -1,9 +1,12 @@
 #pragma once
+#include "Skybox.hpp"
 
 class Renderer3D {
-public:
-    
+    private:
+        // Skybox m_skybox;
 
-private:
-    
+    public:
+        void initialize();
+        void render();
+        void close();
 };
