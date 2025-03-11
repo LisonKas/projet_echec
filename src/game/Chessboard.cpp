@@ -99,7 +99,7 @@ void Chessboard::CreateBoard()
                         {
                             // Sélectionner et obtenir les mouvements possibles
                             m_selectedPiece      = clickedSquare;
-                            m_highlightedSquares = selectedPiece->getZone();
+                            m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
                         }
                     }
                     else

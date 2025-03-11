@@ -1,6 +1,7 @@
 #pragma once
 #include <utility>
 #include <vector>
+#include "../game/Square.hpp"
 
 enum class PieceType {
     Pawn,
@@ -32,7 +33,7 @@ public:
     std::pair<int, int>              getCoords() const;
     bool                             getStatus();
     PieceType                        getType() const;
-    std::vector<std::pair<int, int>> getZone() const;
+    std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* chessboard) const;
 
     // CONSTRUCTOR
     Piece() = default;

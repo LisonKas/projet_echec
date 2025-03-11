@@ -1,6 +1,5 @@
 #include "piece.hpp"
-#include <algorithm>
-#include "../game/Chessboard.hpp"
+#include <iostream>
 
 Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
     : m_team(team), m_direction(1 - 2 * m_team), m_status(true), m_coords(coords), m_type(type) {}
@@ -17,7 +16,7 @@ PieceType Piece::getType() const
     return m_type;
 }
 
-std::vector<std::pair<int, int>> Piece::getZone() const
+std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* chessboard) const
 {
     std::vector<std::pair<int, int>> zone;
     switch (m_type)
