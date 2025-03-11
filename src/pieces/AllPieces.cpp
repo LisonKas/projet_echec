@@ -1,6 +1,7 @@
 #include "AllPieces.hpp"
 #include <iostream>
 #include "piece.hpp"
+#include "../lois/Uniform_Discreet_Law.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 void AllPieces::InitializeAllPieces()
