@@ -2,7 +2,7 @@
 #include <iostream>
 
 void Renderer3D::initialize() {
-    // m_skybox.InitializeSkybox();
+    m_skybox.InitializeSkybox();
 }
 
 void Renderer3D::render() {
