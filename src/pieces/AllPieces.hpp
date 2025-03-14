@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "piece.hpp"
+#include "glad/glad.h"
 
 class AllPieces {
 public:
@@ -10,7 +11,7 @@ public:
 
 public:
     void        InitializeAllPieces();
-    std::string PiecesAppear(int x, int y);
+    std::string PiecesAppear(int x, int y); //GLuint
     Piece*      GetPieceAt(std::pair<int, int> coords);
     // void verifPieceandCase(&boardlist) --> piece.getZone( &boarlist)
 };

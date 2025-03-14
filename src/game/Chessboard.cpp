@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include "quick_imgui/quick_imgui.hpp"
+#include "glad/glad.h"
 
 void Chessboard::InitializeBoardList()
 {
@@ -43,7 +44,6 @@ void Chessboard::CreateBoard()
     {
         for (int j{0}; j < 8; j++)
         {
-            // Vérifie si la case doit être surlignée
             bool isHighlighted = std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), std::make_pair(i, j)) != m_highlightedSquares.end();
 
             if (isHighlighted)
@@ -62,49 +62,46 @@ void Chessboard::CreateBoard()
             ImGui::PushID(m_boardlist[i][j].m_id);
 
             std::string piece_label = m_pieces.PiecesAppear(i, j);
-            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f}))
+            // GLuint piece_texture = m_pieces.PiecesAppear(i, j);
+            // if(piece_texture==0){
+            //     break;
+            // }
+            // ImGui::Image((void*)(intptr_t)piece_texture, ImVec2{100.f, 100.f});
+            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
             {
                 std::pair<int, int> clickedSquare = {i, j};
 
-                // Vérifier si on clique sur une case valide
                 if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
                 {
-                    // Déplacer la pièce
                     Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
                     if (selectedPiece)
                     {
                         selectedPiece->move(clickedSquare);
-                        // Mettre à jour l'échiquier
                         m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
                         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
 
-                        // Désélectionner
                         m_selectedPiece = {-1, -1};
                         m_highlightedSquares.clear();
                     }
                 }
                 else
                 {
-                    // Vérifier si on clique sur une pièce
                     Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
                     if (selectedPiece)
                     {
                         if (m_selectedPiece == clickedSquare)
                         {
-                            // Désélectionner si on reclique sur la même pièce
                             m_selectedPiece = {-1, -1};
                             m_highlightedSquares.clear();
                         }
                         else
                         {
-                            // Sélectionner et obtenir les mouvements possibles
                             m_selectedPiece      = clickedSquare;
                             m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
                         }
                     }
                     else
                     {
-                        // Désélectionner si on clique sur une case vide non valide
                         m_selectedPiece = {-1, -1};
                         m_highlightedSquares.clear();
                     }
@@ -121,13 +118,3 @@ void Chessboard::CreateBoard()
         }
     }
 }
-
-/* Ici c'est pour que les coordonnées apparaissent sur les cases
-            char coord_x = this->m_boardlist[i][j].m_coords.first;
-            int coord_y = this->m_boardlist[i][j].m_coords.second;
-
-            std::string button_label = "(";
-            button_label += coord_x;
-            button_label += ",";
-            button_label += std::to_string(coord_y);
-            button_label += ")"; */

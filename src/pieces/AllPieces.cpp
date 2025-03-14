@@ -1,8 +1,51 @@
 #include "AllPieces.hpp"
 #include <iostream>
+#include <map>
+#include <fstream>
+#include <string>
 #include "piece.hpp"
 #include "../lois/Uniform_Discreet_Law.hpp"
 #include "quick_imgui/quick_imgui.hpp"
+
+std::vector<std::pair<std::string, std::string>> piecePaths;
+std::map<std::string, GLuint> m_textures;
+
+GLuint LoadTexture(const char* path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cerr << "Failed to open image: " << path << std::endl;
+        return 0;
+    }
+
+    unsigned char header[54];
+    file.read(reinterpret_cast<char*>(header), 54);
+
+    if (header[0] != 'B' || header[1] != 'M') {
+        std::cerr << "Not a BMP file: " << path << std::endl;
+        return 0;
+    }
+
+    int dataPos = *(int*)&(header[0x0A]);
+    int width = *(int*)&(header[0x12]);
+    int height = *(int*)&(header[0x16]);
+    int imageSize = *(int*)&(header[0x22]);
+
+    if (imageSize == 0) imageSize = width * height * 3;
+    if (dataPos == 0) dataPos = 54;
+
+    std::vector<unsigned char> data(imageSize);
+    file.seekg(dataPos, std::ios::beg);
+    file.read(reinterpret_cast<char*>(data.data()), imageSize);
+    file.close();
+
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID;
+}
 
 void AllPieces::InitializeAllPieces()
 {
@@ -33,9 +76,29 @@ void AllPieces::InitializeAllPieces()
     }
     this->m_white_pieces.push_back(Piece(true, {7, 4}, PieceType::Queen));
     this->m_white_pieces.push_back(Piece(true, {7, 3}, PieceType::King));
+
+    //load les textures de pieces 2D
+    piecePaths = {
+        {"B_Pawn", "images/2D/Blacks/black-pawn.png"},
+        {"B_Rook", "images/2D/Blacks/black-rook.png"},
+        {"B_Knight", "images/2D/Blacks/black-knight.png"},
+        {"B_Bishop", "images/2D/Blacks/black-bishop.png"},
+        {"B_Queen", "images/2D/Blacks/black-queen.png"},
+        {"B_King", "images/2D/Blacks/black-king.png"},
+        {"W_Pawn", "images/2D/Whites/white-pawn.png"},
+        {"W_Rook", "images/2D/Whites/white-rook.png"},
+        {"W_Knight", "images/2D/Whites/white-knight.png"},
+        {"W_Bishop", "images/2D/Whites/white-bishop.png"},
+        {"W_Queen", "images/2D/Whites/white-queen.png"},
+        {"W_King", "images/2D/Whites/white-king.png"}
+    };
+
+    for (const auto& piecePath : piecePaths) {
+        m_textures[piecePath.first] = LoadTexture(piecePath.second.c_str());
+    }
 }
 
-std::string AllPieces::PiecesAppear(int x, int y)
+std::string AllPieces::PiecesAppear(int x, int y) //GLuint
 {
     for (const auto& piece : m_black_pieces)
     {
@@ -75,6 +138,44 @@ std::string AllPieces::PiecesAppear(int x, int y)
         }
     }
     return "";
+    // for (const auto& piece : m_black_pieces) {
+    //     if (piece.getCoords() == std::make_pair(x, y)) {
+    //         std::string textureKey = "B_";
+    //         switch (piece.getType())
+    //         {
+    //             case PieceType::Pawn: textureKey += "Pawn";
+    //             case PieceType::Rook: textureKey += "Rook";
+    //             case PieceType::Knight: textureKey += "Knight";
+    //             case PieceType::Bishop: textureKey += "Bishop";
+    //             case PieceType::Queen: textureKey += "Queen";
+    //             case PieceType::King: textureKey += "King";
+    //             default:
+    //                 textureKey += "";
+    //                 break;
+    //         }
+    //         return m_textures[textureKey];
+    //     }
+    // }
+
+    // for (const auto& piece : m_white_pieces) {
+    //     if (piece.getCoords() == std::make_pair(x, y)) {
+    //         std::string textureKey = "W_";
+    //         switch (piece.getType())
+    //         {
+    //             case PieceType::Pawn: textureKey += "Pawn";
+    //             case PieceType::Rook: textureKey += "Rook";
+    //             case PieceType::Knight: textureKey += "Knight";
+    //             case PieceType::Bishop: textureKey += "Bishop";
+    //             case PieceType::Queen: textureKey += "Queen";
+    //             case PieceType::King: textureKey += "King";
+    //             default:
+    //                 textureKey += "";
+    //                 break;
+    //         }
+    //         return m_textures[textureKey];
+    //     }
+    // }
+    // return 0;
 }
 
 Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
