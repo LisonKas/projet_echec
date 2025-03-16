@@ -15,5 +15,6 @@ public:
 
 public:
     void InitializeBoardList();
+    void HandlePieceMove(const std::pair<int, int>& clickedSquare);
     void CreateBoard();
 };

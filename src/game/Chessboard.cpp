@@ -38,6 +38,47 @@ void Chessboard::InitializeBoardList()
     m_pieces.InitializeAllPieces();
 }
 
+void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
+{
+    if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
+    {
+        Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
+        if (selectedPiece)
+        {
+            selectedPiece->move(clickedSquare);
+            m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
+            m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
+
+            // Réinitialiser l'état du jeu
+            m_selectedPiece = {-1, -1};
+            m_highlightedSquares.clear();
+        }
+    }
+    else
+    {
+        Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
+        if (selectedPiece)
+        {
+            // Sélectionner ou désélectionner une pièce
+            if (m_selectedPiece == clickedSquare)
+            {
+                m_selectedPiece = {-1, -1};
+                m_highlightedSquares.clear();
+            }
+            else
+            {
+                m_selectedPiece      = clickedSquare;
+                m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
+            }
+        }
+        else
+        {
+            m_selectedPiece = {-1, -1};
+            m_highlightedSquares.clear();
+        }
+    }
+}
+
 void Chessboard::CreateBoard()
 {
     for (int i{0}; i < 8; i++)
@@ -62,50 +103,11 @@ void Chessboard::CreateBoard()
             ImGui::PushID(m_boardlist[i][j].m_id);
 
             std::string piece_label = m_pieces.PiecesAppear(i, j);
-            // GLuint piece_texture = m_pieces.PiecesAppear(i, j);
-            // if(piece_texture==0){
-            //     break;
-            // }
-            // ImGui::Image((void*)(intptr_t)piece_texture, ImVec2{100.f, 100.f});
-            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) // piece_label.empty() ? " " : piece_label.c_str()
+
+            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f}))
             {
                 std::pair<int, int> clickedSquare = {i, j};
-
-                if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
-                {
-                    Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
-                    if (selectedPiece)
-                    {
-                        selectedPiece->move(clickedSquare);
-                        m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
-                        m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
-
-                        m_selectedPiece = {-1, -1};
-                        m_highlightedSquares.clear();
-                    }
-                }
-                else
-                {
-                    Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
-                    if (selectedPiece)
-                    {
-                        if (m_selectedPiece == clickedSquare)
-                        {
-                            m_selectedPiece = {-1, -1};
-                            m_highlightedSquares.clear();
-                        }
-                        else
-                        {
-                            m_selectedPiece      = clickedSquare;
-                            m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
-                        }
-                    }
-                    else
-                    {
-                        m_selectedPiece = {-1, -1};
-                        m_highlightedSquares.clear();
-                    }
-                }
+                HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
             }
 
             ImGui::PopID();
