@@ -3,8 +3,8 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include "quick_imgui/quick_imgui.hpp"
 #include "glad/glad.h"
+#include "quick_imgui/quick_imgui.hpp"
 
 void Chessboard::InitializeBoardList()
 {
@@ -67,7 +67,7 @@ void Chessboard::CreateBoard()
             //     break;
             // }
             // ImGui::Image((void*)(intptr_t)piece_texture, ImVec2{100.f, 100.f});
-            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
+            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f})) // piece_label.empty() ? " " : piece_label.c_str()
             {
                 std::pair<int, int> clickedSquare = {i, j};
 
