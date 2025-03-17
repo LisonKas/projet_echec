@@ -11,7 +11,7 @@ public:
 
 public:
     void        InitializeAllPieces();
-    std::string PiecesAppear(int x, int y); //GLuint
+    GLuint PiecesAppear(int x, int y); //GLuint ou //std::string
     Piece*      GetPieceAt(std::pair<int, int> coords);
     // void verifPieceandCase(&boardlist) --> piece.getZone( &boarlist)
 };

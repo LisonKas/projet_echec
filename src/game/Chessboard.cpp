@@ -102,12 +102,23 @@ void Chessboard::CreateBoard()
 
             ImGui::PushID(m_boardlist[i][j].m_id);
 
-            std::string piece_label = m_pieces.PiecesAppear(i, j);
+            GLuint piece_label = m_pieces.PiecesAppear(i, j); //std::string
 
-            if (ImGui::Button(piece_label.empty() ? " " : piece_label.c_str(), ImVec2{100.f, 100.f}))
-            {
-                std::pair<int, int> clickedSquare = {i, j};
-                HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+            if (piece_label != 0) {
+                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
+                {
+                    std::pair<int, int> clickedSquare = {i, j};
+                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                }
+                // ImGui::SetCursorScreenPos(ImGui::GetItemRectMin()); // Positionner l'image sur le bouton
+                // ImGui::Image((void*)(intptr_t)piece_label, ImVec2{100.f, 100.f});
+            }
+            else {
+                if (ImGui::Button(" ", ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
+                {
+                    std::pair<int, int> clickedSquare = {i, j};
+                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                }
             }
 
             ImGui::PopID();
