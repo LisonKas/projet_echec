@@ -6,7 +6,7 @@ void Renderer3D::initialize() {
 }
 
 void Renderer3D::render() {
-    // m_skybox.DrawSkybox();
+    m_skybox.DrawSkybox();
 }
 
 void Renderer3D::close() {
