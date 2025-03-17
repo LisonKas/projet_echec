@@ -28,26 +28,42 @@ GLuint LoadTexture(const char* path)
         return 0;
     }
 
-    int dataPos   = *(int*)&(header[0x0A]);
-    int width     = *(int*)&(header[0x12]);
-    int height    = *(int*)&(header[0x16]);
+    int dataPos = *(int*)&(header[0x0A]);
+    int width = *(int*)&(header[0x12]);
+    int height = *(int*)&(header[0x16]);
     int imageSize = *(int*)&(header[0x22]);
 
-    if (imageSize == 0)
-        imageSize = width * height * 3;
-    if (dataPos == 0)
-        dataPos = 54;
+    // Calculer la taille réelle de l'image avec 32 bits par pixel
+    int correctedImageSize = width * height * 4;
+
+    if (imageSize == 0) imageSize = correctedImageSize;
+    if (dataPos == 0) dataPos = 54;
 
     std::vector<unsigned char> data(imageSize);
     file.seekg(dataPos, std::ios::beg);
-    file.read(reinterpret_cast<char*>(data.data()), imageSize);
+    if (file.read(reinterpret_cast<char*>(data.data()), imageSize).gcount() != imageSize) {
+        std::cerr << "Failed to read the entire image data." << std::endl;
+        return 0;
+    }
     file.close();
 
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data());
+
+    // Charger les données de l'image dans la texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data.data());
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Paramètres de la texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Vérification des erreurs OpenGL
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cerr << "OpenGL error: " << error << std::endl;
+    }
 
     return textureID;
 }

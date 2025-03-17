@@ -117,8 +117,6 @@ void Chessboard::CreateBoard()
                     std::pair<int, int> clickedSquare = {i, j};
                     HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
                 }
-                // ImGui::SetCursorScreenPos(ImGui::GetItemRectMin()); // Positionner l'image sur le bouton
-                // ImGui::Image((void*)(intptr_t)piece_label, ImVec2{100.f, 100.f});
             }
             else {
                 if (ImGui::Button(" ", ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
