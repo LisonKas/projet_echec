@@ -47,6 +47,20 @@ GLuint LoadTexture(const char* path)
     }
     file.close();
 
+    // Retourner l'image verticalement
+    int rowSize = width * 4; // 4 octets par pixel (RGBA)
+    std::vector<unsigned char> tempRow(rowSize);
+
+    for (int y = 0; y < height / 2; y++) {
+        unsigned char* row1 = &data[y * rowSize];
+        unsigned char* row2 = &data[(height - 1 - y) * rowSize];
+
+        // Échanger row1 et row2
+        std::memcpy(tempRow.data(), row1, rowSize);
+        std::memcpy(row1, row2, rowSize);
+        std::memcpy(row2, tempRow.data(), rowSize);
+    }
+
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -167,12 +181,12 @@ GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
             std::string textureKey = "B_";
             switch (piece.getType())
             {
-            case PieceType::Pawn: textureKey += "Pawn";
-            case PieceType::Rook: textureKey += "Rook";
-            case PieceType::Knight: textureKey += "Knight";
-            case PieceType::Bishop: textureKey += "Bishop";
-            case PieceType::Queen: textureKey += "Queen";
-            case PieceType::King: textureKey += "King";
+            case PieceType::Pawn: textureKey += "Pawn"; break;
+            case PieceType::Rook: textureKey += "Rook"; break;
+            case PieceType::Knight: textureKey += "Knight"; break;
+            case PieceType::Bishop: textureKey += "Bishop"; break;
+            case PieceType::Queen: textureKey += "Queen"; break;
+            case PieceType::King: textureKey += "King"; break;
             default:
                 textureKey += "";
                 break;
@@ -188,12 +202,12 @@ GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
             std::string textureKey = "W_";
             switch (piece.getType())
             {
-            case PieceType::Pawn: textureKey += "Pawn";
-            case PieceType::Rook: textureKey += "Rook";
-            case PieceType::Knight: textureKey += "Knight";
-            case PieceType::Bishop: textureKey += "Bishop";
-            case PieceType::Queen: textureKey += "Queen";
-            case PieceType::King: textureKey += "King";
+            case PieceType::Pawn: textureKey += "Pawn"; break;
+            case PieceType::Rook: textureKey += "Rook"; break;
+            case PieceType::Knight: textureKey += "Knight"; break;
+            case PieceType::Bishop: textureKey += "Bishop"; break;
+            case PieceType::Queen: textureKey += "Queen"; break;
+            case PieceType::King: textureKey += "King"; break;
             default:
                 textureKey += "";
                 break;
