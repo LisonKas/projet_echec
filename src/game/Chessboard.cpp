@@ -6,6 +6,8 @@
 #include "glad/glad.h"
 #include "quick_imgui/quick_imgui.hpp"
 
+// Création du plateau
+
 void Chessboard::InitializeBoardList()
 {
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -38,54 +40,6 @@ void Chessboard::InitializeBoardList()
     m_pieces.InitializeAllPieces();
 }
 
-void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
-{
-    if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
-    {
-        Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
-        if (selectedPiece)
-        {
-            // Vérifier si la case contient une pièce adverse et la capturer si c'est le cas
-            Piece* capturedPiece = m_pieces.GetPieceAt(clickedSquare);
-            if (capturedPiece && capturedPiece->getTeam() != selectedPiece->getTeam())
-            {
-                m_pieces.RemovePieceAt(clickedSquare); // Supprime la pièce capturée
-            }
-
-            selectedPiece->move(clickedSquare);
-            m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
-            m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
-
-            // Réinitialiser l'état du jeu
-            m_selectedPiece = {-1, -1};
-            m_highlightedSquares.clear();
-        }
-    }
-    else
-    {
-        Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
-        if (selectedPiece)
-        {
-            // Sélectionner ou désélectionner une pièce
-            if (m_selectedPiece == clickedSquare)
-            {
-                m_selectedPiece = {-1, -1};
-                m_highlightedSquares.clear();
-            }
-            else
-            {
-                m_selectedPiece      = clickedSquare;
-                m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
-            }
-        }
-        else
-        {
-            m_selectedPiece = {-1, -1};
-            m_highlightedSquares.clear();
-        }
-    }
-}
-
 void Chessboard::CreateBoard()
 {
     for (int i{0}; i < 8; i++)
@@ -111,8 +65,9 @@ void Chessboard::CreateBoard()
 
             GLuint piece_label = m_pieces.PiecesAppear(i, j); // std::string
 
-            if (piece_label != 0) {
-                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f})) //piece_label.empty() ? " " : piece_label.c_str()
+            if (piece_label != 0)
+            {
+                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f})) // piece_label.empty() ? " " : piece_label.c_str()
                 {
                     std::pair<int, int> clickedSquare = {i, j};
                     HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
@@ -134,6 +89,72 @@ void Chessboard::CreateBoard()
             {
                 ImGui::SameLine();
             }
+        }
+    }
+}
+
+// Gestion de pièces sur le plateau
+
+void Chessboard::MovePiece(const std::pair<int, int>& destination)
+{
+    Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
+    if (selectedPiece)
+    {
+        selectedPiece->move(destination);
+        m_boardlist[destination.first][destination.second].m_is_occupied         = true;
+        m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
+    }
+}
+
+void Chessboard::CapturePiece(const std::pair<int, int>& target)
+{
+    Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
+    Piece* capturedPiece = m_pieces.GetPieceAt(target);
+
+    if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
+    {
+        m_pieces.RemovePieceAt(target); // Supprime la pièce capturée
+        MovePiece(target);
+    }
+}
+
+void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
+{
+    if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
+    {
+        if (m_pieces.GetPieceAt(clickedSquare))
+        {
+            CapturePiece(clickedSquare);
+        }
+        else
+        {
+            MovePiece(clickedSquare);
+        }
+
+        // Réinitialisation de l'état du jeu
+        m_selectedPiece = {-1, -1};
+        m_highlightedSquares.clear();
+    }
+    else
+    {
+        Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
+        if (selectedPiece)
+        {
+            if (m_selectedPiece == clickedSquare)
+            {
+                m_selectedPiece = {-1, -1};
+                m_highlightedSquares.clear();
+            }
+            else
+            {
+                m_selectedPiece      = clickedSquare;
+                m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
+            }
+        }
+        else
+        {
+            m_selectedPiece = {-1, -1};
+            m_highlightedSquares.clear();
         }
     }
 }

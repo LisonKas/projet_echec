@@ -17,4 +17,6 @@ public:
     void InitializeBoardList();
     void HandlePieceMove(const std::pair<int, int>& clickedSquare);
     void CreateBoard();
+    void CapturePiece(const std::pair<int, int>& target);
+    void MovePiece(const std::pair<int, int>& destination);
 };
