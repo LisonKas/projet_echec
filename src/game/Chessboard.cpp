@@ -112,7 +112,7 @@ void Chessboard::CreateBoard()
             GLuint piece_label = m_pieces.PiecesAppear(i, j); //std::string
 
             if (piece_label != 0) {
-                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{100.f, 100.f})) //piece_label.empty() ? " " : piece_label.c_str()
+                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f})) //piece_label.empty() ? " " : piece_label.c_str()
                 {
                     std::pair<int, int> clickedSquare = {i, j};
                     HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
