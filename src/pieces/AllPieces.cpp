@@ -7,7 +7,6 @@
 #include "piece.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
-
 std::vector<std::pair<std::string, std::string>> piecePaths;
 std::map<std::string, GLuint>                    m_textures;
 
@@ -85,18 +84,18 @@ void AllPieces::InitializeAllPieces()
 
     // load les textures de pieces 2D
     piecePaths = {
-        {"B_Pawn", "images/2D/Blacks/black-pawn.png"},
-        {"B_Rook", "images/2D/Blacks/black-rook.png"},
-        {"B_Knight", "images/2D/Blacks/black-knight.png"},
-        {"B_Bishop", "images/2D/Blacks/black-bishop.png"},
-        {"B_Queen", "images/2D/Blacks/black-queen.png"},
-        {"B_King", "images/2D/Blacks/black-king.png"},
-        {"W_Pawn", "images/2D/Whites/white-pawn.png"},
-        {"W_Rook", "images/2D/Whites/white-rook.png"},
-        {"W_Knight", "images/2D/Whites/white-knight.png"},
-        {"W_Bishop", "images/2D/Whites/white-bishop.png"},
-        {"W_Queen", "images/2D/Whites/white-queen.png"},
-        {"W_King", "images/2D/Whites/white-king.png"}
+        {"B_Pawn", "../../images/2D/Blacks/black-pawn.bmp"},
+        {"B_Rook", "../../images/2D/Blacks/black-rook.bmp"},
+        {"B_Knight", "../../images/2D/Blacks/black-knight.bmp"},
+        {"B_Bishop", "../../images/2D/Blacks/black-bishop.bmp"},
+        {"B_Queen", "../../images/2D/Blacks/black-queen.bmp"},
+        {"B_King", "../../images/2D/Blacks/black-king.bmp"},
+        {"W_Pawn", "../../images/2D/Whites/white-pawn.bmp"},
+        {"W_Rook", "../../images/2D/Whites/white-rook.bmp"},
+        {"W_Knight", "../../images/2D/Whites/white-knight.bmp"},
+        {"W_Bishop", "../../images/2D/Whites/white-bishop.bmp"},
+        {"W_Queen", "../../images/2D/Whites/white-queen.bmp"},
+        {"W_King", "../../images/2D/Whites/white-king.bmp"}
     };
 
     for (const auto& piecePath : piecePaths)
@@ -105,24 +104,64 @@ void AllPieces::InitializeAllPieces()
     }
 }
 
-std::string AllPieces::PiecesAppear(int x, int y) // GLuint
+GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
 {
+    // for (const auto& piece : m_black_pieces)
+    // {
+    //     if (piece.getCoords() == std::make_pair(x, y))
+    //     {
+    //         switch (piece.getType())
+    //         {
+    //         case PieceType::Pawn: return "B_Pawn";
+    //         case PieceType::Rook: return "B_Rook";
+    //         case PieceType::Knight: return "B_Knight";
+    //         case PieceType::Bishop: return "B_Bishop";
+    //         case PieceType::Queen: return "B_Queen";
+    //         case PieceType::King: return "B_King";
+    //         default:
+    //             return "";
+    //             break;
+    //         }
+    //     }
+    // }
+
+    // for (const auto& piece : m_white_pieces)
+    // {
+    //     if (piece.getCoords() == std::make_pair(x, y))
+    //     {
+    //         switch (piece.getType())
+    //         {
+    //         case PieceType::Pawn: return "W_Pawn";
+    //         case PieceType::Rook: return "W_Rook";
+    //         case PieceType::Knight: return "W_Knight";
+    //         case PieceType::Bishop: return "W_Bishop";
+    //         case PieceType::Queen: return "W_Queen";
+    //         case PieceType::King: return "W_King";
+    //         default:
+    //             return "";
+    //             break;
+    //         }
+    //     }
+    // }
+    // return "";
     for (const auto& piece : m_black_pieces)
     {
         if (piece.getCoords() == std::make_pair(x, y))
         {
+            std::string textureKey = "B_";
             switch (piece.getType())
             {
-            case PieceType::Pawn: return "B_Pawn";
-            case PieceType::Rook: return "B_Rook";
-            case PieceType::Knight: return "B_Knight";
-            case PieceType::Bishop: return "B_Bishop";
-            case PieceType::Queen: return "B_Queen";
-            case PieceType::King: return "B_King";
+            case PieceType::Pawn: textureKey += "Pawn";
+            case PieceType::Rook: textureKey += "Rook";
+            case PieceType::Knight: textureKey += "Knight";
+            case PieceType::Bishop: textureKey += "Bishop";
+            case PieceType::Queen: textureKey += "Queen";
+            case PieceType::King: textureKey += "King";
             default:
-                return "";
+                textureKey += "";
                 break;
             }
+            return m_textures[textureKey];
         }
     }
 
@@ -130,59 +169,23 @@ std::string AllPieces::PiecesAppear(int x, int y) // GLuint
     {
         if (piece.getCoords() == std::make_pair(x, y))
         {
+            std::string textureKey = "W_";
             switch (piece.getType())
             {
-            case PieceType::Pawn: return "W_Pawn";
-            case PieceType::Rook: return "W_Rook";
-            case PieceType::Knight: return "W_Knight";
-            case PieceType::Bishop: return "W_Bishop";
-            case PieceType::Queen: return "W_Queen";
-            case PieceType::King: return "W_King";
+            case PieceType::Pawn: textureKey += "Pawn";
+            case PieceType::Rook: textureKey += "Rook";
+            case PieceType::Knight: textureKey += "Knight";
+            case PieceType::Bishop: textureKey += "Bishop";
+            case PieceType::Queen: textureKey += "Queen";
+            case PieceType::King: textureKey += "King";
             default:
-                return "";
+                textureKey += "";
                 break;
             }
+            return m_textures[textureKey];
         }
     }
-    return "";
-    // for (const auto& piece : m_black_pieces) {
-    //     if (piece.getCoords() == std::make_pair(x, y)) {
-    //         std::string textureKey = "B_";
-    //         switch (piece.getType())
-    //         {
-    //             case PieceType::Pawn: textureKey += "Pawn";
-    //             case PieceType::Rook: textureKey += "Rook";
-    //             case PieceType::Knight: textureKey += "Knight";
-    //             case PieceType::Bishop: textureKey += "Bishop";
-    //             case PieceType::Queen: textureKey += "Queen";
-    //             case PieceType::King: textureKey += "King";
-    //             default:
-    //                 textureKey += "";
-    //                 break;
-    //         }
-    //         return m_textures[textureKey];
-    //     }
-    // }
-
-    // for (const auto& piece : m_white_pieces) {
-    //     if (piece.getCoords() == std::make_pair(x, y)) {
-    //         std::string textureKey = "W_";
-    //         switch (piece.getType())
-    //         {
-    //             case PieceType::Pawn: textureKey += "Pawn";
-    //             case PieceType::Rook: textureKey += "Rook";
-    //             case PieceType::Knight: textureKey += "Knight";
-    //             case PieceType::Bishop: textureKey += "Bishop";
-    //             case PieceType::Queen: textureKey += "Queen";
-    //             case PieceType::King: textureKey += "King";
-    //             default:
-    //                 textureKey += "";
-    //                 break;
-    //         }
-    //         return m_textures[textureKey];
-    //     }
-    // }
-    // return 0;
+    return 0;
 }
 
 Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
