@@ -64,6 +64,42 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     }
     break;
 
+    case PieceType::Rook:
+    {
+        // Vérifier toutes les directions possibles : haut, bas, gauche, droite
+        int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // haut, bas, gauche, droite
+
+        for (const auto& dir : directions)
+        {
+            int row = m_coords.first;
+            int col = m_coords.second;
+
+            // Déplacer dans la direction (dir[0], dir[1])
+            while (true)
+            {
+                row += dir[0];
+                col += dir[1];
+
+                // Vérifier si la case est hors du plateau
+                if (row < 0 || row >= 8 || col < 0 || col >= 8)
+                    break;
+
+                // Si la case est vide, on peut y aller
+                if (!(*chessboard)[row][col].isOccupied())
+                {
+                    zone.push_back({row, col});
+                }
+                // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
+                else
+                {
+                    zone.push_back({row, col});
+                    break; // La tour s'arrête après avoir pris une pièce
+                }
+            }
+        }
+    }
+    break;
+
     default:
         // Gérer les autres types de pièces plus tard
         break;
