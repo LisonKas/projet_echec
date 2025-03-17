@@ -1,18 +1,21 @@
 #include "AllPieces.hpp"
+#include <fstream>
 #include <iostream>
 #include <map>
-#include <fstream>
 #include <string>
-#include "piece.hpp"
 #include "../lois/Uniform_Discreet_Law.hpp"
+#include "piece.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
-std::vector<std::pair<std::string, std::string>> piecePaths;
-std::map<std::string, GLuint> m_textures;
 
-GLuint LoadTexture(const char* path) {
+std::vector<std::pair<std::string, std::string>> piecePaths;
+std::map<std::string, GLuint>                    m_textures;
+
+GLuint LoadTexture(const char* path)
+{
     std::ifstream file(path, std::ios::binary);
-    if (!file) {
+    if (!file)
+    {
         std::cerr << "Failed to open image: " << path << std::endl;
         return 0;
     }
@@ -20,18 +23,21 @@ GLuint LoadTexture(const char* path) {
     unsigned char header[54];
     file.read(reinterpret_cast<char*>(header), 54);
 
-    if (header[0] != 'B' || header[1] != 'M') {
+    if (header[0] != 'B' || header[1] != 'M')
+    {
         std::cerr << "Not a BMP file: " << path << std::endl;
         return 0;
     }
 
-    int dataPos = *(int*)&(header[0x0A]);
-    int width = *(int*)&(header[0x12]);
-    int height = *(int*)&(header[0x16]);
+    int dataPos   = *(int*)&(header[0x0A]);
+    int width     = *(int*)&(header[0x12]);
+    int height    = *(int*)&(header[0x16]);
     int imageSize = *(int*)&(header[0x22]);
 
-    if (imageSize == 0) imageSize = width * height * 3;
-    if (dataPos == 0) dataPos = 54;
+    if (imageSize == 0)
+        imageSize = width * height * 3;
+    if (dataPos == 0)
+        dataPos = 54;
 
     std::vector<unsigned char> data(imageSize);
     file.seekg(dataPos, std::ios::beg);
@@ -77,7 +83,7 @@ void AllPieces::InitializeAllPieces()
     this->m_white_pieces.push_back(Piece(true, {7, 4}, PieceType::Queen));
     this->m_white_pieces.push_back(Piece(true, {7, 3}, PieceType::King));
 
-    //load les textures de pieces 2D
+    // load les textures de pieces 2D
     piecePaths = {
         {"B_Pawn", "images/2D/Blacks/black-pawn.png"},
         {"B_Rook", "images/2D/Blacks/black-rook.png"},
@@ -93,12 +99,13 @@ void AllPieces::InitializeAllPieces()
         {"W_King", "images/2D/Whites/white-king.png"}
     };
 
-    for (const auto& piecePath : piecePaths) {
+    for (const auto& piecePath : piecePaths)
+    {
         m_textures[piecePath.first] = LoadTexture(piecePath.second.c_str());
     }
 }
 
-std::string AllPieces::PiecesAppear(int x, int y) //GLuint
+std::string AllPieces::PiecesAppear(int x, int y) // GLuint
 {
     for (const auto& piece : m_black_pieces)
     {
@@ -195,4 +202,20 @@ Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
         }
     }
     return nullptr;
+}
+
+void AllPieces::RemovePieceAt(std::pair<int, int> coords)
+{
+    auto removePiece = [&](std::vector<Piece>& pieces) {
+        auto it = std::remove_if(pieces.begin(), pieces.end(), [&](const Piece& piece) {
+            return piece.getCoords() == coords;
+        });
+        if (it != pieces.end())
+        {
+            pieces.erase(it, pieces.end());
+        }
+    };
+
+    removePiece(m_black_pieces);
+    removePiece(m_white_pieces);
 }

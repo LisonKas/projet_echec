@@ -34,6 +34,7 @@ public:
     bool                             getStatus();
     PieceType                        getType() const;
     std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* chessboard) const;
+    bool                             getTeam() const;
 
     // CONSTRUCTOR
     Piece() = default;

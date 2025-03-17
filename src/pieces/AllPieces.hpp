@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "piece.hpp"
 #include "glad/glad.h"
+#include "piece.hpp"
+
 
 class AllPieces {
 public:
@@ -11,7 +12,8 @@ public:
 
 public:
     void        InitializeAllPieces();
-    std::string PiecesAppear(int x, int y); //GLuint
+    std::string PiecesAppear(int x, int y); // GLuint
     Piece*      GetPieceAt(std::pair<int, int> coords);
+    void        RemovePieceAt(std::pair<int, int> coords);
     // void verifPieceandCase(&boardlist) --> piece.getZone( &boarlist)
 };

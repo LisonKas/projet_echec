@@ -75,3 +75,8 @@ void Piece::move(const std::pair<int, int>& newCoords)
 {
     m_coords = newCoords;
 }
+
+bool Piece::getTeam() const
+{
+    return m_team;
+}

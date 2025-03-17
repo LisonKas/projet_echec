@@ -45,6 +45,13 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
         Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
         if (selectedPiece)
         {
+            // Vérifier si la case contient une pièce adverse et la capturer si c'est le cas
+            Piece* capturedPiece = m_pieces.GetPieceAt(clickedSquare);
+            if (capturedPiece && capturedPiece->getTeam() != selectedPiece->getTeam())
+            {
+                m_pieces.RemovePieceAt(clickedSquare); // Supprime la pièce capturée
+            }
+
             selectedPiece->move(clickedSquare);
             m_boardlist[clickedSquare.first][clickedSquare.second].m_is_occupied     = true;
             m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
