@@ -5,6 +5,14 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     std::ifstream fShaderFile(fragmentPath);
     std::stringstream vShaderStream, fShaderStream;
 
+    if (!vShaderFile.is_open()) {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier de vertex shader : " << vertexPath << std::endl;
+    }
+
+    if (!fShaderFile.is_open()) {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier de fragment shader : " << fragmentPath << std::endl;
+    }
+
     if (!vShaderFile || !fShaderFile) {
         std::cerr << "Erreur : Impossible de lire les fichiers shader !" << std::endl;
         return;

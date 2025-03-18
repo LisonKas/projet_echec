@@ -16,3 +16,7 @@ void App::StartGame() {
         m_renderer.render();
     //ImGui::End();
 }
+
+void App::CloseGame(){
+    m_renderer.close();
+}

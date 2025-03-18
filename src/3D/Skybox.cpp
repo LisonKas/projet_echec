@@ -116,15 +116,13 @@ void Skybox::InitializeSkybox() {
 
     this->m_Texture = loadCubemap();
 
-    this->m_Shader = new Shader("shaders/shader.vs.glsl", "shaders/shader.fs.glsl");
+    this->m_Shader = new Shader("D:/IMAC_2/prog_algo/projet_echec/src/3D/shaders/shader.vs.glsl", "D:/IMAC_2/prog_algo/projet_echec/src/3D/shaders/shader.fs.glsl");
 }
 
 void Skybox::DrawSkybox(const float* view, const float* projection) {
-    glDepthFunc(GL_LEQUAL);
+    glDisable(GL_DEPTH_TEST);
     m_Shader->use();
-    std::cout << "Shader Skybox ID: " << m_Shader->ID << std::endl;
-
-    // Enlever la translation de la view matrix
+    
     glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, view);
     glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, projection);
 
@@ -132,7 +130,6 @@ void Skybox::DrawSkybox(const float* view, const float* projection) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Texture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthFunc(GL_LESS); 
 }
 
 GLuint Skybox::loadCubemap() {
@@ -143,7 +140,7 @@ GLuint Skybox::loadCubemap() {
     int width, height, nrChannels;
     unsigned char* data;
     for (unsigned int i = 0; i < faces.size(); i++) {
-        data = loadTexture(default_path+(faces[i].c_str()), &width, &height, &nrChannels);
+        data = loadTexture((default_path+faces[i]).c_str(), &width, &height, &nrChannels);
         if (data) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             delete[] data;

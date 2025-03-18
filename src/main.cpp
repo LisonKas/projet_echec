@@ -60,4 +60,6 @@ int main()
             .window_size_callback     = [](int width, int height) { std::cout << "Resized: " << width << ' ' << height << '\n'; },
         }
     );
+
+    app.CloseGame();
 }
