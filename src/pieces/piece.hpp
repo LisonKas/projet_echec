@@ -35,6 +35,8 @@ public:
     PieceType                        getType() const;
     std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* chessboard) const;
     bool                             getTeam() const;
+    std::vector<std::pair<int, int>> getRookMoves(std::vector<std::vector<Square>>* chessboard) const;
+    std::vector<std::pair<int, int>> getPawnMoves(std::vector<std::vector<Square>>* chessboard) const;
 
     // CONSTRUCTOR
     Piece() = default;

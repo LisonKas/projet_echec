@@ -99,6 +99,27 @@ void Chessboard::SetSquareColor(int i, int j)
 
 // Gestion de pièces sur le plateau
 
+void Chessboard::SelectPiece(const std::pair<int, int>& clickedSquare, Piece* selectedPiece)
+{
+    m_selectedPiece = clickedSquare;
+    m_highlightedSquares.clear();
+
+    for (const auto& move : selectedPiece->getZone(&m_boardlist))
+    {
+        Piece* targetPiece = m_pieces.GetPieceAt(move);
+        if (!targetPiece || targetPiece->getTeam() != selectedPiece->getTeam())
+        {
+            m_highlightedSquares.push_back(move);
+        }
+    }
+}
+
+void Chessboard::ResetSelection()
+{
+    m_selectedPiece = {-1, -1};
+    m_highlightedSquares.clear();
+}
+
 void Chessboard::MovePiece(const std::pair<int, int>& destination)
 {
     Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
@@ -124,51 +145,28 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
 
 void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 {
+    // Si une pièce est sélectionnée et que le clic est sur une case valide
     if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
     {
-        if (m_pieces.GetPieceAt(clickedSquare))
-        {
-            CapturePiece(clickedSquare);
-        }
-        else
-        {
-            MovePiece(clickedSquare);
-        }
+        (m_pieces.GetPieceAt(clickedSquare)) ? CapturePiece(clickedSquare) : MovePiece(clickedSquare);
+        ResetSelection();
+        return;
+    }
 
-        // Réinitialisation de l'état du jeu
-        m_selectedPiece = {-1, -1};
-        m_highlightedSquares.clear();
+    Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
+
+    if (!selectedPiece)
+    {
+        ResetSelection();
+        return;
+    }
+
+    if (m_selectedPiece == clickedSquare)
+    {
+        ResetSelection();
     }
     else
     {
-        Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
-        if (selectedPiece)
-        {
-            if (m_selectedPiece == clickedSquare)
-            {
-                m_selectedPiece = {-1, -1};
-                m_highlightedSquares.clear();
-            }
-            else
-            {
-                m_selectedPiece                                = clickedSquare;
-                std::vector<std::pair<int, int>> possibleMoves = selectedPiece->getZone(&m_boardlist);
-                m_highlightedSquares.clear();
-
-                for (const auto& move : possibleMoves)
-                {
-                    Piece* targetPiece = m_pieces.GetPieceAt(move);
-                    if (!targetPiece || targetPiece->getTeam() != selectedPiece->getTeam())
-                    {
-                        m_highlightedSquares.push_back(move);
-                    }
-                }
-            }
-        }
-        else
-        {
-            m_selectedPiece = {-1, -1};
-            m_highlightedSquares.clear();
-        }
+        SelectPiece(clickedSquare, selectedPiece);
     }
 }
