@@ -19,23 +19,24 @@ bool Piece::getTeam() const
     return m_team;
 }
 
-std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* chessboard) const
+// DETECTION DES ZONES
+
+std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* board) const
 {
     switch (m_type)
     {
     case PieceType::Pawn:
-        return getPawnMoves(chessboard);
+        return getPawnMoves(board);
     case PieceType::Rook:
-        return getRookMoves(chessboard);
+        return getRookMoves(board);
     case PieceType::Bishop:
-        return getBishopMoves(chessboard);
+        return getBishopMoves(board);
     case PieceType::Queen:
-        return getQueenMoves(chessboard);
+        return getQueenMoves(board);
     case PieceType::Knight:
-        return getKnightMoves(chessboard);
+        return getKnightMoves(board);
     case PieceType::King:
-        return getKingMoves(chessboard);
-    // Ajoute ici les autres types de pièces (Knight, King)
+        return getKingMoves(board);
     default:
         return {};
     }
@@ -46,41 +47,40 @@ void Piece::move(const std::pair<int, int>& newCoords)
     m_coords = newCoords;
 }
 
-// 🎯 Fonction spécifique pour le pion
-std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
     int                              nextRow = m_coords.first + m_direction;
-    int                              nextCol = m_coords.second;
+    int                              col     = m_coords.second;
 
-    // Avance d'une case si libre
-    if (nextRow >= 0 && nextRow < 8 && !(*chessboard)[nextRow][nextCol].isOccupied())
+    // Mouvements d'une deux cases vers l'avant
+    if (nextRow >= 0 && nextRow < 8 && !(*board)[nextRow][col].isOccupied())
     {
-        zone.push_back({nextRow, nextCol});
+        zone.push_back({nextRow, col});
 
-        // Avance de deux cases si au départ
-        int startRow   = (m_team) ? 6 : 1;
-        int twoStepRow = nextRow + m_direction;
-        if (m_coords.first == startRow && twoStepRow >= 0 && twoStepRow < 8 && !(*chessboard)[twoStepRow][nextCol].isOccupied())
+        if (m_coords.first == (m_team ? 6 : 1)) // Détection du 1er tour (position de départ)
         {
-            zone.push_back({twoStepRow, nextCol});
+            int twoStepRow = nextRow + m_direction;
+            if (twoStepRow >= 0 && twoStepRow < 8 && !(*board)[twoStepRow][col].isOccupied())
+            {
+                zone.push_back({twoStepRow, col});
+            }
         }
     }
 
     // Prises en diagonale
-    std::vector<std::pair<int, int>> captureMoves = {{nextRow, nextCol - 1}, {nextRow, nextCol + 1}};
-    for (const auto& move : captureMoves)
+    for (int shift : {-1, 1})
     {
-        int r = move.first, c = move.second;
-        if (r >= 0 && r < 8 && c >= 0 && c < 8 && (*chessboard)[r][c].isOccupied())
+        int captureCol = col + shift;
+        if (captureCol >= 0 && captureCol < 8 && (*board)[nextRow][captureCol].isOccupied())
         {
-            zone.push_back(move);
+            zone.push_back({nextRow, captureCol});
         }
     }
+
     return zone;
 }
 
-// 🎯 Fonction spécifique pour la tour
 std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* chessboard) const
 {
     std::vector<std::pair<int, int>> zone;
@@ -150,6 +150,43 @@ std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<S
     return zone;
 }
 
+std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<Square>>* chessboard) const
+{
+    std::vector<std::pair<int, int>> zone;
+
+    // Les 8 déplacements possibles du chevalier
+    int directions[8][2] = {
+        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, // Haut-Gauche, Haut-Droit, Bas-Gauche, Bas-Droit
+        {-1, -2},
+        {-1, 2},
+        {1, -2},
+        {1, 2} // Gauche-Haut, Droite-Haut, Gauche-Bas, Droite-Bas
+    };
+
+    for (const auto& dir : directions)
+    {
+        int row = m_coords.first + dir[0];
+        int col = m_coords.second + dir[1];
+
+        // Vérifier si le mouvement reste dans les limites du plateau
+        if (row >= 0 && row < 8 && col >= 0 && col < 8)
+        {
+            // Si la case est vide ou occupée par une pièce ennemie, on peut y aller
+            if (!(*chessboard)[row][col].isOccupied())
+            {
+                zone.push_back({row, col});
+            }
+            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
+            else
+            {
+                zone.push_back({row, col});
+            }
+        }
+    }
+
+    return zone;
+}
+
 std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* chessboard) const
 {
     std::vector<std::pair<int, int>> zone;
@@ -208,44 +245,6 @@ std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Sq
             {
                 zone.push_back({row, col});
                 break;
-            }
-        }
-    }
-
-    return zone;
-}
-
-// 🎯 Fonction spécifique pour le chevalier (Knight)
-std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<Square>>* chessboard) const
-{
-    std::vector<std::pair<int, int>> zone;
-
-    // Les 8 déplacements possibles du chevalier
-    int directions[8][2] = {
-        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, // Haut-Gauche, Haut-Droit, Bas-Gauche, Bas-Droit
-        {-1, -2},
-        {-1, 2},
-        {1, -2},
-        {1, 2} // Gauche-Haut, Droite-Haut, Gauche-Bas, Droite-Bas
-    };
-
-    for (const auto& dir : directions)
-    {
-        int row = m_coords.first + dir[0];
-        int col = m_coords.second + dir[1];
-
-        // Vérifier si le mouvement reste dans les limites du plateau
-        if (row >= 0 && row < 8 && col >= 0 && col < 8)
-        {
-            // Si la case est vide ou occupée par une pièce ennemie, on peut y aller
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
-            else
-            {
-                zone.push_back({row, col});
             }
         }
     }
