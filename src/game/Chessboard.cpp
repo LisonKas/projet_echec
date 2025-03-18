@@ -147,8 +147,18 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
             }
             else
             {
-                m_selectedPiece      = clickedSquare;
-                m_highlightedSquares = selectedPiece->getZone(&m_boardlist);
+                m_selectedPiece                                = clickedSquare;
+                std::vector<std::pair<int, int>> possibleMoves = selectedPiece->getZone(&m_boardlist);
+                m_highlightedSquares.clear();
+
+                for (const auto& move : possibleMoves)
+                {
+                    Piece* targetPiece = m_pieces.GetPieceAt(move);
+                    if (!targetPiece || targetPiece->getTeam() != selectedPiece->getTeam())
+                    {
+                        m_highlightedSquares.push_back(move);
+                    }
+                }
             }
         }
         else
