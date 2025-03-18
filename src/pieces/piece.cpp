@@ -27,7 +27,9 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
         return getPawnMoves(chessboard);
     case PieceType::Rook:
         return getRookMoves(chessboard);
-    // Ajoute ici les autres types de pièces (Bishop, Knight, Queen, King)
+    case PieceType::Bishop:
+        return getBishopMoves(chessboard);
+    // Ajoute ici les autres types de pièces (Knight, King)
     default:
         return {};
     }
@@ -99,6 +101,43 @@ std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Squ
             {
                 zone.push_back({row, col});
                 break;
+            }
+        }
+    }
+    return zone;
+}
+
+std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* chessboard) const
+{
+    std::vector<std::pair<int, int>> zone;
+
+    // Directions diagonales du fou
+    int directions[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+    for (const auto& dir : directions)
+    {
+        int row = m_coords.first;
+        int col = m_coords.second;
+
+        while (true)
+        {
+            row += dir[0];
+            col += dir[1];
+
+            // Vérifier si la case est hors du plateau
+            if (row < 0 || row >= 8 || col < 0 || col >= 8)
+                break;
+
+            // Si la case est vide, on peut y aller
+            if (!(*chessboard)[row][col].isOccupied())
+            {
+                zone.push_back({row, col});
+            }
+            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
+            else
+            {
+                zone.push_back({row, col});
+                break; // Le fou s'arrête après avoir pris une pièce
             }
         }
     }
