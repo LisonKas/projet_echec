@@ -19,4 +19,5 @@ public:
     void CreateBoard();
     void CapturePiece(const std::pair<int, int>& target);
     void MovePiece(const std::pair<int, int>& destination);
+    void SetSquareColor(int i, int j);
 };

@@ -46,39 +46,25 @@ void Chessboard::CreateBoard()
     {
         for (int j{0}; j < 8; j++)
         {
-            bool isHighlighted = std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), std::make_pair(i, j)) != m_highlightedSquares.end();
-
-            if (isHighlighted)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); // Vert pour cases accessibles
-            }
-            else if (this->m_boardlist[i][j].m_color_light)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f)); // Presque Blanc
-            }
-            else
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); // Presque Noir
-            }
+            SetSquareColor(i, j); // Appliquer la couleur à la case
 
             ImGui::PushID(m_boardlist[i][j].m_id);
-
-            GLuint piece_label = m_pieces.PiecesAppear(i, j); // std::string
+            GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
             if (piece_label != 0)
             {
-                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f})) // piece_label.empty() ? " " : piece_label.c_str()
+                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f}))
                 {
                     std::pair<int, int> clickedSquare = {i, j};
-                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                    HandlePieceMove(clickedSquare);
                 }
             }
             else
             {
-                if (ImGui::Button(" ", ImVec2{100.f, 100.f})) // piece_label.empty() ? " " : piece_label.c_str()
+                if (ImGui::Button(" ", ImVec2{100.f, 100.f}))
                 {
                     std::pair<int, int> clickedSquare = {i, j};
-                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                    HandlePieceMove(clickedSquare);
                 }
             }
 
@@ -90,6 +76,24 @@ void Chessboard::CreateBoard()
                 ImGui::SameLine();
             }
         }
+    }
+}
+
+void Chessboard::SetSquareColor(int i, int j)
+{
+    bool isHighlighted = std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), std::make_pair(i, j)) != m_highlightedSquares.end();
+
+    if (isHighlighted)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); // Vert pour cases accessibles
+    }
+    else if (this->m_boardlist[i][j].m_color_light)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f)); // Presque Blanc
+    }
+    else
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); // Presque Noir
     }
 }
 
