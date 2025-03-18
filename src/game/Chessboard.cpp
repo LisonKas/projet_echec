@@ -46,39 +46,25 @@ void Chessboard::CreateBoard()
     {
         for (int j{0}; j < 8; j++)
         {
-            bool isHighlighted = std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), std::make_pair(i, j)) != m_highlightedSquares.end();
-
-            if (isHighlighted)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); // Vert pour cases accessibles
-            }
-            else if (this->m_boardlist[i][j].m_color_light)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f)); // Presque Blanc
-            }
-            else
-            {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); // Presque Noir
-            }
+            SetSquareColor(i, j); // Appliquer la couleur à la case
 
             ImGui::PushID(m_boardlist[i][j].m_id);
-
-            GLuint piece_label = m_pieces.PiecesAppear(i, j); // std::string
+            GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
             if (piece_label != 0)
             {
-                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f})) // piece_label.empty() ? " " : piece_label.c_str()
+                if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f}))
                 {
                     std::pair<int, int> clickedSquare = {i, j};
-                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                    HandlePieceMove(clickedSquare);
                 }
             }
             else
             {
-                if (ImGui::Button(" ", ImVec2{100.f, 100.f})) // piece_label.empty() ? " " : piece_label.c_str()
+                if (ImGui::Button(" ", ImVec2{100.f, 100.f}))
                 {
                     std::pair<int, int> clickedSquare = {i, j};
-                    HandlePieceMove(clickedSquare); // Appel de la fonction pour gérer le déplacement
+                    HandlePieceMove(clickedSquare);
                 }
             }
 
@@ -93,7 +79,46 @@ void Chessboard::CreateBoard()
     }
 }
 
+void Chessboard::SetSquareColor(int i, int j)
+{
+    bool isHighlighted = std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), std::make_pair(i, j)) != m_highlightedSquares.end();
+
+    if (isHighlighted)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); // Vert pour cases accessibles
+    }
+    else if (this->m_boardlist[i][j].m_color_light)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f)); // Presque Blanc
+    }
+    else
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); // Presque Noir
+    }
+}
+
 // Gestion de pièces sur le plateau
+
+void Chessboard::SelectPiece(const std::pair<int, int>& clickedSquare, Piece* selectedPiece)
+{
+    m_selectedPiece = clickedSquare;
+    m_highlightedSquares.clear();
+
+    for (const auto& move : selectedPiece->getZone(&m_boardlist))
+    {
+        Piece* targetPiece = m_pieces.GetPieceAt(move);
+        if (!targetPiece || targetPiece->getTeam() != selectedPiece->getTeam())
+        {
+            m_highlightedSquares.push_back(move);
+        }
+    }
+}
+
+void Chessboard::ResetSelection()
+{
+    m_selectedPiece = {-1, -1};
+    m_highlightedSquares.clear();
+}
 
 void Chessboard::MovePiece(const std::pair<int, int>& destination)
 {
@@ -120,51 +145,28 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
 
 void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 {
+    // Si une pièce est sélectionnée et que le clic est sur une case valide
     if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
     {
-        if (m_pieces.GetPieceAt(clickedSquare))
-        {
-            CapturePiece(clickedSquare);
-        }
-        else
-        {
-            MovePiece(clickedSquare);
-        }
+        (m_pieces.GetPieceAt(clickedSquare)) ? CapturePiece(clickedSquare) : MovePiece(clickedSquare);
+        ResetSelection();
+        return;
+    }
 
-        // Réinitialisation de l'état du jeu
-        m_selectedPiece = {-1, -1};
-        m_highlightedSquares.clear();
+    Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
+
+    if (!selectedPiece)
+    {
+        ResetSelection();
+        return;
+    }
+
+    if (m_selectedPiece == clickedSquare)
+    {
+        ResetSelection();
     }
     else
     {
-        Piece* selectedPiece = m_pieces.GetPieceAt(clickedSquare);
-        if (selectedPiece)
-        {
-            if (m_selectedPiece == clickedSquare)
-            {
-                m_selectedPiece = {-1, -1};
-                m_highlightedSquares.clear();
-            }
-            else
-            {
-                m_selectedPiece                                = clickedSquare;
-                std::vector<std::pair<int, int>> possibleMoves = selectedPiece->getZone(&m_boardlist);
-                m_highlightedSquares.clear();
-
-                for (const auto& move : possibleMoves)
-                {
-                    Piece* targetPiece = m_pieces.GetPieceAt(move);
-                    if (!targetPiece || targetPiece->getTeam() != selectedPiece->getTeam())
-                    {
-                        m_highlightedSquares.push_back(move);
-                    }
-                }
-            }
-        }
-        else
-        {
-            m_selectedPiece = {-1, -1};
-            m_highlightedSquares.clear();
-        }
+        SelectPiece(clickedSquare, selectedPiece);
     }
 }

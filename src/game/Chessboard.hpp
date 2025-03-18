@@ -19,4 +19,7 @@ public:
     void CreateBoard();
     void CapturePiece(const std::pair<int, int>& target);
     void MovePiece(const std::pair<int, int>& destination);
+    void SetSquareColor(int i, int j);
+    void ResetSelection();
+    void SelectPiece(const std::pair<int, int>& clickedSquare, Piece* selectedPiece);
 };
