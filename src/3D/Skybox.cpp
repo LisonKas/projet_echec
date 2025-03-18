@@ -115,15 +115,24 @@ void Skybox::InitializeSkybox() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     this->m_Texture = loadCubemap();
+
+    this->m_Shader = new Shader("shaders/shader.vs.glsl", "shaders/shader.fs.glsl");
 }
 
-void Skybox::DrawSkybox() {
-    glDepthFunc(GL_LEQUAL); 
+void Skybox::DrawSkybox(const float* view, const float* projection) {
+    glDepthFunc(GL_LEQUAL);
+    m_Shader->use();
+    std::cout << "Shader Skybox ID: " << m_Shader->ID << std::endl;
+
+    // Enlever la translation de la view matrix
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, view);
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, projection);
+
     glBindVertexArray(this->m_VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Texture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthFunc(GL_LESS);  
+    glDepthFunc(GL_LESS); 
 }
 
 GLuint Skybox::loadCubemap() {
@@ -151,4 +160,11 @@ GLuint Skybox::loadCubemap() {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
+}
+
+void Skybox::Destroy() {
+    delete m_Shader;
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteTextures(1, &m_Texture);
 }

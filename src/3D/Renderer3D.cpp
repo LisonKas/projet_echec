@@ -6,7 +6,22 @@ void Renderer3D::initialize() {
 }
 
 void Renderer3D::render() {
-    m_skybox.DrawSkybox();
+    //glClearColor(1,0,0,1);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    float view[16] = {
+        1, 0, 0, 0,  
+        0, 1, 0, 0,  
+        0, 0, 1, 0,  
+        0, 0, 0, 1  
+    };
+
+    float projection[16] = {
+        1, 0, 0, 0,  
+        0, 1, 0, 0,  
+        0, 0, -1, -1,  
+        0, 0, -0.1, 0  
+    };
+    m_skybox.DrawSkybox(view, projection);
 }
 
 void Renderer3D::close() {

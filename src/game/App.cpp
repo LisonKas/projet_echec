@@ -12,7 +12,7 @@ void App::StartGame() {
     ImGui::Begin("Game");
         m_chessboard.CreateBoard();
     ImGui::End();
-    ImGui::Begin("3DRenderer");
+    //ImGui::Begin("3DRenderer");
         m_renderer.render();
-    ImGui::End();
+    //ImGui::End();
 }
