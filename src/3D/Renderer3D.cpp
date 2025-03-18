@@ -8,7 +8,6 @@ void Renderer3D::initialize() {
 void Renderer3D::render() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     float view[16] = {
         1, 0, 0, 0,  
@@ -20,8 +19,8 @@ void Renderer3D::render() {
     float projection[16] = {
         1, 0, 0, 0,  
         0, 1, 0, 0,  
-        0, 0, -1, -1,  
-        0, 0, -0.1, 0  
+        0, 0, -1, 0,  
+        0, 0, -0.1, 1  
     };
     m_skybox.DrawSkybox(view, projection);
 }

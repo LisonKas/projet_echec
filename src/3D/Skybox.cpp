@@ -92,6 +92,10 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
     file.read(reinterpret_cast<char*>(data), imageSize);
     file.close();
 
+    for (int i = 0; i < imageSize; i += *nrChannels) {
+        std::swap(data[i], data[i + 2]); // Inverse le rouge et le bleu
+    }
+
     for (int i = 0; i < *height / 2; ++i) {
         unsigned char* topRow = data + i * (*width) * (*nrChannels);
         unsigned char* bottomRow = data + (*height - 1 - i) * (*width) * (*nrChannels);
@@ -140,16 +144,17 @@ GLuint Skybox::loadCubemap() {
     int width, height, nrChannels;
     unsigned char* data;
     for (unsigned int i = 0; i < faces.size(); i++) {
-        data = loadTexture((default_path+faces[i]).c_str(), &width, &height, &nrChannels);
+        data = loadTexture((default_path + faces[i]).c_str(), &width, &height, &nrChannels);
         if (data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB; // Vérifie si l'image a un canal alpha
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+            
             delete[] data;
-            data = nullptr;
         } else {
             std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            delete[] data;
         }
     }
+    
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
