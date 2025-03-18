@@ -33,6 +33,8 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
         return getQueenMoves(chessboard);
     case PieceType::Knight:
         return getKnightMoves(chessboard);
+    case PieceType::King:
+        return getKingMoves(chessboard);
     // Ajoute ici les autres types de pièces (Knight, King)
     default:
         return {};
@@ -248,5 +250,23 @@ std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<S
         }
     }
 
+    return zone;
+}
+
+std::vector<std::pair<int, int>> Piece::getKingMoves(std::vector<std::vector<Square>>* chessboard) const
+{
+    std::vector<std::pair<int, int>> zone;
+    int                              directions[8][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}; // Toutes les directions du roi
+
+    for (const auto& dir : directions)
+    {
+        int row = m_coords.first + dir[0];
+        int col = m_coords.second + dir[1];
+
+        if (row >= 0 && row < 8 && col >= 0 && col < 8) // Vérifie que la case est dans l'échiquier
+        {
+            zone.push_back({row, col});
+        }
+    }
     return zone;
 }
