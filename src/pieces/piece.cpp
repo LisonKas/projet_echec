@@ -31,6 +31,8 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
         return getBishopMoves(chessboard);
     case PieceType::Queen:
         return getQueenMoves(chessboard);
+    case PieceType::Knight:
+        return getKnightMoves(chessboard);
     // Ajoute ici les autres types de pièces (Knight, King)
     default:
         return {};
@@ -204,6 +206,44 @@ std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Sq
             {
                 zone.push_back({row, col});
                 break;
+            }
+        }
+    }
+
+    return zone;
+}
+
+// 🎯 Fonction spécifique pour le chevalier (Knight)
+std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<Square>>* chessboard) const
+{
+    std::vector<std::pair<int, int>> zone;
+
+    // Les 8 déplacements possibles du chevalier
+    int directions[8][2] = {
+        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, // Haut-Gauche, Haut-Droit, Bas-Gauche, Bas-Droit
+        {-1, -2},
+        {-1, 2},
+        {1, -2},
+        {1, 2} // Gauche-Haut, Droite-Haut, Gauche-Bas, Droite-Bas
+    };
+
+    for (const auto& dir : directions)
+    {
+        int row = m_coords.first + dir[0];
+        int col = m_coords.second + dir[1];
+
+        // Vérifier si le mouvement reste dans les limites du plateau
+        if (row >= 0 && row < 8 && col >= 0 && col < 8)
+        {
+            // Si la case est vide ou occupée par une pièce ennemie, on peut y aller
+            if (!(*chessboard)[row][col].isOccupied())
+            {
+                zone.push_back({row, col});
+            }
+            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
+            else
+            {
+                zone.push_back({row, col});
             }
         }
     }
