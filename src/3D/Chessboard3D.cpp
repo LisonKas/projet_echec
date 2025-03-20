@@ -22,9 +22,9 @@ GLfloat chessboardVertices[] = {
     -0.5f, 0.1f, -0.5f,  // Haut gauche arrière
 };
 
-std::string whiteTexturePath = "../../images/3D/Chessboard/white_texture.bmp";
-std::string blackTexturePath = "../../images/3D/Chessboard/black_texture.bmp";
-std::string borderTexturePath = "../../images/3D/Chessboard/border_texture.bmp";
+std::string whiteTexturePath = "../../images/3D/Chessboard/white_square.bmp";
+std::string blackTexturePath = "../../images/3D/Chessboard/black_square.bmp";
+std::string borderTexturePath = "../../images/3D/Chessboard/borders.bmp";
 
 unsigned char* LoadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
 {
