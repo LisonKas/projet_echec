@@ -1,4 +1,5 @@
 #include "piece.hpp"
+#include <array>
 #include <iostream>
 
 Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
@@ -81,35 +82,27 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>> zone;
-    int                              directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // haut, bas, gauche, droite
+    std::vector<std::pair<int, int>>             zone;
+    constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}}; // haut, bas, gauche, droite
 
-    for (const auto& dir : directions)
+    int row = m_coords.first;
+    int col = m_coords.second;
+
+    for (const std::pair<int, int>& direction : directions)
     {
-        int row = m_coords.first;
-        int col = m_coords.second;
+        int xShift = direction.first;
+        int yShift = direction.second;
 
-        while (true)
+        for (int nextRow = row + xShift, nextCol = col + yShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += xShift, nextCol += yShift)
         {
-            row += dir[0];
-            col += dir[1];
-
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
+            zone.push_back({nextRow, nextCol});
+            if ((*board)[nextRow][nextCol].isOccupied())
                 break;
-
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
-            }
         }
     }
+
     return zone;
 }
 
