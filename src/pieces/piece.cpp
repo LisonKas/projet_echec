@@ -92,10 +92,10 @@ std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Squ
 
     for (const std::pair<int, int>& direction : directions)
     {
-        int xShift = direction.first;
-        int yShift = direction.second;
+        int rShift = direction.first;
+        int cShift = direction.second;
 
-        for (int nextRow = row + xShift, nextCol = col + yShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += xShift, nextCol += yShift)
+        for (int nextRow = row + rShift, nextCol = col + cShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += rShift, nextCol += cShift)
         {
             zone.push_back({nextRow, nextCol});
             if ((*board)[nextRow][nextCol].isOccupied())
@@ -106,37 +106,32 @@ std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Squ
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
+    int                              row{0};
+    int                              col{0};
 
-    // Directions diagonales du fou
-    int directions[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    for (const auto& dir : directions)
+    for (int rShift : {-1, 1})
     {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
+        for (int cShift : {-1, 1})
         {
-            row += dir[0];
-            col += dir[1];
+            row = m_coords.first + rShift;
+            col = m_coords.second + cShift;
 
-            // Vérifier si la case est hors du plateau
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            // Si la case est vide, on peut y aller
-            if (!(*chessboard)[row][col].isOccupied())
+            while (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
-                zone.push_back({row, col});
-            }
-            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
-            else
-            {
-                zone.push_back({row, col});
-                break; // Le fou s'arrête après avoir pris une pièce
+                if (!(*board)[row][col].isOccupied())
+                {
+                    zone.push_back({row, col});
+                }
+                else
+                {
+                    zone.push_back({row, col});
+                    break;
+                }
+                row += rShift;
+                col += cShift;
             }
         }
     }
