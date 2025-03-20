@@ -35,7 +35,7 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     case PieceType::Queen:
         return getQueenMoves(board);
     case PieceType::Knight:
-        return getKnightMoves(board);
+        return getKnightMoves();
     case PieceType::King:
         return getKingMoves(board);
     default:
@@ -138,37 +138,24 @@ std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<S
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getKnightMoves() const
 {
     std::vector<std::pair<int, int>> zone;
 
-    // Les 8 déplacements possibles du chevalier
-    int directions[8][2] = {
-        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, // Haut-Gauche, Haut-Droit, Bas-Gauche, Bas-Droit
-        {-1, -2},
-        {-1, 2},
-        {1, -2},
-        {1, 2} // Gauche-Haut, Droite-Haut, Gauche-Bas, Droite-Bas
+    std::vector<std::pair<int, int>> directions = {
+        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
     };
 
-    for (const auto& dir : directions)
+    for (const auto& direction : directions)
     {
-        int row = m_coords.first + dir[0];
-        int col = m_coords.second + dir[1];
+        int row = m_coords.first + direction.first;
+        int col = m_coords.second + direction.second;
 
         // Vérifier si le mouvement reste dans les limites du plateau
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
-            // Si la case est vide ou occupée par une pièce ennemie, on peut y aller
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
-            else
-            {
-                zone.push_back({row, col});
-            }
+            // Ajouter la case à la zone si elle est vide ou occupée par une pièce ennemie
+            zone.push_back({row, col});
         }
     }
 
