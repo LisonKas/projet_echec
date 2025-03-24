@@ -37,7 +37,7 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     case PieceType::Knight:
         return getKnightMoves();
     case PieceType::King:
-        return getKingMoves(board);
+        return getKingMoves();
     default:
         return {};
     }
@@ -166,31 +166,36 @@ std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Sq
 {
     std::vector<std::pair<int, int>> zone;
 
-    // Ajouter les déplacements comme une tour
     auto rookMoves = getRookMoves(board);
     zone.insert(zone.end(), rookMoves.begin(), rookMoves.end());
 
-    // Ajouter les déplacements comme un fou
     auto bishopMoves = getBishopMoves(board);
     zone.insert(zone.end(), bishopMoves.begin(), bishopMoves.end());
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKingMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getKingMoves() const
 {
-    std::vector<std::pair<int, int>> zone;
-    int                              directions[8][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}; // Toutes les directions du roi
+    std::vector<std::pair<int, int>>             zone;
+    constexpr std::array<std::pair<int, int>, 8> directions = {{
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // Haut, Bas, Gauche, Droite
+        {-1, -1},
+        {-1, 1},
+        {1, -1},
+        {1, 1} // Diagonales
+    }};
 
-    for (const auto& dir : directions)
+    for (std::pair<int, int> direction : directions)
     {
-        int row = m_coords.first + dir[0];
-        int col = m_coords.second + dir[1];
+        int row = m_coords.first + direction.first;
+        int col = m_coords.second + direction.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8) // Vérifie que la case est dans l'échiquier
         {
             zone.push_back({row, col});
         }
     }
+
     return zone;
 }
