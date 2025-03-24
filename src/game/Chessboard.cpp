@@ -54,6 +54,15 @@ void Chessboard::CreateBoard()
             ImGui::PushID(m_boardlist[i][j].m_id);
             GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
+            // Vérifie si le clic droit est effectué, pour désélectionner une pièce
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
+                ResetSelection();
+                ImGui::PopID();
+                ImGui::PopStyleColor();
+                continue; // Passe à la case suivante sans effectuer d'autres actions
+            }
+
             if (piece_label != 0)
             {
                 if (ImGui::ImageButton((void*)(intptr_t)piece_label, ImVec2{92.f, 92.f}))
