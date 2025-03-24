@@ -9,6 +9,7 @@ private:
     std::vector<std::vector<Square>> m_boardlist;
     std::pair<int, int>              m_selectedPiece{-1, -1}; // Coordonnées de la pièce sélectionnée
     std::vector<std::pair<int, int>> m_highlightedSquares;    // Cases à surligner
+    bool                             m_teamPlaying{true};     // true si c'est le tour des blancs, false pour les noirs
 
 public:
     AllPieces m_pieces;
@@ -22,4 +23,6 @@ public:
     void SetSquareColor(int i, int j);
     void ResetSelection();
     void SelectPiece(const std::pair<int, int>& clickedSquare, Piece* selectedPiece);
+    void changeTurn();
+    bool teamPlaying() const;
 };
