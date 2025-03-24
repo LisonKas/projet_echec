@@ -125,9 +125,11 @@ void Skybox::InitializeSkybox()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
+    glBindVertexArray(0);  
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     this->m_Texture = loadCubemap();
 
-    // this->m_Shader = new Shader("D:/IMAC_2/prog_algo/projet_echec/src/3D/shaders/shader.vs.glsl", "D:/IMAC_2/prog_algo/projet_echec/src/3D/shaders/shader.fs.glsl");
     this->m_Shader = new Shader("../../src/3D/shaders/shader.vs.glsl", "../../src/3D/shaders/shader.fs.glsl");
 }
 
