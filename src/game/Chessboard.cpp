@@ -143,6 +143,16 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
     }
 }
 
+bool Chessboard::teamPlaying() const
+{
+    return m_teamPlaying;
+}
+
+void Chessboard::changeTurn()
+{
+    m_teamPlaying = !m_teamPlaying;
+}
+
 void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 {
     // Si une pièce est sélectionnée et que le clic est sur une case valide
@@ -150,6 +160,7 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
     {
         (m_pieces.GetPieceAt(clickedSquare)) ? CapturePiece(clickedSquare) : MovePiece(clickedSquare);
         ResetSelection();
+        changeTurn();
         return;
     }
 
@@ -158,6 +169,13 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
     if (!selectedPiece)
     {
         ResetSelection();
+        return;
+    }
+
+    // Vérifie si c'est bien le tour de la couleur de la pièce sélectionnée
+    if (selectedPiece->getTeam() != m_teamPlaying)
+    {
+        std::cerr << "Ce n'est pas votre tour !" << std::endl;
         return;
     }
 
