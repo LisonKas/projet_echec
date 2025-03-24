@@ -1,4 +1,5 @@
 #include "piece.hpp"
+#include <array>
 #include <iostream>
 
 Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
@@ -34,9 +35,9 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     case PieceType::Queen:
         return getQueenMoves(board);
     case PieceType::Knight:
-        return getKnightMoves(board);
+        return getKnightMoves();
     case PieceType::King:
-        return getKingMoves(board);
+        return getKingMoves();
     default:
         return {};
     }
@@ -81,191 +82,120 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* board) const
+{
+    std::vector<std::pair<int, int>>             zone;
+    constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}}; // haut, bas, gauche, droite
+
+    int row = m_coords.first;
+    int col = m_coords.second;
+
+    for (const std::pair<int, int>& direction : directions)
+    {
+        int rShift = direction.first;
+        int cShift = direction.second;
+
+        for (int nextRow = row + rShift, nextCol = col + cShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += rShift, nextCol += cShift)
+        {
+            zone.push_back({nextRow, nextCol});
+            if ((*board)[nextRow][nextCol].isOccupied())
+                break;
+        }
+    }
+
+    return zone;
+}
+
+std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
-    int                              directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // haut, bas, gauche, droite
+    int                              row{0};
+    int                              col{0};
 
-    for (const auto& dir : directions)
+    for (int rShift : {-1, 1})
     {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
+        for (int cShift : {-1, 1})
         {
-            row += dir[0];
-            col += dir[1];
+            row = m_coords.first + rShift;
+            col = m_coords.second + cShift;
 
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            if (!(*chessboard)[row][col].isOccupied())
+            while (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
+                if (!(*board)[row][col].isOccupied())
+                {
+                    zone.push_back({row, col});
+                }
+                else
+                {
+                    zone.push_back({row, col});
+                    break;
+                }
+                row += rShift;
+                col += cShift;
             }
         }
     }
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getKnightMoves() const
 {
     std::vector<std::pair<int, int>> zone;
 
-    // Directions diagonales du fou
-    int directions[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    for (const auto& dir : directions)
-    {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
-        {
-            row += dir[0];
-            col += dir[1];
-
-            // Vérifier si la case est hors du plateau
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            // Si la case est vide, on peut y aller
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
-            else
-            {
-                zone.push_back({row, col});
-                break; // Le fou s'arrête après avoir pris une pièce
-            }
-        }
-    }
-    return zone;
-}
-
-std::vector<std::pair<int, int>> Piece::getKnightMoves(std::vector<std::vector<Square>>* chessboard) const
-{
-    std::vector<std::pair<int, int>> zone;
-
-    // Les 8 déplacements possibles du chevalier
-    int directions[8][2] = {
-        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, // Haut-Gauche, Haut-Droit, Bas-Gauche, Bas-Droit
-        {-1, -2},
-        {-1, 2},
-        {1, -2},
-        {1, 2} // Gauche-Haut, Droite-Haut, Gauche-Bas, Droite-Bas
+    std::vector<std::pair<int, int>> directions = {
+        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
     };
 
-    for (const auto& dir : directions)
+    for (const auto& direction : directions)
     {
-        int row = m_coords.first + dir[0];
-        int col = m_coords.second + dir[1];
+        int row = m_coords.first + direction.first;
+        int col = m_coords.second + direction.second;
 
         // Vérifier si le mouvement reste dans les limites du plateau
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
-            // Si la case est vide ou occupée par une pièce ennemie, on peut y aller
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            // Si la case est occupée par une pièce ennemie, on peut prendre la pièce
-            else
-            {
-                zone.push_back({row, col});
-            }
+            // Ajouter la case à la zone si elle est vide ou occupée par une pièce ennemie
+            zone.push_back({row, col});
         }
     }
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
 
-    // Directions de la tour (haut, bas, gauche, droite)
-    int rookDirections[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    auto rookMoves = getRookMoves(board);
+    zone.insert(zone.end(), rookMoves.begin(), rookMoves.end());
 
-    // Directions du fou (diagonales)
-    int bishopDirections[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    // Déplacement comme une tour
-    for (const auto& dir : rookDirections)
-    {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
-        {
-            row += dir[0];
-            col += dir[1];
-
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
-            }
-        }
-    }
-
-    // Déplacement comme un fou
-    for (const auto& dir : bishopDirections)
-    {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
-        {
-            row += dir[0];
-            col += dir[1];
-
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
-            }
-        }
-    }
+    auto bishopMoves = getBishopMoves(board);
+    zone.insert(zone.end(), bishopMoves.begin(), bishopMoves.end());
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKingMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getKingMoves() const
 {
-    std::vector<std::pair<int, int>> zone;
-    int                              directions[8][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}; // Toutes les directions du roi
+    std::vector<std::pair<int, int>>             zone;
+    constexpr std::array<std::pair<int, int>, 8> directions = {{
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // Haut, Bas, Gauche, Droite
+        {-1, -1},
+        {-1, 1},
+        {1, -1},
+        {1, 1} // Diagonales
+    }};
 
-    for (const auto& dir : directions)
+    for (std::pair<int, int> direction : directions)
     {
-        int row = m_coords.first + dir[0];
-        int col = m_coords.second + dir[1];
+        int row = m_coords.first + direction.first;
+        int col = m_coords.second + direction.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8) // Vérifie que la case est dans l'échiquier
         {
             zone.push_back({row, col});
         }
     }
+
     return zone;
 }

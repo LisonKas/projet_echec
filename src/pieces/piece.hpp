@@ -36,11 +36,11 @@ public:
     std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* chessboard) const;
     bool                             getTeam() const;
     std::vector<std::pair<int, int>> getRookMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getPawnMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getBishopMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getQueenMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getKnightMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getKingMoves(std::vector<std::vector<Square>>* chessboard) const;
+    std::vector<std::pair<int, int>> getPawnMoves(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getBishopMoves(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getQueenMoves(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getKnightMoves() const;
+    std::vector<std::pair<int, int>> getKingMoves() const;
 
     // CONSTRUCTOR
     Piece() = default;
