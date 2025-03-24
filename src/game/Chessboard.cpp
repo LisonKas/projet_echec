@@ -42,6 +42,9 @@ void Chessboard::InitializeBoardList()
 
 void Chessboard::CreateBoard()
 {
+    // Affiche le joueur actuel
+    ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
+
     for (int i{0}; i < 8; i++)
     {
         for (int j{0}; j < 8; j++)
