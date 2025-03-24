@@ -162,67 +162,17 @@ std::vector<std::pair<int, int>> Piece::getKnightMoves() const
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* chessboard) const
+std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
 
-    // Directions de la tour (haut, bas, gauche, droite)
-    int rookDirections[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    // Ajouter les déplacements comme une tour
+    auto rookMoves = getRookMoves(board);
+    zone.insert(zone.end(), rookMoves.begin(), rookMoves.end());
 
-    // Directions du fou (diagonales)
-    int bishopDirections[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    // Déplacement comme une tour
-    for (const auto& dir : rookDirections)
-    {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
-        {
-            row += dir[0];
-            col += dir[1];
-
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
-            }
-        }
-    }
-
-    // Déplacement comme un fou
-    for (const auto& dir : bishopDirections)
-    {
-        int row = m_coords.first;
-        int col = m_coords.second;
-
-        while (true)
-        {
-            row += dir[0];
-            col += dir[1];
-
-            if (row < 0 || row >= 8 || col < 0 || col >= 8)
-                break;
-
-            if (!(*chessboard)[row][col].isOccupied())
-            {
-                zone.push_back({row, col});
-            }
-            else
-            {
-                zone.push_back({row, col});
-                break;
-            }
-        }
-    }
+    // Ajouter les déplacements comme un fou
+    auto bishopMoves = getBishopMoves(board);
+    zone.insert(zone.end(), bishopMoves.begin(), bishopMoves.end());
 
     return zone;
 }
