@@ -24,9 +24,24 @@ void Renderer3D::render() {
         0, 0, -0.1, 1  
     };
     m_skybox.DrawSkybox(view, projection);
-    m_chessboard.DrawChessboard(view, projection);
+
+    float chess_view[16] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, -5.0f, // Déplace la caméra de 5 unités sur l'axe Z
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    
+    float chess_projection[16] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, -1.0f, 0.0f,
+        0.0f, 0.0f, -0.1f, 1.0f
+    };
+    m_chessboard.DrawChessboard(chess_view, chess_projection);
 }
 
 void Renderer3D::close() {
     m_skybox.Destroy();
+    m_chessboard.Destroy();
 }
