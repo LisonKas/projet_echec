@@ -42,6 +42,9 @@ void Chessboard::InitializeBoardList()
 
 void Chessboard::CreateBoard()
 {
+    // Affiche le joueur actuel
+    ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
+
     for (int i{0}; i < 8; i++)
     {
         for (int j{0}; j < 8; j++)
@@ -50,6 +53,15 @@ void Chessboard::CreateBoard()
 
             ImGui::PushID(m_boardlist[i][j].m_id);
             GLuint piece_label = m_pieces.PiecesAppear(i, j);
+
+            // Vérifie si le clic droit est effectué, pour désélectionner une pièce
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
+                ResetSelection();
+                ImGui::PopID();
+                ImGui::PopStyleColor();
+                continue; // Passe à la case suivante sans effectuer d'autres actions
+            }
 
             if (piece_label != 0)
             {
