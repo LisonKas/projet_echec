@@ -3,6 +3,7 @@
 
 void Renderer3D::initialize() {
     m_skybox.InitializeSkybox();
+    m_chessboard.InitializeChessboard();
 }
 
 void Renderer3D::render() {
@@ -23,6 +24,7 @@ void Renderer3D::render() {
         0, 0, -0.1, 1  
     };
     m_skybox.DrawSkybox(view, projection);
+    m_chessboard.DrawChessboard(view, projection);
 }
 
 void Renderer3D::close() {

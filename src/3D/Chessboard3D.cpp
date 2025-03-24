@@ -91,7 +91,7 @@ GLuint Chessboard3D::loadTexture(const std::string& path) {
         return 0;
     }
 
-    GLuint textureID;
+    GLuint textureID = 0;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
@@ -113,6 +113,9 @@ void Chessboard3D::InitializeChessboard() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(chessboardVertices), &chessboardVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glBindVertexArray(0);  
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     this->m_TextureWhite = loadTexture(whiteTexturePath);
     this->m_TextureBlack = loadTexture(blackTexturePath);
