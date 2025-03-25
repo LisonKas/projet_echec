@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstring>
 
-GLfloat chessboardVertices[] = {
+std::vector<GLfloat> chessboardVertices = {
     // Chaque case est un cube avec des sommets définis ici (simplifié)
     // Format : x, y, z
     // Exemple pour une seule case en 3D (cube) - à répéter pour 64 cases
@@ -145,7 +145,7 @@ void Chessboard3D::InitializeChessboard() {
     glGenBuffers(1, &this->m_VBO);
     glBindVertexArray(this->m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(chessboardVertices), &chessboardVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * chessboardVertices.size(), chessboardVertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
@@ -175,7 +175,7 @@ void Chessboard3D::DrawChessboard(const float* view, const float* projection) {
         } else {
             glBindTexture(GL_TEXTURE_2D, this->m_TextureBlack);
         }
-        glDrawArrays(GL_TRIANGLES, i * 36, 36);
+        glDrawArrays(GL_TRIANGLES, 0, chessboardVertices.size() / 3);
     }
 
     glBindVertexArray(this->m_BorderVAO);
