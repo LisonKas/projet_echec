@@ -42,6 +42,11 @@ void Chessboard::InitializeBoardList()
 
 void Chessboard::CreateBoard()
 {
+    if (m_isGameOver)
+    {
+        ImGui::Text(m_winnerMessage.c_str());
+        return; // Empêche toute interaction avec le plateau
+    }
     // Affiche le joueur actuel
     ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
 
@@ -150,6 +155,11 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
 
     if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
     {
+        if (capturedPiece->getType() == PieceType::King)
+        {
+            m_isGameOver    = true;
+            m_winnerMessage = selectedPiece->getTeam() ? "Les Blancs gagnent !" : "Les Noirs gagnent !";
+        }
         m_pieces.RemovePieceAt(target); // Supprime la pièce capturée
         MovePiece(target);
     }
