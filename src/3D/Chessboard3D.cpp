@@ -181,7 +181,7 @@ void Chessboard3D::DrawChessboard(const float* view, const float* projection) {
     glBindVertexArray(this->m_BorderVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->m_BorderTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, chessboardVertices.size() / 3);
 }
 
 void Chessboard3D::Destroy() {

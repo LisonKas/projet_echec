@@ -1,6 +1,7 @@
 #include "Skybox.hpp"
 #include <fstream>
 #include <iostream>
+#include "glm/glm.hpp"
 #include <vector>
 
 GLfloat skyboxVertices[] = {
