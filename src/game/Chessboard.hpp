@@ -10,6 +10,8 @@ private:
     std::pair<int, int>              m_selectedPiece{-1, -1}; // Coordonnées de la pièce sélectionnée
     std::vector<std::pair<int, int>> m_highlightedSquares;    // Cases à surligner
     bool                             m_teamPlaying{true};     // true si c'est le tour des blancs, false pour les noirs
+    bool                             m_isGameOver = false;
+    std::string                      m_winnerMessage;
 
 public:
     AllPieces m_pieces;
