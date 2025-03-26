@@ -10,6 +10,12 @@
 
 void Chessboard::InitializeBoardList()
 {
+    m_teamPlaying = true;                    // Toujours commencer avec les Blancs
+    m_isGameOver  = false;                   // Réinitialise l'état du jeu
+    m_winnerMessage.clear();                 // Efface le message du gagnant
+    m_boardlist.clear();                     // Assure une réinitialisation complète du plateau
+    m_highlightedSquares.clear();            // Efface les cases mises en surbrillance
+    m_selectedPiece              = {-1, -1}; // Réinitialise la pièce sélectionnée
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int               id{1};
     for (int i{0}; i < 8; i++)
@@ -49,6 +55,18 @@ void Chessboard::CreateBoard()
     }
     // Affiche le joueur actuel
     ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
+
+    // Si la partie est terminée, affiche le message du gagnant tout en permettant de voir le plateau
+    if (m_isGameOver)
+    {
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), m_winnerMessage.c_str()); // Message en rouge
+        // Continue l'affichage du plateau pour que l'utilisateur puisse encore le voir
+    }
+    else
+    {
+        // Affiche le joueur actuel
+        ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
+    }
 
     for (int i{0}; i < 8; i++)
     {
