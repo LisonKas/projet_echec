@@ -62,11 +62,6 @@ void Chessboard::CreateBoard()
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), m_winnerMessage.c_str()); // Message en rouge
         // Continue l'affichage du plateau pour que l'utilisateur puisse encore le voir
     }
-    else
-    {
-        // Affiche le joueur actuel
-        ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
-    }
 
     for (int i{0}; i < 8; i++)
     {
