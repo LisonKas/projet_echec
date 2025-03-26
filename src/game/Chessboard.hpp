@@ -3,6 +3,7 @@
 #include <vector>
 #include "../pieces/AllPieces.hpp"
 #include "Square.hpp"
+#include "pieces/piece.hpp"
 
 class Chessboard {
 private:
@@ -27,4 +28,7 @@ public:
     bool        m_isGameOver = false;
     std::string m_winnerMessage;
     bool        m_teamPlaying{true}; // true si c'est le tour des blancs, false pour les noirs
+    void        PromotePawn(Piece* pawn);
+    bool        showPromotionPopup = false; // Flag pour afficher la promotion du pion
+    Piece*      selectedPawn       = nullptr;
 };

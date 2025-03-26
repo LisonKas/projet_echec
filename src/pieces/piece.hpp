@@ -41,6 +41,7 @@ public:
     std::vector<std::pair<int, int>> getQueenMoves(std::vector<std::vector<Square>>* board) const;
     std::vector<std::pair<int, int>> getKnightMoves() const;
     std::vector<std::pair<int, int>> getKingMoves() const;
+    void                             setType(PieceType newType);
 
     // CONSTRUCTOR
     Piece() = default;

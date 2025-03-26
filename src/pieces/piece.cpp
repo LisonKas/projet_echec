@@ -199,3 +199,8 @@ std::vector<std::pair<int, int>> Piece::getKingMoves() const
 
     return zone;
 }
+
+void Piece::setType(PieceType newType)
+{
+    m_type = newType;
+}

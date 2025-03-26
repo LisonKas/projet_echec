@@ -158,6 +158,13 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
         selectedPiece->move(destination);
         m_boardlist[destination.first][destination.second].m_is_occupied         = true;
         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
+
+        // Gestion de la promotion du pion
+        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7)) // Si le pion arrive à la dernière ligne
+        {
+            std::cout << "Promoted!" << std::endl;
+            PromotePawn(selectedPiece);
+        }
     }
 }
 
@@ -222,4 +229,13 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
     {
         SelectPiece(clickedSquare, selectedPiece);
     }
+}
+
+void Chessboard::PromotePawn(Piece* pawn)
+{
+    std::cout << "Popup Promotion appelé !" << std::endl;
+
+    // On active le flag pour afficher la promotion
+    showPromotionPopup = true;
+    selectedPawn       = pawn; // On garde une référence à ce pion pour la promotion
 }
