@@ -22,20 +22,29 @@ void Camera::key_callback(int key, int scancode, int action, int mods) {
     } else if (action == 0) {
         keyStates[scancode] = false;
     }
+    std::cout << "scancode " << scancode << std::endl;
 }
 
 void Camera::processInput() {
-    if (keyStates[328]) { 
-        position += front * speed;
+    if (keyStates[328]) {  
+        phi += 0.01f; 
+        if (phi > glm::radians(89.0f))  
+            phi = glm::radians(89.0f);  
+        updatePosition(); 
     }
-    if (keyStates[336]) { 
-        position -= front * speed;
+    if (keyStates[336]) {
+        phi -= 0.01f; 
+        if (phi < glm::radians(1.0f)) 
+            phi = glm::radians(1.0f);
+        updatePosition(); 
+    }
+    if (keyStates[333]) {
+        theta += 0.01f;  
+        updatePosition();  
     }
     if (keyStates[331]) {
-        position -= glm::normalize(glm::cross(front, up)) * speed;
-    }
-    if (keyStates[333]) { 
-        position += glm::normalize(glm::cross(front, up)) * speed;
+        theta -= 0.01f;  
+        updatePosition(); 
     }
 }
 
