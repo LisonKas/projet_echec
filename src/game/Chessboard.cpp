@@ -10,6 +10,12 @@
 
 void Chessboard::InitializeBoardList()
 {
+    m_teamPlaying = true;                    // Toujours commencer avec les Blancs
+    m_isGameOver  = false;                   // Réinitialise l'état du jeu
+    m_winnerMessage.clear();                 // Efface le message du gagnant
+    m_boardlist.clear();                     // Assure une réinitialisation complète du plateau
+    m_highlightedSquares.clear();            // Efface les cases mises en surbrillance
+    m_selectedPiece              = {-1, -1}; // Réinitialise la pièce sélectionnée
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int               id{1};
     for (int i{0}; i < 8; i++)
@@ -49,6 +55,13 @@ void Chessboard::CreateBoard()
     }
     // Affiche le joueur actuel
     ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
+
+    // Si la partie est terminée, affiche le message du gagnant tout en permettant de voir le plateau
+    if (m_isGameOver)
+    {
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), m_winnerMessage.c_str()); // Message en rouge
+        // Continue l'affichage du plateau pour que l'utilisateur puisse encore le voir
+    }
 
     for (int i{0}; i < 8; i++)
     {
@@ -145,6 +158,13 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
         selectedPiece->move(destination);
         m_boardlist[destination.first][destination.second].m_is_occupied         = true;
         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
+
+        // Gestion de la promotion du pion
+        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7)) // Si le pion arrive à la dernière ligne
+        {
+            std::cout << "Promoted!" << std::endl;
+            PromotePawn(selectedPiece);
+        }
     }
 }
 
@@ -209,4 +229,13 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
     {
         SelectPiece(clickedSquare, selectedPiece);
     }
+}
+
+void Chessboard::PromotePawn(Piece* pawn)
+{
+    std::cout << "Popup Promotion appelé !" << std::endl;
+
+    // On active le flag pour afficher la promotion
+    showPromotionPopup = true;
+    selectedPawn       = pawn; // On garde une référence à ce pion pour la promotion
 }

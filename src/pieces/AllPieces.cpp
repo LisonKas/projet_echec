@@ -28,30 +28,34 @@ GLuint LoadTexture(const char* path)
         return 0;
     }
 
-    int dataPos = *(int*)&(header[0x0A]);
-    int width = *(int*)&(header[0x12]);
-    int height = *(int*)&(header[0x16]);
+    int dataPos   = *(int*)&(header[0x0A]);
+    int width     = *(int*)&(header[0x12]);
+    int height    = *(int*)&(header[0x16]);
     int imageSize = *(int*)&(header[0x22]);
 
     // Calculer la taille réelle de l'image avec 32 bits par pixel
     int correctedImageSize = width * height * 4;
 
-    if (imageSize == 0) imageSize = correctedImageSize;
-    if (dataPos == 0) dataPos = 54;
+    if (imageSize == 0)
+        imageSize = correctedImageSize;
+    if (dataPos == 0)
+        dataPos = 54;
 
     std::vector<unsigned char> data(imageSize);
     file.seekg(dataPos, std::ios::beg);
-    if (file.read(reinterpret_cast<char*>(data.data()), imageSize).gcount() != imageSize) {
+    if (file.read(reinterpret_cast<char*>(data.data()), imageSize).gcount() != imageSize)
+    {
         std::cerr << "Failed to read the entire image data." << std::endl;
         return 0;
     }
     file.close();
 
     // Retourner l'image verticalement
-    int rowSize = width * 4; // 4 octets par pixel (RGBA)
+    int                        rowSize = width * 4; // 4 octets par pixel (RGBA)
     std::vector<unsigned char> tempRow(rowSize);
 
-    for (int y = 0; y < height / 2; y++) {
+    for (int y = 0; y < height / 2; y++)
+    {
         unsigned char* row1 = &data[y * rowSize];
         unsigned char* row2 = &data[(height - 1 - y) * rowSize];
 
@@ -75,7 +79,8 @@ GLuint LoadTexture(const char* path)
 
     // Vérification des erreurs OpenGL
     GLenum error = glGetError();
-    if (error != GL_NO_ERROR) {
+    if (error != GL_NO_ERROR)
+    {
         std::cerr << "OpenGL error: " << error << std::endl;
     }
 
@@ -84,6 +89,9 @@ GLuint LoadTexture(const char* path)
 
 void AllPieces::InitializeAllPieces()
 {
+    // Efface toutes les pièces existantes
+    m_black_pieces.clear();
+    m_white_pieces.clear();
     for (int j{0}; j < 8; j++)
     {
         this->m_black_pieces.push_back(Piece(false, {1, j}, PieceType::Pawn));
