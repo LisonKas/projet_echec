@@ -3,6 +3,8 @@
 #include <vector>
 #include <iostream>
 #include "glad/glad.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include "Shader.hpp"
 
 class Chessboard3D {
@@ -13,7 +15,8 @@ class Chessboard3D {
 
     public:
         void InitializeChessboard();
-        void DrawChessboard(const float* view, const float* projection);
+        void drawCube(const glm::vec3& position, float size, GLuint texture);
+        void DrawChessboard(const glm::mat4& view, const glm::mat4& projection); //const glm::mat4& view, const glm::mat4& projection ou //const float* view, const float* projection
         GLuint loadTexture(const std::string& path);
         void Destroy();
 };

@@ -1,65 +1,31 @@
 #include "Chessboard3D.hpp"
 #include <fstream>
 #include <vector>
+#include <iostream>
 #include <cstring>
+#include "Skybox.hpp"
 
-std::vector<GLfloat> chessboardVertices = {
-    // Chaque case est un cube avec des sommets définis ici (simplifié)
-    // Format : x, y, z
-    // Exemple pour une seule case en 3D (cube) - à répéter pour 64 cases
+std::vector<float> cubeVertices = {
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
 
-    // Première ligne (y = 0.0f)
-    -1.0f, 0.0f, -1.0f,  1.0f, 0.0f, -1.0f,  1.0f, 0.0f, -0.5f,  1.0f, 0.0f, -0.5f,  -1.0f, 0.0f, -0.5f,  -1.0f, 0.0f, -1.0f,
-    -0.5f, 0.0f, -1.0f,  0.5f, 0.0f, -1.0f,  0.5f, 0.0f, -0.5f,  0.5f, 0.0f, -0.5f,  -0.5f, 0.0f, -0.5f,  -0.5f, 0.0f, -1.0f,
-    -0.3f, 0.0f, -1.0f,  0.3f, 0.0f, -1.0f,  0.3f, 0.0f, -0.5f,  0.3f, 0.0f, -0.5f,  -0.3f, 0.0f, -0.5f,  -0.3f, 0.0f, -1.0f,
-    -0.5f, 0.0f, -1.0f,  0.5f, 0.0f, -1.0f,  0.5f, 0.0f, -0.5f,  0.5f, 0.0f, -0.5f,  -0.5f, 0.0f, -0.5f,  -0.5f, 0.0f, -1.0f,
-
-    // Deuxième ligne (y = 0.1f)
-    -1.0f, 0.1f, -1.0f,  1.0f, 0.1f, -1.0f,  1.0f, 0.1f, -0.5f,  1.0f, 0.1f, -0.5f,  -1.0f, 0.1f, -0.5f,  -1.0f, 0.1f, -1.0f,
-    -0.5f, 0.1f, -1.0f,  0.5f, 0.1f, -1.0f,  0.5f, 0.1f, -0.5f,  0.5f, 0.1f, -0.5f,  -0.5f, 0.1f, -0.5f,  -0.5f, 0.1f, -1.0f,
-    -0.3f, 0.1f, -1.0f,  0.3f, 0.1f, -1.0f,  0.3f, 0.1f, -0.5f,  0.3f, 0.1f, -0.5f,  -0.3f, 0.1f, -0.5f,  -0.3f, 0.1f, -1.0f,
-    -0.5f, 0.1f, -1.0f,  0.5f, 0.1f, -1.0f,  0.5f, 0.1f, -0.5f,  0.5f, 0.1f, -0.5f,  -0.5f, 0.1f, -0.5f,  -0.5f, 0.1f, -1.0f,
-
-    // Troisième ligne (y = 0.2f)
-    -1.0f, 0.2f, -1.0f,  1.0f, 0.2f, -1.0f,  1.0f, 0.2f, -0.5f,  1.0f, 0.2f, -0.5f,  -1.0f, 0.2f, -0.5f,  -1.0f, 0.2f, -1.0f,
-    -0.5f, 0.2f, -1.0f,  0.5f, 0.2f, -1.0f,  0.5f, 0.2f, -0.5f,  0.5f, 0.2f, -0.5f,  -0.5f, 0.2f, -0.5f,  -0.5f, 0.2f, -1.0f,
-    -0.3f, 0.2f, -1.0f,  0.3f, 0.2f, -1.0f,  0.3f, 0.2f, -0.5f,  0.3f, 0.2f, -0.5f,  -0.3f, 0.2f, -0.5f,  -0.3f, 0.2f, -1.0f,
-    -0.5f, 0.2f, -1.0f,  0.5f, 0.2f, -1.0f,  0.5f, 0.2f, -0.5f,  0.5f, 0.2f, -0.5f,  -0.5f, 0.2f, -0.5f,  -0.5f, 0.2f, -1.0f,
-
-    // Quatrième ligne (y = 0.3f)
-    -1.0f, 0.3f, -1.0f,  1.0f, 0.3f, -1.0f,  1.0f, 0.3f, -0.5f,  1.0f, 0.3f, -0.5f,  -1.0f, 0.3f, -0.5f,  -1.0f, 0.3f, -1.0f,
-    -0.5f, 0.3f, -1.0f,  0.5f, 0.3f, -1.0f,  0.5f, 0.3f, -0.5f,  0.5f, 0.3f, -0.5f,  -0.5f, 0.3f, -0.5f,  -0.5f, 0.3f, -1.0f,
-    -0.3f, 0.3f, -1.0f,  0.3f, 0.3f, -1.0f,  0.3f, 0.3f, -0.5f,  0.3f, 0.3f, -0.5f,  -0.3f, 0.3f, -0.5f,  -0.3f, 0.3f, -1.0f,
-    -0.5f, 0.3f, -1.0f,  0.5f, 0.3f, -1.0f,  0.5f, 0.3f, -0.5f,  0.5f, 0.3f, -0.5f,  -0.5f, 0.3f, -0.5f,  -0.5f, 0.3f, -1.0f,
-
-    // Cinquième ligne (y = 0.4f)
-    -1.0f, 0.4f, -1.0f,  1.0f, 0.4f, -1.0f,  1.0f, 0.4f, -0.5f,  1.0f, 0.4f, -0.5f,  -1.0f, 0.4f, -0.5f,  -1.0f, 0.4f, -1.0f,
-    -0.5f, 0.4f, -1.0f,  0.5f, 0.4f, -1.0f,  0.5f, 0.4f, -0.5f,  0.5f, 0.4f, -0.5f,  -0.5f, 0.4f, -0.5f,  -0.5f, 0.4f, -1.0f,
-    -0.3f, 0.4f, -1.0f,  0.3f, 0.4f, -1.0f,  0.3f, 0.4f, -0.5f,  0.3f, 0.4f, -0.5f,  -0.3f, 0.4f, -0.5f,  -0.3f, 0.4f, -1.0f,
-    -0.5f, 0.4f, -1.0f,  0.5f, 0.4f, -1.0f,  0.5f, 0.4f, -0.5f,  0.5f, 0.4f, -0.5f,  -0.5f, 0.4f, -0.5f,  -0.5f, 0.4f, -1.0f,
-
-    // Sixième ligne (y = 0.5f)
-    -1.0f, 0.5f, -1.0f,  1.0f, 0.5f, -1.0f,  1.0f, 0.5f, -0.5f,  1.0f, 0.5f, -0.5f,  -1.0f, 0.5f, -0.5f,  -1.0f, 0.5f, -1.0f,
-    -0.5f, 0.5f, -1.0f,  0.5f, 0.5f, -1.0f,  0.5f, 0.5f, -0.5f,  0.5f, 0.5f, -0.5f,  -0.5f, 0.5f, -0.5f,  -0.5f, 0.5f, -1.0f,
-    -0.3f, 0.5f, -1.0f,  0.3f, 0.5f, -1.0f,  0.3f, 0.5f, -0.5f,  0.3f, 0.5f, -0.5f,  -0.3f, 0.5f, -0.5f,  -0.3f, 0.5f, -1.0f,
-    -0.5f, 0.5f, -1.0f,  0.5f, 0.5f, -1.0f,  0.5f, 0.5f, -0.5f,  0.5f, 0.5f, -0.5f,  -0.5f, 0.5f, -0.5f,  -0.5f, 0.5f, -1.0f,
-
-    // Septième ligne (y = 0.6f)
-    -1.0f, 0.6f, -1.0f,  1.0f, 0.6f, -1.0f,  1.0f, 0.6f, -0.5f,  1.0f, 0.6f, -0.5f,  -1.0f, 0.6f, -0.5f,  -1.0f, 0.6f, -1.0f,
-    -0.5f, 0.6f, -1.0f,  0.5f, 0.6f, -1.0f,  0.5f, 0.6f, -0.5f,  0.5f, 0.6f, -0.5f,  -0.5f, 0.6f, -0.5f,  -0.5f, 0.6f, -1.0f,
-    -0.3f, 0.6f, -1.0f,  0.3f, 0.6f, -1.0f,  0.3f, 0.6f, -0.5f,  0.3f, 0.6f, -0.5f,  -0.3f, 0.6f, -0.5f,  -0.3f, 0.6f, -1.0f,
-    -0.5f, 0.6f, -1.0f,  0.5f, 0.6f, -1.0f,  0.5f, 0.6f, -0.5f,  0.5f, 0.6f, -0.5f,  -0.5f, 0.6f, -0.5f,  -0.5f, 0.6f, -1.0f,
-
-    // Huitième ligne (y = 0.7f)
-    -1.0f, 0.7f, -1.0f,  1.0f, 0.7f, -1.0f,  1.0f, 0.7f, -0.5f,  1.0f, 0.7f, -0.5f,  -1.0f, 0.7f, -0.5f,  -1.0f, 0.7f, -1.0f,
-    -0.5f, 0.7f, -1.0f,  0.5f, 0.7f, -1.0f,  0.5f, 0.7f, -0.5f,  0.5f, 0.7f, -0.5f,  -0.5f, 0.7f, -0.5f,  -0.5f, 0.7f, -1.0f,
-    -0.3f, 0.7f, -1.0f,  0.3f, 0.7f, -1.0f,  0.3f, 0.7f, -0.5f,  0.3f, 0.7f, -0.5f,  -0.3f, 0.7f, -0.5f,  -0.3f, 0.7f, -1.0f,
-    -0.5f, 0.7f, -1.0f,  0.5f, 0.7f, -1.0f,  0.5f, 0.7f, -0.5f,  0.5f, 0.7f, -0.5f,  -0.5f, 0.7f, -0.5f,  -0.5f, 0.7f, -1.0f
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-std::string whiteTexturePath = "../../images/3D/Chessboard/white_square.bmp";
-std::string blackTexturePath = "../../images/3D/Chessboard/black_square.bmp";
-std::string borderTexturePath = "../../images/3D/Chessboard/borders.bmp";
+std::vector<unsigned int> cubeIndices = {
+    0, 1, 2,  2, 3, 0,  
+    1, 5, 6,  6, 2, 1,  
+    7, 6, 5,  5, 4, 7,  
+    4, 0, 3,  3, 7, 4,  
+    4, 5, 1,  1, 0, 4,  
+    3, 2, 6,  6, 7, 3   
+};
+
 
 unsigned char* LoadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
 {
@@ -101,7 +67,7 @@ unsigned char* LoadTexture(const std::string& filename, int* width, int* height,
 
     for (int i = 0; i < imageSize; i += *nrChannels)
     {
-        std::swap(data[i], data[i + 2]); // Inverse le rouge et le bleu
+        std::swap(data[i], data[i + 2]); //Inverse le rouge et le bleu
     }
 
     for (int i = 0; i < *height / 2; ++i)
@@ -141,53 +107,64 @@ GLuint Chessboard3D::loadTexture(const std::string& path) {
 }
 
 void Chessboard3D::InitializeChessboard() {
-    glGenVertexArrays(1, &this->m_VAO);
-    glGenBuffers(1, &this->m_VBO);
-    glBindVertexArray(this->m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * chessboardVertices.size(), chessboardVertices.data(), GL_STATIC_DRAW);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
+    
+    glBindVertexArray(m_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    glBufferData(GL_ARRAY_BUFFER, cubeVertices.size() * sizeof(float), cubeVertices.data(), GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cubeIndices.size() * sizeof(unsigned int), cubeIndices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
-    glBindVertexArray(0);  
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
-    this->m_TextureWhite = loadTexture(whiteTexturePath);
-    this->m_TextureBlack = loadTexture(blackTexturePath);
-    this->m_BorderTexture = loadTexture(borderTexturePath);
+    m_TextureWhite = loadTexture("../../images/3D/Chessboard/white_square.bmp");
+    m_TextureBlack = loadTexture("../../images/3D/Chessboard/black_square.bmp");
+    m_BorderTexture = loadTexture("../../images/3D/Chessboard/borders.bmp");
 
-    this->m_Shader = new Shader("../../src/3D/shaders/chessboard.vs.glsl", "../../src/3D/shaders/chessboard.fs.glsl");
+    m_Shader = new Shader("../../src/3D/shaders/chessboard.vs.glsl", "../../src/3D/shaders/chessboard.fs.glsl");
 }
 
-void Chessboard3D::DrawChessboard(const float* view, const float* projection) {
+void Chessboard3D::DrawChessboard(const glm::mat4& view, const glm::mat4& projection) {
+    if (!m_Shader) return;
+    
     glEnable(GL_DEPTH_TEST);
     m_Shader->use();
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, view);
-    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, projection);
-
-    glBindVertexArray(this->m_VAO);
-    
-    for (int i = 0; i < 64; i++) {
-        glActiveTexture(GL_TEXTURE0);
-        if ((i / 8 + i) % 2 == 0) {
-            glBindTexture(GL_TEXTURE_2D, this->m_TextureWhite);
-        } else {
-            glBindTexture(GL_TEXTURE_2D, this->m_TextureBlack);
+    glBindVertexArray(m_VAO);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            glm::vec3 position = glm::vec3((i - 3.5f) * 1.0f, -0.5f, (j - 3.5f) * 1.0f);
+            GLuint texture = ((i + j) % 2 == 0) ? m_TextureWhite : m_TextureBlack;
+            drawCube(position, 1.0f, texture);
         }
-        glDrawArrays(GL_TRIANGLES, 0, chessboardVertices.size() / 3);
     }
+    glBindVertexArray(0);
+}
 
-    glBindVertexArray(this->m_BorderVAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, this->m_BorderTexture);
-    glDrawArrays(GL_TRIANGLES, 0, chessboardVertices.size() / 3);
+void Chessboard3D::drawCube(const glm::vec3& position, float size, GLuint texture) {
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    model = glm::scale(model, glm::vec3(size));
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "model"), 1, GL_FALSE, &model[0][0]);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
 void Chessboard3D::Destroy() {
     delete m_Shader;
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_EBO);
     glDeleteTextures(1, &m_TextureWhite);
     glDeleteTextures(1, &m_TextureBlack);
     glDeleteTextures(1, &m_BorderTexture);
