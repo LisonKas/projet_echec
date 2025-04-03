@@ -26,23 +26,23 @@ void Camera::key_callback(int key, int scancode, int action, int mods) {
 }
 
 void Camera::processInput() {
-    if (keyStates[328]) {  
+    if (keyStates[336]) {  
         phi += 0.01f; 
         if (phi > glm::radians(89.0f))  
             phi = glm::radians(89.0f);  
         updatePosition(); 
     }
-    if (keyStates[336]) {
+    if (keyStates[328]) {
         phi -= 0.01f; 
         if (phi < glm::radians(1.0f)) 
             phi = glm::radians(1.0f);
         updatePosition(); 
     }
-    if (keyStates[333]) {
+    if (keyStates[331]) {
         theta += 0.01f;  
         updatePosition();  
     }
-    if (keyStates[331]) {
+    if (keyStates[333]) {
         theta -= 0.01f;  
         updatePosition(); 
     }
