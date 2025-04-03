@@ -1,39 +1,34 @@
-// #pragma once
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 
-// #include <glm/glm.hpp>
-// #include <glm/gtc/matrix_transform.hpp>
+#pragma once
 
-// enum Camera_Movement {
-//     FORWARD,
-//     BACKWARD,
-//     LEFT,
-//     RIGHT,
-//     UP,
-//     DOWN
-// };
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include <unordered_map>
 
-// class Camera {
-// public:
-//     Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
+class Camera {
+    public:
+        Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed);
 
-//     glm::mat4 GetViewMatrix() const;
-//     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
-//     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
-//     void ProcessMouseScroll(float yoffset);
+        static void key_callback(int key, int scancode, int action, int mods);
+        void processInput();
+        
+        glm::mat4 getViewMatrix() const;
 
-// private:
-//     void updateCameraVectors();
+        void setSpeed(float speed);
+        float getSpeed() const;
 
-//     glm::vec3 Position;
-//     glm::vec3 Front;
-//     glm::vec3 Up;
-//     glm::vec3 Right;
-//     glm::vec3 WorldUp;
+        glm::vec3 getPosition() const;
+        glm::vec3 getFront() const;
 
-//     float Yaw;
-//     float Pitch;
+    private:
+        glm::vec3 position;
+        glm::vec3 front;
+        glm::vec3 up;
+        float speed;
 
-//     float MovementSpeed;
-//     float MouseSensitivity;
-//     float Zoom;
-// };
+        static std::unordered_map<int, bool> keyStates;
+};
+
+#endif // CAMERA_HPP

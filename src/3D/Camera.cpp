@@ -1,71 +1,54 @@
-// #include "Camera.hpp"
+#include "Camera.hpp"
+#include <iostream>
 
-// Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
-//     : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.1f), Zoom(45.0f) {
-//     Position = position;
-//     WorldUp = up;
-//     Yaw = yaw;
-//     Pitch = pitch;
-//     updateCameraVectors();
-// }
+std::unordered_map<int, bool> Camera::keyStates;
 
-// glm::mat4 Camera::GetViewMatrix() const {
-//     return glm::lookAt(Position, Position + Front, Up);
-// }
+Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed)
+    : position(position), front(front), up(up), speed(speed) {}
 
-// void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-//     float velocity = MovementSpeed * deltaTime;
-//     if (direction == FORWARD)
-//         Position += Front * velocity;
-//     if (direction == BACKWARD)
-//         Position -= Front * velocity;
-//     if (direction == LEFT)
-//         Position -= Right * velocity;
-//     if (direction == RIGHT)
-//         Position += Right * velocity;
-//     if (direction == UP)
-//         Position += Up * velocity;
-//     if (direction == DOWN)
-//         Position -= Up * velocity;
+// Gère les entrées clavier et met à jour keyStates
+void Camera::key_callback(int key, int scancode, int action, int mods) {
+    if (action == 1) { // Touche pressée
+        keyStates[scancode] = true;
+    } else if (action == 0) { // Touche relâchée
+        keyStates[scancode] = false;
+    }
+    std::cout << "Key: " << key << " Scancode: " << scancode << " Action: " << action << " Mods: " << mods << '\n';
+}
 
-//     // Ensure the camera does not go below the chessboard
-//     if (Position.y < 1.0f)
-//         Position.y = 1.0f;
+// Traite les entrées utilisateur pour déplacer la caméra
+void Camera::processInput() {
+    if (keyStates[328]) { // Flèche HAUT
+        position += speed * front;
+    }
+    if (keyStates[336]) { // Flèche BAS
+        position -= speed * front;
+    }
+    if (keyStates[331]) { // Flèche GAUCHE
+        position -= glm::normalize(glm::cross(front, up)) * speed;
+    }
+    if (keyStates[333]) { // Flèche DROITE
+        position += glm::normalize(glm::cross(front, up)) * speed;
+    }
+}
 
-//     updateCameraVectors();
-// }
+// Retourne la matrice de vue
+glm::mat4 Camera::getViewMatrix() const {
+    return glm::lookAt(position, position + front, up);
+}
 
-// void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch) {
-//     xoffset *= MouseSensitivity;
-//     yoffset *= MouseSensitivity;
+void Camera::setSpeed(float newSpeed) {
+    speed = newSpeed;
+}
 
-//     Yaw += xoffset;
-//     Pitch += yoffset;
+float Camera::getSpeed() const {
+    return speed;
+}
 
-//     if (constrainPitch) {
-//         if (Pitch > 89.0f)
-//             Pitch = 89.0f;
-//         if (Pitch < -89.0f)
-//             Pitch = -89.0f;
-//     }
+glm::vec3 Camera::getPosition() const {
+    return position;
+}
 
-//     updateCameraVectors();
-// }
-
-// void Camera::ProcessMouseScroll(float yoffset) {
-//     Zoom -= yoffset;
-//     if (Zoom < 1.0f)
-//         Zoom = 1.0f;
-//     if (Zoom > 45.0f)
-//         Zoom = 45.0f;
-// }
-
-// void Camera::updateCameraVectors() {
-//     glm::vec3 front;
-//     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-//     front.y = sin(glm::radians(Pitch));
-//     front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-//     Front = glm::normalize(front);
-//     Right = glm::normalize(glm::cross(Front, WorldUp));
-//     Up = glm::normalize(glm::cross(Right, Front));
-// }
+glm::vec3 Camera::getFront() const {
+    return front;
+}

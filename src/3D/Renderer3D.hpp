@@ -1,14 +1,15 @@
 #pragma once
 #include "Skybox.hpp"
 #include "Chessboard3D.hpp"
+#include "Camera.hpp"
 
 class Renderer3D {
     private:
         Skybox m_skybox;
         Chessboard3D m_chessboard;
+        Camera m_camera = Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
 
     public:
-        static void key_callback(int key, int scancode, int action, int mods);
         void initialize();
         void render();
         void close();
