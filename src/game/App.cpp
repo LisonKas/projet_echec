@@ -63,9 +63,10 @@ void App::StartGame()
             // Nouveau bouton de promotion aléatoire
             if (ImGui::Button("Promotion Aléatoire 🎲"))
             {
-                // Tirage exponentiel : X = -ln(U) avec U ~ U(0,1)
-                float u = static_cast<float>(rand()) / RAND_MAX;
-                float x = -log(u); // loi exponentielle de lambda = 1
+                // Loi exponentielle de paramètre lambda = 0.7675
+                float lambda = 0.7675f;
+                float u      = static_cast<float>(rand()) / RAND_MAX;
+                float x      = -log(u) / lambda; // Tirage exponentiel
 
                 // Discrétisation bornée entre 0 et 3
                 int choix = std::min(static_cast<int>(x), 3);
@@ -74,7 +75,7 @@ void App::StartGame()
                 switch (choix)
                 {
                 case 0:
-                    m_chessboard.selectedPawn->setType(PieceType::Knight); // très fréquent
+                    m_chessboard.selectedPawn->setType(PieceType::Knight); // Fréquent
                     break;
                 case 1:
                     m_chessboard.selectedPawn->setType(PieceType::Bishop);
@@ -83,7 +84,7 @@ void App::StartGame()
                     m_chessboard.selectedPawn->setType(PieceType::Rook);
                     break;
                 case 3:
-                    m_chessboard.selectedPawn->setType(PieceType::Queen); // très rare
+                    m_chessboard.selectedPawn->setType(PieceType::Queen); // ~10%
                     break;
                 }
 
