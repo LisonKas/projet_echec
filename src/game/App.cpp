@@ -38,11 +38,11 @@ void App::StartGame()
         {
             ImGui::Text("Promouvoir le pion!");
 
-            // Boutons pour la promotion
+            // Boutons manuels
             if (ImGui::Button("Reine"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Queen);
-                m_chessboard.showPromotionPopup = false; // Fermer le pop-up
+                m_chessboard.showPromotionPopup = false;
             }
             if (ImGui::Button("Tour"))
             {
@@ -58,6 +58,36 @@ void App::StartGame()
             {
                 m_chessboard.selectedPawn->setType(PieceType::Knight);
                 m_chessboard.showPromotionPopup = false;
+            }
+
+            // Nouveau bouton de promotion aléatoire
+            if (ImGui::Button("Promotion Aléatoire 🎲"))
+            {
+                // Tirage exponentiel : X = -ln(U) avec U ~ U(0,1)
+                float u = static_cast<float>(rand()) / RAND_MAX;
+                float x = -log(u); // loi exponentielle de lambda = 1
+
+                // Discrétisation bornée entre 0 et 3
+                int choix = std::min(static_cast<int>(x), 3);
+
+                // Attribution selon le tirage
+                switch (choix)
+                {
+                case 0:
+                    m_chessboard.selectedPawn->setType(PieceType::Knight); // très fréquent
+                    break;
+                case 1:
+                    m_chessboard.selectedPawn->setType(PieceType::Bishop);
+                    break;
+                case 2:
+                    m_chessboard.selectedPawn->setType(PieceType::Rook);
+                    break;
+                case 3:
+                    m_chessboard.selectedPawn->setType(PieceType::Queen); // très rare
+                    break;
+                }
+
+                m_chessboard.showPromotionPopup = false; // Fermer le pop-up
             }
 
             ImGui::EndPopup();
