@@ -10,7 +10,8 @@
 void Renderer3D::initialize()
 {
     m_skybox.InitializeSkybox();
-    m_chessboard.InitializeChessboard();
+    m_chessboardShader = new Shader("shaders/chessboard.vs.glsl", "shaders/chessboard.fs.glsl");
+    m_chessboard = new ObjModel("../../models/chessboard.obj");
 }
 
 void Renderer3D::render()
@@ -22,16 +23,25 @@ void Renderer3D::render()
     m_camera.processInput();
     std::cout << "passe après processInput" << std::endl;
 
-    glm::mat4 view        = m_camera.getViewMatrix();
-    float     aspectRatio = 16.0f / 9.0f;
-    glm::mat4 projection  = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    glm::mat4 view = m_camera.getViewMatrix();
+    float aspectRatio = 16.0f / 9.0f;
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    glm::mat4 model = glm::mat4(1.0f);
 
     m_skybox.DrawSkybox(glm::value_ptr(view), glm::value_ptr(projection));
-    m_chessboard.DrawChessboard(view, projection);
+
+    m_chessboardShader->use();
+    m_chessboardShader->setMat4("uView", glm::value_ptr(view));
+    m_chessboardShader->setMat4("uProjection", glm::value_ptr(projection));
+    m_chessboard->draw(*m_chessboardShader, model);
 }
 
 void Renderer3D::close()
 {
     m_skybox.Destroy();
-    m_chessboard.Destroy();
+
+    delete m_chessboard;
+    delete m_chessboardShader;
+    m_chessboard = nullptr;
+    m_chessboardShader = nullptr;
 }
