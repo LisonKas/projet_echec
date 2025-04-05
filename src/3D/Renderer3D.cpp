@@ -21,7 +21,6 @@ void Renderer3D::render()
     glDepthFunc(GL_LESS);
 
     m_camera.processInput();
-    std::cout << "passe après processInput" << std::endl;
 
     glm::mat4 view = m_camera.getViewMatrix();
     float aspectRatio = 16.0f / 9.0f;
