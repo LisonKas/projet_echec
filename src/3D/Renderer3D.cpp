@@ -5,17 +5,14 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "quick_imgui/quick_imgui.hpp"
 
-void Renderer3D::initialize()
-{
+void Renderer3D::initialize() {
     m_skybox.InitializeSkybox();
-    m_chessboardShader = new Shader("shaders/chessboard.vs.glsl", "shaders/chessboard.fs.glsl");
-    m_chessboard = new ObjModel("../../models/chessboard.obj");
+    m_chessboardShader = new Shader("../../src/3D/shaders/chessboard.vs.glsl", "../../src/3D/shaders/chessboard.fs.glsl");
+    m_chessboard = new ObjModel("../../models/chessboard.obj", "../../models/chessboard.mtl");
 }
 
-void Renderer3D::render()
-{
+void Renderer3D::render() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDepthFunc(GL_LESS);
@@ -30,13 +27,12 @@ void Renderer3D::render()
     m_skybox.DrawSkybox(glm::value_ptr(view), glm::value_ptr(projection));
 
     m_chessboardShader->use();
-    m_chessboardShader->setMat4("uView", glm::value_ptr(view));
-    m_chessboardShader->setMat4("uProjection", glm::value_ptr(projection));
+    m_chessboardShader->setMat4("view", glm::value_ptr(view));
+    m_chessboardShader->setMat4("projection", glm::value_ptr(projection));
     m_chessboard->draw(*m_chessboardShader, model);
 }
 
-void Renderer3D::close()
-{
+void Renderer3D::close() {
     m_skybox.Destroy();
 
     delete m_chessboard;

@@ -13,8 +13,8 @@ class Renderer3D {
         Shader* m_chessboardShader = nullptr;
         Camera m_camera = Camera(glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
 
-public:
-    void initialize();
-    void render();
-    void close();
+    public:
+        void initialize();
+        void render();
+        void close();
 };
