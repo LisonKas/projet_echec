@@ -1,0 +1,13 @@
+# Blender 4.2.1 LTS MTL File: 'chess_set_4k.blend'
+# www.blender.org
+
+newmtl chess_set_pieces_black
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/lison/Downloads/chess_set_4k.blend/textures/chess_set_pieces_black_diff_4k.png
+map_Ns C:/Users/lison/Downloads/chess_set_4k.blend/textures/chess_set_pieces_black_rough_4k.png
+map_Bump -bm 1.000000 C:/Users/lison/Downloads/chess_set_4k.blend/textures/chess_set_pieces_black_nor_gl_4k.png

@@ -27,7 +27,7 @@ void Camera::key_callback(int key, int scancode, int action, int mods)
     {
         keyStates[scancode] = false;
     }
-    std::cout << "scancode " << scancode << std::endl;
+    // std::cout << "scancode " << scancode << std::endl;
 }
 
 void Camera::processInput()
