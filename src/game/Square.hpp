@@ -1,4 +1,5 @@
 #pragma once
+#include <imgui.h>
 #include <utility>
 
 struct Square {
@@ -8,4 +9,5 @@ struct Square {
     std::pair<char, int> m_coords;
     bool                 isOccupied() const;
     bool                 isOccupied(std::pair<int, int> coords) const;
+    ImVec4               m_dark_color; // Valeur par défaut
 };

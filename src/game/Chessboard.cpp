@@ -1,10 +1,86 @@
 #include "Chessboard.hpp"
 #include <imgui.h>
+#include <cmath>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "glad/glad.h"
 #include "quick_imgui/quick_imgui.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+float generateGaussian()
+{
+    // Tirages uniformes U1, U2 dans ]0,1]
+    float u1 = static_cast<float>(rand()) / RAND_MAX;
+    float u2 = static_cast<float>(rand()) / RAND_MAX;
+
+    // Méthode de Box-Muller pour une gaussienne de moyenne 0, écart-type 1
+    float z0 = sqrt(-2.0f * log(u1)) * cos(2 * M_PI * u2);
+
+    // Centrer la gaussienne autour de 0.1 et l’adapter à une faible variance
+    float mean   = 0.1f;
+    float stddev = 0.03f;
+
+    float gray = std::clamp(mean + stddev * z0, 0.0f, 0.2f);
+    return gray;
+}
+
+ImVec4 generateFancyDarkColor()
+{
+    // Génère une teinte (H) bien espacée, en évitant les teintes trop proches
+    float hue = static_cast<float>(rand()) / RAND_MAX;
+
+    // Saturation et valeur : on reste sombre mais saturé pour des couleurs plus visibles
+    float saturation = 0.7f + static_cast<float>(rand()) / RAND_MAX * 0.3f; // 0.7 à 1.0
+    float value      = 0.2f + static_cast<float>(rand()) / RAND_MAX * 0.2f; // 0.2 à 0.4
+
+    // Conversion HSV vers RGB
+    int   i = int(hue * 6);
+    float f = hue * 6 - i;
+    float p = value * (1 - saturation);
+    float q = value * (1 - f * saturation);
+    float t = value * (1 - (1 - f) * saturation);
+
+    float r, g, b;
+    switch (i % 6)
+    {
+    case 0:
+        r = value;
+        g = t;
+        b = p;
+        break;
+    case 1:
+        r = q;
+        g = value;
+        b = p;
+        break;
+    case 2:
+        r = p;
+        g = value;
+        b = t;
+        break;
+    case 3:
+        r = p;
+        g = q;
+        b = value;
+        break;
+    case 4:
+        r = t;
+        g = p;
+        b = value;
+        break;
+    case 5:
+        r = value;
+        g = p;
+        b = q;
+        break;
+    }
+
+    return ImVec4(r, g, b, 1.0f);
+}
 
 // Création du plateau
 
@@ -24,14 +100,13 @@ void Chessboard::InitializeBoardList()
         for (int j{0}; j < 8; j++)
         {
             Square new_square;
-            new_square.m_id = id;
-            if (i % 2 == 0)
+            new_square.m_id          = id;
+            bool is_light            = (i + j) % 2 != 0;
+            new_square.m_color_light = is_light;
+
+            if (!is_light)
             {
-                new_square.m_color_light = j % 2 == 0 ? false : true;
-            }
-            else
-            {
-                new_square.m_color_light = j % 2 == 0 ? true : false;
+                new_square.m_dark_color = generateFancyDarkColor(); // Couleur unique fancy
             }
             if (i == 0 || i == 1 || i == 6 || i == 7)
             {
@@ -123,7 +198,8 @@ void Chessboard::SetSquareColor(int i, int j)
     }
     else
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); // Presque Noir
+        ImVec4 color = m_boardlist[i][j].m_dark_color;
+        ImGui::PushStyleColor(ImGuiCol_Button, color);
     }
 }
 
