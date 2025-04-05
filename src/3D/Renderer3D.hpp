@@ -1,9 +1,8 @@
 #pragma once
 #include "Camera.hpp"
-#include "Chessboard3D.hpp"
+#include "Shader.hpp"
 #include "Skybox.hpp"
 #include "ObjModel.hpp"
-#include "Camera.hpp"
 
 
 class Renderer3D {
