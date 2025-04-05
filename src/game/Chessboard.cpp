@@ -11,6 +11,17 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+float random(int precision)
+{
+    float x = 0.0f;
+    for (int i = 1; i <= precision; i++)
+    {
+        int bit = std::rand() % 2;
+        x += static_cast<float>(bit) / std::pow(2, i);
+    }
+    return x;
+}
+
 float generateGaussian()
 {
     // Tirages uniformes U1, U2 dans ]0,1]
@@ -28,56 +39,33 @@ float generateGaussian()
     return gray;
 }
 
+// Approximation d'une loi normale avec la méthode de la somme de plusieurs U(0,1)
+float gaussian_approx(int n = 6)
+{
+    float sum = 0.0f;
+    for (int i = 0; i < n; ++i)
+    {
+        sum += random(20); // utilise ta fonction custom
+    }
+    float mean   = n / 2.0f;
+    float stddev = std::sqrt(n / 12.0f);
+    float z      = (sum - mean) / stddev;
+
+    // Recentrer entre 0 et 1, en supposant z ≈ N(0,1)
+    float result = 0.5f + z * 0.15f; // écart-type ajusté à 0.15
+
+    // Tronquer dans [0,1]
+    return std::clamp(result, 0.0f, 1.0f);
+}
+
+// Génère une couleur sombre (autour de gris foncé) avec variation douce
 ImVec4 generateFancyDarkColor()
 {
-    // Génère une teinte (H) bien espacée, en évitant les teintes trop proches
-    float hue = static_cast<float>(rand()) / RAND_MAX;
+    float base = 0.1f; // base sombre
 
-    // Saturation et valeur : on reste sombre mais saturé pour des couleurs plus visibles
-    float saturation = 0.7f + static_cast<float>(rand()) / RAND_MAX * 0.3f; // 0.7 à 1.0
-    float value      = 0.2f + static_cast<float>(rand()) / RAND_MAX * 0.2f; // 0.2 à 0.4
-
-    // Conversion HSV vers RGB
-    int   i = int(hue * 6);
-    float f = hue * 6 - i;
-    float p = value * (1 - saturation);
-    float q = value * (1 - f * saturation);
-    float t = value * (1 - (1 - f) * saturation);
-
-    float r, g, b;
-    switch (i % 6)
-    {
-    case 0:
-        r = value;
-        g = t;
-        b = p;
-        break;
-    case 1:
-        r = q;
-        g = value;
-        b = p;
-        break;
-    case 2:
-        r = p;
-        g = value;
-        b = t;
-        break;
-    case 3:
-        r = p;
-        g = q;
-        b = value;
-        break;
-    case 4:
-        r = t;
-        g = p;
-        b = value;
-        break;
-    case 5:
-        r = value;
-        g = p;
-        b = q;
-        break;
-    }
+    float r = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
+    float g = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
+    float b = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
 
     return ImVec4(r, g, b, 1.0f);
 }
