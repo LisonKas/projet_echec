@@ -1,31 +1,31 @@
 #include "Chessboard3D.hpp"
-#include <fstream>
-#include <vector>
-#include <iostream>
 #include <cstring>
+#include <fstream>
+#include <iostream>
+#include <vector>
 #include "Skybox.hpp"
 
-std::vector<float> cubeVertices = {
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+std::vector<float> cubeVertices = {
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 };
 
 std::vector<unsigned int> cubeIndices = {
-    0, 1, 2,  2, 3, 0,  
-    1, 5, 6,  6, 2, 1,  
-    7, 6, 5,  5, 4, 7,  
-    4, 0, 3,  3, 7, 4,  
-    4, 5, 1,  1, 0, 4,  
-    3, 2, 6,  6, 7, 3   
+    0, 1, 2, 2, 3, 0,
+    1, 5, 6, 6, 2, 1,
+    7, 6, 5, 5, 4, 7,
+    4, 0, 3, 3, 7, 4,
+    4, 5, 1, 1, 0, 4,
+    3, 2, 6, 6, 7, 3
 };
-
 
 unsigned char* LoadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
 {
@@ -67,7 +67,7 @@ unsigned char* LoadTexture(const std::string& filename, int* width, int* height,
 
     for (int i = 0; i < imageSize; i += *nrChannels)
     {
-        std::swap(data[i], data[i + 2]); //Inverse le rouge et le bleu
+        std::swap(data[i], data[i + 2]); // Inverse le rouge et le bleu
     }
 
     for (int i = 0; i < *height / 2; ++i)
@@ -84,10 +84,12 @@ unsigned char* LoadTexture(const std::string& filename, int* width, int* height,
     return data;
 }
 
-GLuint Chessboard3D::loadTexture(const std::string& path) {
-    int width, height, nrChannels;
+GLuint Chessboard3D::loadTexture(const std::string& path)
+{
+    int            width, height, nrChannels;
     unsigned char* data = LoadTexture(path, &width, &height, &nrChannels);
-    if (!data) {
+    if (!data)
+    {
         std::cerr << "Erreur lors du chargement de la texture : " << path << std::endl;
         return 0;
     }
@@ -106,15 +108,16 @@ GLuint Chessboard3D::loadTexture(const std::string& path) {
     return textureID;
 }
 
-void Chessboard3D::InitializeChessboard() {
+void Chessboard3D::InitializeChessboard()
+{
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
-    
+
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, cubeVertices.size() * sizeof(float), cubeVertices.data(), GL_STATIC_DRAW);
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, cubeIndices.size() * sizeof(unsigned int), cubeIndices.data(), GL_STATIC_DRAW);
 
@@ -125,42 +128,48 @@ void Chessboard3D::InitializeChessboard() {
 
     glBindVertexArray(0);
 
-    m_TextureWhite = loadTexture("../../images/3D/Chessboard/white_square.bmp");
-    m_TextureBlack = loadTexture("../../images/3D/Chessboard/black_square.bmp");
+    m_TextureWhite  = loadTexture("../../images/3D/Chessboard/white_square.bmp");
+    m_TextureBlack  = loadTexture("../../images/3D/Chessboard/black_square.bmp");
     m_BorderTexture = loadTexture("../../images/3D/Chessboard/borders.bmp");
 
     m_Shader = new Shader("../../src/3D/shaders/chessboard.vs.glsl", "../../src/3D/shaders/chessboard.fs.glsl");
 }
 
-void Chessboard3D::DrawChessboard(const glm::mat4& view, const glm::mat4& projection) {
-    if (!m_Shader) return;
-    
+void Chessboard3D::DrawChessboard(const glm::mat4& view, const glm::mat4& projection)
+{
+    if (!m_Shader)
+        return;
+
     glEnable(GL_DEPTH_TEST);
     m_Shader->use();
     glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
     glBindVertexArray(m_VAO);
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
             glm::vec3 position = glm::vec3((i - 3.5f) * 1.0f, -0.5f, (j - 3.5f) * 1.0f);
-            GLuint texture = ((i + j) % 2 == 0) ? m_TextureWhite : m_TextureBlack;
+            GLuint    texture  = ((i + j) % 2 == 0) ? m_TextureWhite : m_TextureBlack;
             drawCube(position, 1.0f, texture);
         }
     }
     glBindVertexArray(0);
 }
 
-void Chessboard3D::drawCube(const glm::vec3& position, float size, GLuint texture) {
+void Chessboard3D::drawCube(const glm::vec3& position, float size, GLuint texture)
+{
     glBindTexture(GL_TEXTURE_2D, texture);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::scale(model, glm::vec3(size));
+    model           = glm::translate(model, position);
+    model           = glm::scale(model, glm::vec3(size));
     glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "model"), 1, GL_FALSE, &model[0][0]);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
-void Chessboard3D::Destroy() {
+void Chessboard3D::Destroy()
+{
     delete m_Shader;
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
