@@ -1,18 +1,20 @@
 #include <imgui.h>
 #include <iostream>
-#include "game/App.hpp"
 #include "3D/Camera.hpp"
+#include "game/App.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
 {
+    std::srand(static_cast<unsigned int>(std::time(0))); // une fois au début du programme
+
     float value{0.f};
-    App app;
+    App   app;
 
     quick_imgui::loop(
         "Quick ImGui",
         {
-            .init                     = [&]() { app.InitializeGame();},
+            .init                     = [&]() { app.InitializeGame(); },
             .loop                     = [&]() { app.StartGame(); },
             .key_callback             = Camera::key_callback, //[](int key, int scancode, int action, int mods) { std::cout << "Key: " << key << " Scancode: " << scancode << " Action: " << action << " Mods: " << mods << '\n'; },
             .mouse_button_callback    = [](int button, int action, int mods) { std::cout << "Button: " << button << " Action: " << action << " Mods: " << mods << '\n'; },
