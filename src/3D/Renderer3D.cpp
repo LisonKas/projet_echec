@@ -73,8 +73,8 @@ void Renderer3D::render() {
     m_Shader->setMat4("projection", glm::value_ptr(projection));
     m_Shader->setMat4("model", &model[0][0]);
     //uniform light
-    m_Shader->setVec3("lightPos", glm::vec3(0.0f, 0.0f, 10.0f));
-    m_Shader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 10.0f));
+    m_Shader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 0.0f));
+    m_Shader->setVec3("viewPos", m_camera.getPosition());
     m_Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
     m_chessboard->draw(*m_Shader);

@@ -66,3 +66,7 @@ void Camera::updatePosition()
 
     front = glm::normalize(target - position);
 }
+
+glm::vec3 Camera::getPosition() const {
+    return position; 
+}
