@@ -3,18 +3,35 @@
 #include "Shader.hpp"
 #include "Skybox.hpp"
 #include "ObjModel.hpp"
+#include <vector>
 
+#include "../pieces/AllPieces.hpp" 
+
+struct DisplayedPiece {
+    Piece* logicPiece;
+    ObjModel* model;
+};
 
 class Renderer3D {
     private:
         Skybox m_skybox;
-
         ObjModel* m_chessboard = nullptr;
-        Shader* m_chessboardShader = nullptr;
+        std::vector<DisplayedPiece> m_displayedBlackPieces;
+        std::vector<DisplayedPiece> m_displayedWhitePieces;
         Camera m_camera = Camera(glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
+        Shader* m_Shader = nullptr;
+
+        AllPieces* m_pieces = nullptr;
+
+        glm::vec3 getBoardPosition(int col, int row) {
+            return glm::vec3(-3.5f + col, 0.0f, -3.5f + row);
+        }
 
     public:
         void initialize();
+        void init_pieces();
         void render();
         void close();
+
+        void setPieces(AllPieces* pieces);
 };

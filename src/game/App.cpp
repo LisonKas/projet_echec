@@ -6,6 +6,7 @@
 void App::InitializeGame()
 {
     m_chessboard.InitializeBoardList();
+    m_renderer.setPieces(&m_chessboard.m_pieces);
     m_renderer.initialize();
 }
 

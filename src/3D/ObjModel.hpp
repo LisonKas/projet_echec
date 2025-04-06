@@ -13,7 +13,7 @@ public:
     ObjModel(const std::string& path, const std::string& mtlPath);
     ~ObjModel();
 
-    void draw(Shader& shader, const glm::mat4& modelMatrix);
+    void draw(Shader& shader);
 
 private:
     struct Vertex {

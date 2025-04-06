@@ -3,6 +3,10 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include "glm/fwd.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 ObjModel::ObjModel(const std::string& path, const std::string& mtlPath) {
     loadObj(path);
@@ -16,10 +20,7 @@ ObjModel::~ObjModel() {
     glDeleteBuffers(1, &EBO);
 }
 
-void ObjModel::draw(Shader& shader, const glm::mat4& modelMatrix) {
-    shader.use();
-    shader.setMat4("model", &modelMatrix[0][0]);
-
+void ObjModel::draw(Shader& shader) { 
     glBindVertexArray(VAO);
     for (const auto& materialPair : materials) {
         const Material& material = materialPair.second;
@@ -130,8 +131,6 @@ void ObjModel::setupMesh() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
