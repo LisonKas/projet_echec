@@ -85,7 +85,15 @@ void App::StartGame()
     }
 
     // Toujours afficher le plateau
-    m_chessboard.CreateBoard();
+    // N'affiche le plateau que si le tirage a été effectué
+    if (tirage_effectue)
+    {
+        m_chessboard.CreateBoard();
+    }
+    else
+    {
+        ImGui::Text("Veuillez valider les noms pour commencer la partie.");
+    }
 
     // Afficher le pop-up de promotion si le flag est activé
     if (m_chessboard.showPromotionPopup)
