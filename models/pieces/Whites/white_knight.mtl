@@ -9,5 +9,3 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd ../../images/3D/Pieces/chess_set_pieces_white_diff_4k.png
-map_Ns ../../images/3D/Pieces/chess_set_pieces_white_rough_4k.png
-map_Bump -bm 1.000000 ../../images/3D/Pieces/chess_set_pieces_white_nor_gl_4k.png
