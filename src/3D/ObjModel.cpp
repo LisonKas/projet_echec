@@ -29,7 +29,10 @@ void ObjModel::draw(Shader& shader) {
         shader.setVec3("Ks", material.Ks);
         shader.setFloat("Ns", material.Ns);
 
-        if (material.textureID) {
+        bool useTexture = (material.textureID != 0);
+        shader.setBool("useTexture", useTexture);
+
+        if (useTexture) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.textureID);
             shader.setInt("texture1", 0);

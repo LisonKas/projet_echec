@@ -9,16 +9,20 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 
 uniform vec3 viewPos;
-uniform vec3 Kd; 
+uniform vec3 Kd;
 uniform vec3 Ka;
 uniform float Ks;
 uniform float Ns;
+uniform bool useTexture; // Nouvelle variable uniforme
 
 out vec4 FragColor;
 
 void main()
 {
-    // vec4 texColor = texture(texture1, TexCoord);
+    vec3 texColor = vec3(1.0); // Couleur par défaut si aucune texture n'est utilisée
+    if (useTexture) {
+        texColor = texture(texture1, TexCoord).rgb;
+    }
 
     vec3 ambient = Ka * ((lightColor) * 0.05);
 
@@ -33,13 +37,6 @@ void main()
     float spec1 = pow(max(dot(N, H1), 0.0), Ns);
     vec3 specular1 = spec1 * Ks * lightColor;
 
-    // FragColor = vec4(Kd, 1.0); // Set the color to the diffuse color
-    // FragColor = texture(texture1, TexCoord);
-
-    vec3 result = ambient + diffuse1 + specular1;
+    vec3 result = (ambient + diffuse1) * texColor + specular1;
     FragColor = vec4(result, 1.0);
-
-    // vec3 result = (ambient + diffuse1) * texColor.rgb + specular1;
-    
-    // FragColor = vec4(result, texColor.a);
 }
