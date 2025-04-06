@@ -3,6 +3,13 @@
 #include <iostream>
 #include "quick_imgui/quick_imgui.hpp"
 
+// Variables globales pour la gestion des noms et du tirage
+static char        joueur1[32]     = "";
+static char        joueur2[32]     = "";
+static bool        noms_valides    = false;
+static std::string joueur_blancs   = "";
+static bool        tirage_effectue = false;
+
 void App::InitializeGame()
 {
     m_chessboard.InitializeBoardList();
@@ -14,6 +21,34 @@ void App::StartGame()
 {
     ImGui::Begin("Game");
 
+    // Interface de saisie des noms et tirage au sort
+    if (!noms_valides)
+    {
+        ImGui::InputText("Nom du joueur 1", joueur1, IM_ARRAYSIZE(joueur1));
+        ImGui::InputText("Nom du joueur 2", joueur2, IM_ARRAYSIZE(joueur2));
+
+        if (ImGui::Button("Valider les noms") && strlen(joueur1) > 0 && strlen(joueur2) > 0)
+        {
+            noms_valides    = true;
+            tirage_effectue = true;
+
+            float p = 0.5f;
+            float r = static_cast<float>(rand()) / RAND_MAX;
+            if (r < p)
+            {
+                joueur_blancs = joueur1;
+            }
+            else
+            {
+                joueur_blancs = joueur2;
+            }
+        }
+    }
+    else if (tirage_effectue)
+    {
+        ImGui::Text("%s commence avec les blancs !", joueur_blancs.c_str());
+    }
+
     // Si la partie est terminée, affiche le message et le bouton Rejouer
     if (m_chessboard.m_isGameOver)
     {
@@ -22,6 +57,12 @@ void App::StartGame()
 
         if (ImGui::Button("Rejouer"))
         {
+            joueur1[0]      = '\0';
+            joueur2[0]      = '\0';
+            noms_valides    = false;
+            tirage_effectue = false;
+            joueur_blancs   = "";
+
             m_chessboard.InitializeBoardList(); // Réinitialise le plateau et les pièces
         }
     }
