@@ -10,6 +10,23 @@ static bool        noms_valides    = false;
 static std::string joueur_blancs   = "";
 static bool        tirage_effectue = false;
 
+float random2(int precision)
+{
+    float x = 0.0f;
+    for (int i = 1; i <= precision; i++)
+    {
+        int bit = std::rand() % 2; // 0 ou 1
+        x += static_cast<float>(bit) / std::pow(2, i);
+    }
+    return x;
+}
+
+bool bernoulli(float p, int precision = 20)
+{
+    float r = random2(precision);
+    return r < p;
+}
+
 void App::InitializeGame()
 {
     m_chessboard.InitializeBoardList();
@@ -32,9 +49,9 @@ void App::StartGame()
             noms_valides    = true;
             tirage_effectue = true;
 
-            float p = 0.5f;
-            float r = static_cast<float>(rand()) / RAND_MAX;
-            if (r < p)
+            // Loi de Bernoulli pour le tirage au sort
+            float p = 0.5f; // probabilité que joueur1 ait les blancs
+            if (bernoulli(p))
             {
                 joueur_blancs = joueur1;
             }
