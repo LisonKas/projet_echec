@@ -130,32 +130,29 @@ void App::StartGame()
             // Nouveau bouton de promotion aléatoire
             if (ImGui::Button("Promotion Aléatoire 🎲"))
             {
-                // Loi exponentielle de paramètre lambda = 0.7675
+                // Étape 1 : Tirage exponentiel
                 float lambda = 0.7675f;
                 float u      = static_cast<float>(rand()) / RAND_MAX;
-                float x      = -log(u) / lambda; // Tirage exponentiel
+                float x      = -log(u) / lambda;
 
-                // Discrétisation bornée entre 0 et 3
+                // Étape 2 : Discrétisation entre 0 et 3
                 int choix = std::min(static_cast<int>(x), 3);
 
-                // Attribution selon le tirage
-                switch (choix)
-                {
-                case 0:
-                    m_chessboard.selectedPawn->setType(PieceType::Knight); // Fréquent
-                    break;
-                case 1:
-                    m_chessboard.selectedPawn->setType(PieceType::Bishop);
-                    break;
-                case 2:
-                    m_chessboard.selectedPawn->setType(PieceType::Rook);
-                    break;
-                case 3:
-                    m_chessboard.selectedPawn->setType(PieceType::Queen); // ~10%
-                    break;
-                }
+                // Étape 3 : Correspondance avec une chaîne (non numérique !)
+                std::vector<std::string> pieces       = {"Cavalier", "Fou", "Tour", "Reine"};
+                std::string              pieceChoisie = pieces[choix];
 
-                m_chessboard.showPromotionPopup = false; // Fermer le pop-up
+                // Étape 4 : Application de la promotion selon la chaîne
+                if (pieceChoisie == "Cavalier")
+                    m_chessboard.selectedPawn->setType(PieceType::Knight);
+                else if (pieceChoisie == "Fou")
+                    m_chessboard.selectedPawn->setType(PieceType::Bishop);
+                else if (pieceChoisie == "Tour")
+                    m_chessboard.selectedPawn->setType(PieceType::Rook);
+                else if (pieceChoisie == "Reine")
+                    m_chessboard.selectedPawn->setType(PieceType::Queen);
+
+                m_chessboard.showPromotionPopup = false;
             }
 
             ImGui::EndPopup();
