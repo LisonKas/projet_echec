@@ -31,4 +31,5 @@ class Renderer3D {
         void loadPieceModel(Piece& piece, const std::string& color);
         void update(AllPieces* pieces);
         std::string getModelName(Piece& piece, const std::string& color);
+        void setPieceModel(Piece* piece);
 };

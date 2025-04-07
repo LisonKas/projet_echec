@@ -123,21 +123,29 @@ void App::StartGame()
             {
                 m_chessboard.selectedPawn->setType(PieceType::Queen);
                 m_chessboard.showPromotionPopup = false;
+
+                m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Tour"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Rook);
                 m_chessboard.showPromotionPopup = false;
+
+                m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Fou"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Bishop);
                 m_chessboard.showPromotionPopup = false;
+
+                m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Cavalier"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Knight);
                 m_chessboard.showPromotionPopup = false;
+
+                m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
 
             // Nouveau bouton de promotion aléatoire
@@ -155,6 +163,8 @@ void App::StartGame()
                     m_chessboard.selectedPawn->setType(PieceType::Queen);
 
                 m_chessboard.showPromotionPopup = false;
+
+                m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
 
             ImGui::EndPopup();

@@ -89,6 +89,28 @@ std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
     return modelName;
 }
 
+void Renderer3D::setPieceModel(Piece* piece){
+    if (!piece) return;
+
+    // Déterminer la couleur avec m_team : true = white, false = black
+    std::string color = piece->getTeam() ? "white" : "black";
+    std::string modelName = getModelName(*piece, color);
+
+    // Supprimer l'ancien modèle s'il existe
+    if (m_displayedPieces.find(piece) != m_displayedPieces.end()) {
+        delete m_displayedPieces[piece];
+        m_displayedPieces.erase(piece);
+    }
+
+    // Construire les chemins vers les fichiers .obj et .mtl
+    std::string default_path = "../../models/pieces/";
+    std::string modelPath = default_path + (piece->getTeam() ? "Whites/" : "Blacks/") + modelName + ".obj";
+    std::string mtlPath = default_path + (piece->getTeam() ? "Whites/" : "Blacks/") + modelName + ".mtl";
+
+    // Charger le nouveau modèle
+    m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
+}
+
 void Renderer3D::render() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
