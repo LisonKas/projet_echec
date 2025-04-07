@@ -27,6 +27,19 @@ bool bernoulli(float p, int precision = 20)
     return r < p;
 }
 
+// Tirage exponentiel basé sur random2()
+// Renvoie une chaîne non numérique : "Cavalier", "Fou", "Tour" ou "Reine"
+std::string tiragePromotionExponentiel()
+{
+    float lambda = 0.7675f;
+    float u      = random2(20); // Utilise ton générateur binaire maison
+    float x      = -std::log(u) / lambda;
+
+    int                      choix  = std::min(static_cast<int>(x), 3); // Borné à 3 max
+    std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
+    return pieces[choix];
+}
+
 void App::InitializeGame()
 {
     m_chessboard.InitializeBoardList();
@@ -130,19 +143,8 @@ void App::StartGame()
             // Nouveau bouton de promotion aléatoire
             if (ImGui::Button("Promotion Aléatoire 🎲"))
             {
-                // Étape 1 : Tirage exponentiel
-                float lambda = 0.7675f;
-                float u      = static_cast<float>(rand()) / RAND_MAX;
-                float x      = -log(u) / lambda;
+                std::string pieceChoisie = tiragePromotionExponentiel();
 
-                // Étape 2 : Discrétisation entre 0 et 3
-                int choix = std::min(static_cast<int>(x), 3);
-
-                // Étape 3 : Correspondance avec une chaîne (non numérique !)
-                std::vector<std::string> pieces       = {"Cavalier", "Fou", "Tour", "Reine"};
-                std::string              pieceChoisie = pieces[choix];
-
-                // Étape 4 : Application de la promotion selon la chaîne
                 if (pieceChoisie == "Cavalier")
                     m_chessboard.selectedPawn->setType(PieceType::Knight);
                 else if (pieceChoisie == "Fou")
