@@ -59,6 +59,7 @@ std::vector<std::string> skybox_paths = {
 // Fonction pour générer un float aléatoire ∈ [0, 1) en construisant la valeur bit par bit
 float random_uniform(int precision = 20)
 {
+    std::srand(static_cast<unsigned int>(std::time(0))); // Réinitialisation à chaque appel
     float x = 0.0f;
     for (int i = 1; i <= precision; ++i)
     {
@@ -72,14 +73,17 @@ float random_uniform(int precision = 20)
 // Tirage uniforme d’un index ∈ [0, 3] à partir de random_uniform()
 int select_index_uniform(int nb_choices)
 {
-    float r = random_uniform(); // ∈ [0,1)
+    float r = random_uniform(); // ∈ [0, 1)
     for (int i = 0; i < nb_choices; ++i)
     {
+        // Vérifier si le nombre aléatoire tombe dans l'intervalle correspondant à l'indice i
         if (r < static_cast<float>(i + 1) / nb_choices)
+        {
             std::cout << "i : " << i << std::endl;
-        return i;
+            return i; // Retourner immédiatement l'indice sélectionné
+        }
     }
-    return nb_choices - 1; // Par sécurité
+    return nb_choices - 1; // Par sécurité, si aucune condition n'est remplie
 }
 
 // Sélection de la skybox au lancement
