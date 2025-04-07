@@ -55,6 +55,7 @@ void Renderer3D::update(AllPieces* pieces) {
             if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
                 delete m_displayedPieces[&p];
                 m_displayedPieces.erase(&p);
+                m_piecePositions.erase(&p);
             }
         }
     }
@@ -71,6 +72,7 @@ void Renderer3D::update(AllPieces* pieces) {
             if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
                 delete m_displayedPieces[&p];
                 m_displayedPieces.erase(&p);
+                m_piecePositions.erase(&p);
             }
         }
     }
@@ -143,8 +145,24 @@ void Renderer3D::render() {
         int col = piece->getCoords().first % 8;
         int row = piece->getCoords().second % 8;
     
-        glm::vec3 pos = getBoardPosition(row, col);
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
+        // glm::vec3 pos = getBoardPosition(row, col);
+        // glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
+        /////////////////////////////
+        glm::vec3 targetPos = getBoardPosition(row, col);
+
+        // Récupère la position actuelle (sinon initialise à la cible directement)
+        glm::vec3& currentPos = m_piecePositions[piece];
+        if (currentPos == glm::vec3(0)) {
+            currentPos = targetPos;
+        }
+
+        // Interpolation : approche de la position cible
+        float speed = 5.0f * ImGui::GetIO().DeltaTime; // ou un facteur fixe genre 0.1f
+        currentPos = glm::mix(currentPos, targetPos, speed);
+
+        // Création de la matrice à partir de la position interpolée
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), currentPos);
+        //////////////////////////////////
         m_Shader->setMat4("model", &modelMatrix[0][0]);
         model->draw(*m_Shader);
     }
@@ -162,4 +180,5 @@ void Renderer3D::close() {
         delete model;
     }
     m_displayedPieces.clear();
+    m_piecePositions.clear();
 }

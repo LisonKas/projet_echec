@@ -12,6 +12,7 @@ class Renderer3D {
         Skybox m_skybox;
         ObjModel* m_chessboard = nullptr;
         std::unordered_map<Piece*, ObjModel*> m_displayedPieces;
+        std::unordered_map<Piece*, glm::vec3> m_piecePositions;
         Camera m_camera = Camera(glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
         Shader* m_Shader = nullptr;
 
