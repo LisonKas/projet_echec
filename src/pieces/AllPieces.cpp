@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include "../lois/Uniform_Discreet_Law.hpp"
+// #include "../lois/Uniform_Discreet_Law.hpp"
 #include "piece.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
@@ -259,19 +259,23 @@ void AllPieces::RemovePieceAt(std::pair<int, int> coords)
 
     // removePiece(m_black_pieces);
     // removePiece(m_white_pieces);
-    for (size_t i = 0; i < m_black_pieces.size(); ++i) {
-        if (m_black_pieces[i].getCoords() == coords) {
+    for (size_t i = 0; i < m_black_pieces.size(); ++i)
+    {
+        if (m_black_pieces[i].getCoords() == coords)
+        {
             // Marquer la pièce comme morte
-            m_black_pieces[i].setStatus(false);  // Marquer la pièce comme morte
-            m_black_pieces[i].move({-1, -1});    // Déplacer la pièce hors du plateau
+            m_black_pieces[i].setStatus(false); // Marquer la pièce comme morte
+            m_black_pieces[i].move({-1, -1});   // Déplacer la pièce hors du plateau
         }
     }
-    
-    for (size_t i = 0; i < m_white_pieces.size(); ++i) {
-        if (m_white_pieces[i].getCoords() == coords) {
+
+    for (size_t i = 0; i < m_white_pieces.size(); ++i)
+    {
+        if (m_white_pieces[i].getCoords() == coords)
+        {
             // Marquer la pièce comme morte
-            m_white_pieces[i].setStatus(false);  // Marquer la pièce comme morte
-            m_white_pieces[i].move({-1, -1});    // Déplacer la pièce hors du plateau
+            m_white_pieces[i].setStatus(false); // Marquer la pièce comme morte
+            m_white_pieces[i].move({-1, -1});   // Déplacer la pièce hors du plateau
         }
     }
 }

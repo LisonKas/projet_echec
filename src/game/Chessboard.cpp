@@ -5,71 +5,9 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include "../laws/maths.hpp"
 #include "glad/glad.h"
 #include "quick_imgui/quick_imgui.hpp"
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-float random(int precision)
-{
-    float x = 0.0f;
-    for (int i = 1; i <= precision; i++)
-    {
-        int bit = std::rand() % 2;
-        x += static_cast<float>(bit) / std::pow(2, i);
-    }
-    return x;
-}
-
-float generateGaussian()
-{
-    // Tirages uniformes U1, U2 dans ]0,1]
-    float u1 = static_cast<float>(rand()) / RAND_MAX;
-    float u2 = static_cast<float>(rand()) / RAND_MAX;
-
-    // Méthode de Box-Muller pour une gaussienne de moyenne 0, écart-type 1
-    float z0 = sqrt(-2.0f * log(u1)) * cos(2 * M_PI * u2);
-
-    // Centrer la gaussienne autour de 0.1 et l’adapter à une faible variance
-    float mean   = 0.1f;
-    float stddev = 0.03f;
-
-    float gray = std::clamp(mean + stddev * z0, 0.0f, 0.2f);
-    return gray;
-}
-
-// Approximation d'une loi normale avec la méthode de la somme de plusieurs U(0,1)
-float gaussian_approx(int n = 6)
-{
-    float sum = 0.0f;
-    for (int i = 0; i < n; ++i)
-    {
-        sum += random(20); // utilise ta fonction custom
-    }
-    float mean   = n / 2.0f;
-    float stddev = std::sqrt(n / 12.0f);
-    float z      = (sum - mean) / stddev;
-
-    // Recentrer entre 0 et 1, en supposant z ≈ N(0,1)
-    float result = 0.5f + z * 0.15f; // écart-type ajusté à 0.15
-
-    // Tronquer dans [0,1]
-    return std::clamp(result, 0.0f, 1.0f);
-}
-
-// Génère une couleur sombre (autour de gris foncé) avec variation douce
-ImVec4 generateFancyDarkColor()
-{
-    float base = 0.1f; // base sombre
-
-    float r = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
-    float g = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
-    float b = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
-
-    return ImVec4(r, g, b, 1.0f);
-}
 
 // Création du plateau
 
