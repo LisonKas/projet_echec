@@ -41,20 +41,17 @@ void Renderer3D::init_pieces() {
 }
 
 void Renderer3D::update(AllPieces* pieces) {
-    m_pieces = pieces;  // Met à jour l'objet contenant toutes les pièces
+    m_pieces = pieces; 
 
-    // Recharger les modèles des pièces si nécessaire
     for (Piece& p : m_pieces->m_white_pieces) {
-        if (p.getStatus()) {  // Si la pièce est vivante
+        if (p.getStatus()) {  
             if (m_displayedPieces.find(&p) == m_displayedPieces.end()) {
-                // La pièce n'existe pas encore dans m_displayedPieces, donc on la crée
                 std::string modelName = getModelName(p, "white");
                 std::string modelPath = "../../models/pieces/Whites/" + modelName + ".obj";
                 std::string mtlPath = "../../models/pieces/Whites/" + modelName + ".mtl";
                 m_displayedPieces[&p] = new ObjModel(modelPath, mtlPath);
             }
         } else {
-            // Si la pièce est morte, on la supprime de la map
             if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
                 delete m_displayedPieces[&p];
                 m_displayedPieces.erase(&p);
@@ -63,16 +60,14 @@ void Renderer3D::update(AllPieces* pieces) {
     }
 
     for (Piece& p : m_pieces->m_black_pieces) {
-        if (p.getStatus()) {  // Si la pièce est vivante
+        if (p.getStatus()) {  
             if (m_displayedPieces.find(&p) == m_displayedPieces.end()) {
-                // La pièce n'existe pas encore dans m_displayedPieces, donc on la crée
                 std::string modelName = getModelName(p, "black");
                 std::string modelPath = "../../models/pieces/Blacks/" + modelName + ".obj";
                 std::string mtlPath = "../../models/pieces/Blacks/" + modelName + ".mtl";
                 m_displayedPieces[&p] = new ObjModel(modelPath, mtlPath);
             }
         } else {
-            // Si la pièce est morte, on la supprime de la map
             if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
                 delete m_displayedPieces[&p];
                 m_displayedPieces.erase(&p);
@@ -81,7 +76,6 @@ void Renderer3D::update(AllPieces* pieces) {
     }
 }
 
-// Méthode pour obtenir le nom du modèle en fonction du type de pièce et de la couleur
 std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
     std::string modelName;
     switch (piece.getType()) {
@@ -122,7 +116,7 @@ void Renderer3D::render() {
     m_chessboard->draw(*m_Shader);
 
     for (auto& [piece, model] : m_displayedPieces) {
-        if (!piece->getStatus()) break;  // 👈 Ne pas afficher la pièce si elle est morte
+        if (!piece->getStatus()) break;  
     
         int col = piece->getCoords().first % 8;
         int row = piece->getCoords().second % 8;
