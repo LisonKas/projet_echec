@@ -1,8 +1,8 @@
 #include "Skybox.hpp"
 #include <fstream>
 #include <iostream>
-#include "glm/glm.hpp"
 #include <vector>
+#include "glm/glm.hpp"
 
 GLfloat skyboxVertices[] = {
     -10.0f, 10.0f, -10.0f,
@@ -48,7 +48,45 @@ GLfloat skyboxVertices[] = {
     10.0f, -10.0f, 10.0f
 };
 
-std::string default_path = "../../images/3D/Skybox/skybox_stormy_weather/";
+// Définir les différents dossiers de skybox
+std::vector<std::string> skybox_paths = {
+    "../../images/3D/Skybox/skybox_stormy_weather/",
+    "../../images/3D/Skybox/skybox_galaxy/",
+    "../../images/3D/Skybox/skybox_dawn/",
+    "../../images/3D/Skybox/skybox_aurora/"
+};
+
+// Fonction pour générer un float aléatoire ∈ [0, 1) en construisant la valeur bit par bit
+float random_uniform(int precision = 20)
+{
+    float x = 0.0f;
+    for (int i = 1; i <= precision; ++i)
+    {
+        int bit = std::rand() % 2;
+        x += static_cast<float>(bit) / std::pow(2, i);
+    }
+    std::cout << "x : " << x << std::endl;
+    return x;
+}
+
+// Tirage uniforme d’un index ∈ [0, 3] à partir de random_uniform()
+int select_index_uniform(int nb_choices)
+{
+    float r = random_uniform(); // ∈ [0,1)
+    for (int i = 0; i < nb_choices; ++i)
+    {
+        if (r < static_cast<float>(i + 1) / nb_choices)
+            std::cout << "i : " << i << std::endl;
+        return i;
+    }
+    return nb_choices - 1; // Par sécurité
+}
+
+// Sélection de la skybox au lancement
+int         selected_index = select_index_uniform(skybox_paths.size());
+std::string default_path   = skybox_paths[selected_index];
+
+// std::string default_path = "../../images/3D/Skybox/skybox_stormy_weather/";
 
 std::vector<std::string> faces = {
     "pz.bmp",
@@ -126,7 +164,7 @@ void Skybox::InitializeSkybox()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    glBindVertexArray(0);  
+    glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     this->m_Texture = loadCubemap();

@@ -1,9 +1,9 @@
 #include "Chessboard.hpp"
 #include <imgui.h>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <utility>
-#include <algorithm>
 #include <vector>
 #include "glad/glad.h"
 #include "quick_imgui/quick_imgui.hpp"
