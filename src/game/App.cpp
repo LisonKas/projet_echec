@@ -1,6 +1,7 @@
 #include "App.hpp"
 #include <imgui.h>
 #include <iostream>
+#include "../laws/maths.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 // Variables globales pour la gestion des noms et du tirage
@@ -10,34 +11,10 @@ static bool        noms_valides    = false;
 static std::string joueur_blancs   = "";
 static bool        tirage_effectue = false;
 
-float random2(int precision)
+std::string promotionAleatoireExponentielle()
 {
-    float x = 0.0f;
-    for (int i = 1; i <= precision; i++)
-    {
-        int bit = std::rand() % 2; // 0 ou 1
-        x += static_cast<float>(bit) / std::pow(2, i);
-    }
-    return x;
-}
-
-bool bernoulli(float p, int precision = 20)
-{
-    float r = random2(precision);
-    return r < p;
-}
-
-// Tirage exponentiel basé sur random2()
-// Renvoie une chaîne non numérique : "Cavalier", "Fou", "Tour" ou "Reine"
-std::string tiragePromotionExponentiel()
-{
-    float lambda = 0.7675f;
-    float u      = random2(20); // Utilise ton générateur binaire maison
-    float x      = -std::log(u) / lambda;
-
-    int                      choix  = std::min(static_cast<int>(x), 3); // Borné à 3 max
     std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
-    return pieces[choix];
+    return pieces[tirageExponentialIndex()];
 }
 
 void App::InitializeGame()
@@ -63,8 +40,7 @@ void App::StartGame()
             tirage_effectue = true;
 
             // Loi de Bernoulli pour le tirage au sort
-            float p = 0.5f; // probabilité que joueur1 ait les blancs
-            if (bernoulli(p))
+            if (bernoulli(0.5f))
             {
                 joueur_blancs = joueur1;
             }
@@ -98,7 +74,6 @@ void App::StartGame()
     }
 
     // Toujours afficher le plateau
-    // N'affiche le plateau que si le tirage a été effectué
     if (tirage_effectue)
     {
         m_chessboard.CreateBoard();
@@ -111,7 +86,6 @@ void App::StartGame()
     // Afficher le pop-up de promotion si le flag est activé
     if (m_chessboard.showPromotionPopup)
     {
-        // Afficher le pop-up pour la promotion
         ImGui::OpenPopup("Promotion");
 
         if (ImGui::BeginPopupModal("Promotion", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Modal))
@@ -123,35 +97,31 @@ void App::StartGame()
             {
                 m_chessboard.selectedPawn->setType(PieceType::Queen);
                 m_chessboard.showPromotionPopup = false;
-
                 m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Tour"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Rook);
                 m_chessboard.showPromotionPopup = false;
-
                 m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Fou"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Bishop);
                 m_chessboard.showPromotionPopup = false;
-
                 m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
             if (ImGui::Button("Cavalier"))
             {
                 m_chessboard.selectedPawn->setType(PieceType::Knight);
                 m_chessboard.showPromotionPopup = false;
-
                 m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
 
             // Nouveau bouton de promotion aléatoire
             if (ImGui::Button("Promotion Aléatoire 🎲"))
             {
-                std::string pieceChoisie = tiragePromotionExponentiel();
+                std::string pieceChoisie = promotionAleatoireExponentielle();
 
                 if (pieceChoisie == "Cavalier")
                     m_chessboard.selectedPawn->setType(PieceType::Knight);
@@ -163,7 +133,6 @@ void App::StartGame()
                     m_chessboard.selectedPawn->setType(PieceType::Queen);
 
                 m_chessboard.showPromotionPopup = false;
-
                 m_renderer.setPieceModel(m_chessboard.selectedPawn);
             }
 

@@ -4,7 +4,6 @@
 #include <cmath>
 #include <cstdlib>
 
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -57,4 +56,17 @@ ImVec4 generateFancyDarkColor()
     float b    = std::clamp(base + gaussian_approx() * 0.2f, 0.0f, 1.0f);
 
     return ImVec4(r, g, b, 1.0f);
+}
+
+int tirageExponentialIndex(float lambda)
+{
+    float u = random(20); // Ton générateur binaire
+    float x = -std::log(u) / lambda;
+    return std::min(static_cast<int>(x), 3);
+}
+
+bool bernoulli(float p, int precision)
+{
+    float r = random(precision);
+    return r < p;
 }
