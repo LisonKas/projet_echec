@@ -162,6 +162,7 @@ void App::StartGame()
     }
 
     ImGui::End();
+    m_renderer.update(&m_chessboard.m_pieces);
     m_renderer.render();
 }
 

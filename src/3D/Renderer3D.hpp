@@ -16,8 +16,9 @@ class Renderer3D {
     private:
         Skybox m_skybox;
         ObjModel* m_chessboard = nullptr;
-        std::vector<DisplayedPiece> m_displayedBlackPieces;
-        std::vector<DisplayedPiece> m_displayedWhitePieces;
+        // std::vector<DisplayedPiece> m_displayedBlackPieces;
+        // std::vector<DisplayedPiece> m_displayedWhitePieces;
+        std::unordered_map<Piece*, ObjModel*> m_displayedPieces;
         Camera m_camera = Camera(glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
         Shader* m_Shader = nullptr;
 
@@ -34,4 +35,7 @@ class Renderer3D {
         void close();
 
         void setPieces(AllPieces* pieces);
+        void loadPieceModel(Piece& piece, const std::string& color);
+        void update(AllPieces* pieces);
+        std::string getModelName(Piece& piece, const std::string& color);
 };

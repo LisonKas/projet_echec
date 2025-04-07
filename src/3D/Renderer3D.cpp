@@ -20,37 +20,79 @@ void Renderer3D::setPieces(AllPieces* pieces) {
 void Renderer3D::init_pieces() {
     if (!m_pieces) return;
 
-    for (Piece& piece : m_pieces->m_black_pieces) {
+    auto loadPieceModel = [this](Piece& piece, const std::string& color) {
         std::string modelName;
         switch (piece.getType()) {
-            case PieceType::Pawn:   modelName = "black_pawn"; break;
-            case PieceType::Rook:   modelName = "black_rook"; break;
-            case PieceType::Knight: modelName = "black_knight"; break;
-            case PieceType::Bishop: modelName = "black_bishop"; break;
-            case PieceType::Queen:  modelName = "black_queen"; break;
-            case PieceType::King:   modelName = "black_king"; break;
+            case PieceType::Pawn:   modelName = color + "_pawn"; break;
+            case PieceType::Rook:   modelName = color + "_rook"; break;
+            case PieceType::Knight: modelName = color + "_knight"; break;
+            case PieceType::Bishop: modelName = color + "_bishop"; break;
+            case PieceType::Queen:  modelName = color + "_queen"; break;
+            case PieceType::King:   modelName = color + "_king"; break;
         }
-        DisplayedPiece dp;
-        dp.logicPiece = &piece;
-        dp.model = new ObjModel("../../models/pieces/Blacks/" + modelName + ".obj", "../../models/pieces/Blacks/" + modelName + ".mtl");
-        m_displayedBlackPieces.push_back(dp);
+        std::string default_path = "../../models/pieces/";
+        std::string modelPath = default_path + (color == "white" ? "Whites/" : "Blacks/") + modelName + ".obj";
+        std::string mtlPath = default_path + (color == "white" ? "Whites/" : "Blacks/") + modelName + ".mtl";
+        m_displayedPieces[&piece] = new ObjModel(modelPath, mtlPath);
+    };
+
+    for (Piece& p : m_pieces->m_white_pieces) loadPieceModel(p, "white");
+    for (Piece& p : m_pieces->m_black_pieces) loadPieceModel(p, "black");
+}
+
+void Renderer3D::update(AllPieces* pieces) {
+    m_pieces = pieces;  // Met à jour l'objet contenant toutes les pièces
+
+    // Recharger les modèles des pièces si nécessaire
+    for (Piece& p : m_pieces->m_white_pieces) {
+        if (p.getStatus()) {  // Si la pièce est vivante
+            if (m_displayedPieces.find(&p) == m_displayedPieces.end()) {
+                // La pièce n'existe pas encore dans m_displayedPieces, donc on la crée
+                std::string modelName = getModelName(p, "white");
+                std::string modelPath = "../../models/pieces/Whites/" + modelName + ".obj";
+                std::string mtlPath = "../../models/pieces/Whites/" + modelName + ".mtl";
+                m_displayedPieces[&p] = new ObjModel(modelPath, mtlPath);
+            }
+        } else {
+            // Si la pièce est morte, on la supprime de la map
+            if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
+                delete m_displayedPieces[&p];
+                m_displayedPieces.erase(&p);
+            }
+        }
     }
 
-    for (Piece& piece : m_pieces->m_white_pieces) {
-        std::string modelName;
-        switch (piece.getType()) {
-            case PieceType::Pawn:   modelName = "white_pawn"; break;
-            case PieceType::Rook:   modelName = "white_rook"; break;
-            case PieceType::Knight: modelName = "white_knight"; break;
-            case PieceType::Bishop: modelName = "white_bishop"; break;
-            case PieceType::Queen:  modelName = "white_queen"; break;
-            case PieceType::King:   modelName = "white_king"; break;
+    for (Piece& p : m_pieces->m_black_pieces) {
+        if (p.getStatus()) {  // Si la pièce est vivante
+            if (m_displayedPieces.find(&p) == m_displayedPieces.end()) {
+                // La pièce n'existe pas encore dans m_displayedPieces, donc on la crée
+                std::string modelName = getModelName(p, "black");
+                std::string modelPath = "../../models/pieces/Blacks/" + modelName + ".obj";
+                std::string mtlPath = "../../models/pieces/Blacks/" + modelName + ".mtl";
+                m_displayedPieces[&p] = new ObjModel(modelPath, mtlPath);
+            }
+        } else {
+            // Si la pièce est morte, on la supprime de la map
+            if (m_displayedPieces.find(&p) != m_displayedPieces.end()) {
+                delete m_displayedPieces[&p];
+                m_displayedPieces.erase(&p);
+            }
         }
-        DisplayedPiece dp;
-        dp.logicPiece = &piece;
-        dp.model = new ObjModel("../../models/pieces/Whites/" + modelName + ".obj", "../../models/pieces/Whites/" + modelName + ".mtl");
-        m_displayedWhitePieces.push_back(dp);
     }
+}
+
+// Méthode pour obtenir le nom du modèle en fonction du type de pièce et de la couleur
+std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
+    std::string modelName;
+    switch (piece.getType()) {
+        case PieceType::Pawn:   modelName = color + "_pawn"; break;
+        case PieceType::Rook:   modelName = color + "_rook"; break;
+        case PieceType::Knight: modelName = color + "_knight"; break;
+        case PieceType::Bishop: modelName = color + "_bishop"; break;
+        case PieceType::Queen:  modelName = color + "_queen"; break;
+        case PieceType::King:   modelName = color + "_king"; break;
+    }
+    return modelName;
 }
 
 void Renderer3D::render() {
@@ -79,24 +121,16 @@ void Renderer3D::render() {
 
     m_chessboard->draw(*m_Shader);
 
-    for (int i = 0; i < m_displayedWhitePieces.size(); ++i) {
-        int col = m_displayedWhitePieces[i].logicPiece->getCoords().first % 8;
-        int row = m_displayedWhitePieces[i].logicPiece->getCoords().second % 8;
-
-        glm::vec3 pos = glm::vec3(-3.5f + row, 0.0f, -3.5f + col); //getBoardPosition(col, row);
+    for (auto& [piece, model] : m_displayedPieces) {
+        if (!piece->getStatus()) break;  // 👈 Ne pas afficher la pièce si elle est morte
+    
+        int col = piece->getCoords().first % 8;
+        int row = piece->getCoords().second % 8;
+    
+        glm::vec3 pos = getBoardPosition(row, col);
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
         m_Shader->setMat4("model", &modelMatrix[0][0]);
-        m_displayedWhitePieces[i].model->draw(*m_Shader);
-    }
-
-    for (int i = 0; i < m_displayedBlackPieces.size(); ++i) {
-        int col = m_displayedBlackPieces[i].logicPiece->getCoords().first % 8;
-        int row = m_displayedBlackPieces[i].logicPiece->getCoords().second % 8;
-
-        glm::vec3 pos = glm::vec3(-3.5f + row, 0.0f, -3.5f + col); 
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
-        m_Shader->setMat4("model", &modelMatrix[0][0]);
-        m_displayedBlackPieces[i].model->draw(*m_Shader);
+        model->draw(*m_Shader);
     }
 }
 
@@ -108,9 +142,8 @@ void Renderer3D::close() {
     delete m_Shader;
     m_Shader = nullptr;
 
-    for (auto& dp : m_displayedBlackPieces) delete dp.model;
-    for (auto& dp : m_displayedWhitePieces) delete dp.model;
-
-    m_displayedBlackPieces.clear();
-    m_displayedWhitePieces.clear();
+    for (auto& [piece, model] : m_displayedPieces) {
+        delete model;
+    }
+    m_displayedPieces.clear();
 }

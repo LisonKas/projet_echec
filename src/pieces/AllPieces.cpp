@@ -247,16 +247,31 @@ Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
 
 void AllPieces::RemovePieceAt(std::pair<int, int> coords)
 {
-    auto removePiece = [&](std::vector<Piece>& pieces) {
-        auto it = std::remove_if(pieces.begin(), pieces.end(), [&](const Piece& piece) {
-            return piece.getCoords() == coords;
-        });
-        if (it != pieces.end())
-        {
-            pieces.erase(it, pieces.end());
-        }
-    };
+    // auto removePiece = [&](std::vector<Piece>& pieces) {
+    //     auto it = std::remove_if(pieces.begin(), pieces.end(), [&](const Piece& piece) {
+    //         return piece.getCoords() == coords;
+    //     });
+    //     if (it != pieces.end())
+    //     {
+    //         pieces.erase(it, pieces.end());
+    //     }
+    // };
 
-    removePiece(m_black_pieces);
-    removePiece(m_white_pieces);
+    // removePiece(m_black_pieces);
+    // removePiece(m_white_pieces);
+    for (size_t i = 0; i < m_black_pieces.size(); ++i) {
+        if (m_black_pieces[i].getCoords() == coords) {
+            // Marquer la pièce comme morte
+            m_black_pieces[i].setStatus(false);  // Marquer la pièce comme morte
+            m_black_pieces[i].move({-1, -1});    // Déplacer la pièce hors du plateau
+        }
+    }
+    
+    for (size_t i = 0; i < m_white_pieces.size(); ++i) {
+        if (m_white_pieces[i].getCoords() == coords) {
+            // Marquer la pièce comme morte
+            m_white_pieces[i].setStatus(false);  // Marquer la pièce comme morte
+            m_white_pieces[i].move({-1, -1});    // Déplacer la pièce hors du plateau
+        }
+    }
 }

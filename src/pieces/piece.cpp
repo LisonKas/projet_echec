@@ -20,6 +20,14 @@ bool Piece::getTeam() const
     return m_team;
 }
 
+bool Piece::getStatus() {
+    return m_status;
+}
+
+void Piece::setStatus(bool status) {
+    m_status = status;  // Met à jour le statut de la pièce
+}
+
 // DETECTION DES ZONES
 
 std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* board) const

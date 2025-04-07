@@ -42,6 +42,7 @@ public:
     std::vector<std::pair<int, int>> getKnightMoves() const;
     std::vector<std::pair<int, int>> getKingMoves() const;
     void                             setType(PieceType newType);
+    void setStatus(bool status);
 
     // CONSTRUCTOR
     Piece() = default;
