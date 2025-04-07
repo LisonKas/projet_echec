@@ -11,12 +11,6 @@ static bool        noms_valides    = false;
 static std::string joueur_blancs   = "";
 static bool        tirage_effectue = false;
 
-std::string promotionAleatoireExponentielle()
-{
-    std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
-    return pieces[tirageExponentialIndex()];
-}
-
 void App::InitializeGame()
 {
     m_chessboard.InitializeBoardList();

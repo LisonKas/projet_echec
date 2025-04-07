@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "../laws/maths.hpp"
 #include "glm/glm.hpp"
 
 GLfloat skyboxVertices[] = {
@@ -55,36 +56,6 @@ std::vector<std::string> skybox_paths = {
     "../../images/3D/Skybox/skybox_dawn/",
     "../../images/3D/Skybox/skybox_aurora/"
 };
-
-// Fonction pour générer un float aléatoire ∈ [0, 1) en construisant la valeur bit par bit
-float random_uniform(int precision = 20)
-{
-    std::srand(static_cast<unsigned int>(std::time(0))); // Réinitialisation à chaque appel
-    float x = 0.0f;
-    for (int i = 1; i <= precision; ++i)
-    {
-        int bit = std::rand() % 2;
-        x += static_cast<float>(bit) / std::pow(2, i);
-    }
-    std::cout << "x : " << x << std::endl;
-    return x;
-}
-
-// Tirage uniforme d’un index ∈ [0, 3] à partir de random_uniform()
-int select_index_uniform(int nb_choices)
-{
-    float r = random_uniform(); // ∈ [0, 1)
-    for (int i = 0; i < nb_choices; ++i)
-    {
-        // Vérifier si le nombre aléatoire tombe dans l'intervalle correspondant à l'indice i
-        if (r < static_cast<float>(i + 1) / nb_choices)
-        {
-            std::cout << "i : " << i << std::endl;
-            return i; // Retourner immédiatement l'indice sélectionné
-        }
-    }
-    return nb_choices - 1; // Par sécurité, si aucune condition n'est remplie
-}
 
 // Sélection de la skybox au lancement
 int         selected_index = select_index_uniform(skybox_paths.size());

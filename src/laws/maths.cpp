@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <ctime> // pour std::time
+#include <vector>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -69,4 +71,35 @@ bool bernoulli(float p, int precision)
 {
     float r = random(precision);
     return r < p;
+}
+
+std::string promotionAleatoireExponentielle()
+{
+    std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
+    return pieces[tirageExponentialIndex()];
+}
+
+float random_uniform(int precision)
+{
+    std::srand(static_cast<unsigned int>(std::time(0))); // Réinitialisation à chaque appel
+    float x = 0.0f;
+    for (int i = 1; i <= precision; ++i)
+    {
+        int bit = std::rand() % 2;
+        x += static_cast<float>(bit) / std::pow(2, i);
+    }
+    return x;
+}
+
+int select_index_uniform(int nb_choices)
+{
+    float r = random_uniform(); // ∈ [0, 1)
+    for (int i = 0; i < nb_choices; ++i)
+    {
+        if (r < static_cast<float>(i + 1) / nb_choices)
+        {
+            return i;
+        }
+    }
+    return nb_choices - 1; // Par sécurité
 }
