@@ -12,6 +12,11 @@ struct Vertex {
     glm::vec3 m_position;     
     glm::vec3 m_normal;      
     glm::vec2 m_texCoord;  
+    glm::vec3 Kd;
+    glm::vec3 Ka;
+    glm::vec3 Ks;
+    float Ns;
+    int useTexture;
 };
 
 class ObjModel {

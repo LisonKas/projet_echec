@@ -7,8 +7,8 @@
 #include <map>
 
 ObjModel::ObjModel(const std::string& path, const std::string& mtlPath) {
-    loadObj(path);
     loadMtl(mtlPath);
+    loadObj(path);
     setupMesh();
 }
 
@@ -32,22 +32,14 @@ void ObjModel::draw(Shader& shader) {
     } 
     else {
         auto& material = m_materials.begin()->second;
-        
-        shader.setVec3("Ka", material.Ka);
-        shader.setVec3("Kd", material.Kd);
-        shader.setVec3("Ks", material.Ks);
-        shader.setFloat("Ns", material.Ns);
-        
-        bool useTexture = (material.textureID != 0);
-        shader.setBool("useTexture", useTexture);
-        
-        if (useTexture) {
-            std::cout << "Rendering with texture ID: " << material.textureID << std::endl;
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, material.textureID);
-            shader.setInt("texture1", 0);
-        } else {
-            std::cout << "Rendering without texture" << std::endl;
+
+        for(auto& material : m_materials) {
+            bool useTexture = (material.second.textureID != 0);
+            if (useTexture) {
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, material.second.textureID);
+                shader.setInt("texture1", 0);
+            }
         }
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     }
@@ -79,7 +71,6 @@ void ObjModel::loadObj(const std::string& path) {
         } else if (prefix == "vt") {
             glm::vec2 tex;
             iss >> tex.x >> tex.y;
-            tex.y = 1.0f - tex.y; 
             temp_texcoords.push_back(tex);
         } else if (prefix == "vn") {
             glm::vec3 norm;
@@ -87,7 +78,6 @@ void ObjModel::loadObj(const std::string& path) {
             temp_normals.push_back(norm);
         } else if (prefix == "usemtl") {
             iss >> currentMaterial;
-            std::cout << "Using material: " << currentMaterial << std::endl;
         } else if (prefix == "f") {
             std::string vertex;
             std::vector<unsigned int> face_indices;
@@ -118,6 +108,12 @@ void ObjModel::loadObj(const std::string& path) {
                 } else {
                     vert.m_normal = glm::vec3(0.0f, 1.0f, 0.0f);
                 }
+
+                vert.Kd = m_materials[currentMaterial].Kd;
+                vert.Ka = m_materials[currentMaterial].Ka;
+                vert.Ks = m_materials[currentMaterial].Ks;
+                vert.Ns = m_materials[currentMaterial].Ns;
+                vert.useTexture = m_materials[currentMaterial].textureID != 0 ? 1 : 0;
                 
                 m_vertices.push_back(vert);
                 m_indices.push_back(m_indices.size());
@@ -128,8 +124,6 @@ void ObjModel::loadObj(const std::string& path) {
             }
         }
     }
-    
-    std::cout << "Loaded " << m_vertices.size() << " vertices, " << m_indices.size() << " indices" << std::endl;
 }
 
 void ObjModel::loadMtl(const std::string& path) {
@@ -149,7 +143,6 @@ void ObjModel::loadMtl(const std::string& path) {
             iss >> currentMaterialName;
             m_materials[currentMaterialName] = Material();
             m_materials[currentMaterialName].name = currentMaterialName;
-            std::cout << "Defined material: " << currentMaterialName << std::endl;
         } else if (prefix == "Ka") {
             iss >> m_materials[currentMaterialName].Ka.r >> m_materials[currentMaterialName].Ka.g >> m_materials[currentMaterialName].Ka.b;
         } else if (prefix == "Kd") {
@@ -161,12 +154,9 @@ void ObjModel::loadMtl(const std::string& path) {
         } else if (prefix == "map_Kd") {
             std::string texturePath;
             iss >> texturePath;
-            std::cout << "Loading texture for " << currentMaterialName << ": " << texturePath << std::endl;
             m_materials[currentMaterialName].loadTexture(texturePath);
         }
     }
-    
-    std::cout << "Loaded " << m_materials.size() << " materials" << std::endl;
 }
 
 void ObjModel::setupMesh() {
@@ -191,7 +181,20 @@ void ObjModel::setupMesh() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_texCoord));
     glEnableVertexAttribArray(2);
 
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Kd));
+    glEnableVertexAttribArray(3);
+
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Ks));
+    glEnableVertexAttribArray(4);
+
+    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Ka));
+    glEnableVertexAttribArray(5);
+
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Ns));
+    glEnableVertexAttribArray(6);
+
+    glVertexAttribPointer(7, 1, GL_INT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, useTexture));
+    glEnableVertexAttribArray(7);
+
     glBindVertexArray(0);
-    
-    std::cout << "Mesh setup complete" << std::endl;
 }
