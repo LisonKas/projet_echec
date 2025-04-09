@@ -163,7 +163,7 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
 
         // Gestion de la promotion du pion
-        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7))
+        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7) && !m_isGameOver)
         {
             std::cout << "Promoted!" << std::endl;
             PromotePawn(selectedPiece);

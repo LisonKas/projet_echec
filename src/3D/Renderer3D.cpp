@@ -194,7 +194,7 @@ void Renderer3D::render()
             if (m_pieceDurations.find(piece) == m_pieceDurations.end())
             {
                 // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
-                float duration = logNormalMapped(0.0f, 2.0f, 1.0f, 5.0f, 100); // Ajuste ces paramètres si nécessaire
+                float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
 
                 // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
                 float speed = distance / duration;
