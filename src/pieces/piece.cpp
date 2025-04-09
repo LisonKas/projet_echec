@@ -1,73 +1,81 @@
 #include "piece.hpp"
 #include <array>
-#include <iostream>
 
-Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
+// CONSTRUCTORS
+Piece::Piece(bool team, const std::pair<int, int>& coords, PieceType type)
     : m_team(team), m_direction(1 - 2 * m_team), m_status(true), m_coords(coords), m_type(type) {}
 
+// DESTRUCTOR
 Piece::~Piece() {}
 
-std::pair<int, int> Piece::getCoords() const
+// GETTERS
+const std::pair<int, int>& Piece::getCoords() const
 {
     return m_coords;
 }
+
 PieceType Piece::getType() const
 {
     return m_type;
 }
+
 bool Piece::getTeam() const
 {
     return m_team;
 }
 
-bool Piece::getStatus() {
+bool Piece::getStatus() const
+{
     return m_status;
 }
 
-void Piece::setStatus(bool status) {
-    m_status = status;  // Met à jour le statut de la pièce
+// SETTERS
+void Piece::setStatus(bool status)
+{
+    m_status = status;
 }
 
-// DETECTION DES ZONES
+void Piece::setType(PieceType newType)
+{
+    m_type = newType;
+}
 
-std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* board) const
+// DÉTECTION DES ZONES
+
+std::vector<std::pair<int, int>> Piece::getZone(const std::vector<std::vector<Square>>* board) const
 {
     switch (m_type)
     {
     case PieceType::Pawn:
-        return getPawnMoves(board);
+        return getPawnZone(board);
     case PieceType::Rook:
-        return getRookMoves(board);
+        return getRookZone(board);
     case PieceType::Bishop:
-        return getBishopMoves(board);
+        return getBishopZone(board);
     case PieceType::Queen:
-        return getQueenMoves(board);
+        return getQueenZone(board);
     case PieceType::Knight:
-        return getKnightMoves();
+        return getKnightZone();
     case PieceType::King:
-        return getKingMoves();
+        return getKingZone();
     default:
         return {};
     }
 }
 
-void Piece::move(const std::pair<int, int>& newCoords)
-{
-    m_coords = newCoords;
-}
-
-std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getPawnZone(const std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
     int                              nextRow = m_coords.first + m_direction;
     int                              col     = m_coords.second;
 
-    // Mouvements d'une deux cases vers l'avant
+    // Déplacements en avant
     if (nextRow >= 0 && nextRow < 8 && !(*board)[nextRow][col].isOccupied())
     {
         zone.push_back({nextRow, col});
 
-        if (m_coords.first == (m_team ? 6 : 1)) // Détection du 1er tour (position de départ)
+        // 1er mouvement
+        if (m_coords.first == (m_team ? 6 : 1))
         {
             int twoStepRow = nextRow + m_direction;
             if (twoStepRow >= 0 && twoStepRow < 8 && !(*board)[twoStepRow][col].isOccupied())
@@ -77,9 +85,10 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
         }
     }
 
-    // Prises en diagonale
-    for (int shift : {-1, 1})
+    // Captures en diagonal
+    for (int i = 0; i < 2; ++i)
     {
+        int shift      = (i == 0) ? -1 : 1;
         int captureCol = col + shift;
         if (captureCol >= 0 && captureCol < 8 && (*board)[nextRow][captureCol].isOccupied())
         {
@@ -90,79 +99,79 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getRookZone(const std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>>             zone;
-    constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}}; // haut, bas, gauche, droite
+    std::vector<std::pair<int, int>> zone;
+    // Respectivement haut, bas, gauche, droite
+    constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}};
 
     int row = m_coords.first;
     int col = m_coords.second;
 
-    for (const std::pair<int, int>& direction : directions)
+    for (const auto& direction : directions)
     {
         int rShift = direction.first;
         int cShift = direction.second;
 
-        for (int nextRow = row + rShift, nextCol = col + cShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += rShift, nextCol += cShift)
+        int nextRow = row + rShift;
+        int nextCol = col + cShift;
+
+        while (nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8)
         {
             zone.push_back({nextRow, nextCol});
             if ((*board)[nextRow][nextCol].isOccupied())
                 break;
+
+            nextRow += rShift;
+            nextCol += cShift;
         }
     }
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getBishopZone(const std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
-    int                              row{0};
-    int                              col{0};
 
+    // Diagonales
     for (int rShift : {-1, 1})
     {
         for (int cShift : {-1, 1})
         {
-            row = m_coords.first + rShift;
-            col = m_coords.second + cShift;
+            int row = m_coords.first + rShift;
+            int col = m_coords.second + cShift;
 
             while (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
-                if (!(*board)[row][col].isOccupied())
-                {
-                    zone.push_back({row, col});
-                }
-                else
-                {
-                    zone.push_back({row, col});
+                zone.push_back({row, col});
+                if ((*board)[row][col].isOccupied())
                     break;
-                }
+
                 row += rShift;
                 col += cShift;
             }
         }
     }
+
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKnightMoves() const
+std::vector<std::pair<int, int>> Piece::getKnightZone() const
 {
     std::vector<std::pair<int, int>> zone;
-
-    std::vector<std::pair<int, int>> directions = {
+    // Déplacements en L possibles
+    const std::vector<std::pair<int, int>> directions = {
         {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
     };
 
-    for (const auto& direction : directions)
+    for (const auto& dir : directions)
     {
-        int row = m_coords.first + direction.first;
-        int col = m_coords.second + direction.second;
+        int row = m_coords.first + dir.first;
+        int col = m_coords.second + dir.second;
 
-        // Vérifier si le mouvement reste dans les limites du plateau
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
-            // Ajouter la case à la zone si elle est vide ou occupée par une pièce ennemie
             zone.push_back({row, col});
         }
     }
@@ -170,36 +179,27 @@ std::vector<std::pair<int, int>> Piece::getKnightMoves() const
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getQueenZone(const std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>> zone;
-
-    auto rookMoves = getRookMoves(board);
-    zone.insert(zone.end(), rookMoves.begin(), rookMoves.end());
-
-    auto bishopMoves = getBishopMoves(board);
-    zone.insert(zone.end(), bishopMoves.begin(), bishopMoves.end());
-
+    std::vector<std::pair<int, int>> zone       = getRookZone(board);
+    std::vector<std::pair<int, int>> bishopZone = getBishopZone(board);
+    zone.insert(zone.end(), bishopZone.begin(), bishopZone.end());
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKingMoves() const
+std::vector<std::pair<int, int>> Piece::getKingZone() const
 {
     std::vector<std::pair<int, int>>             zone;
-    constexpr std::array<std::pair<int, int>, 8> directions = {{
-        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // Haut, Bas, Gauche, Droite
-        {-1, -1},
-        {-1, 1},
-        {1, -1},
-        {1, 1} // Diagonales
-    }};
+    constexpr std::array<std::pair<int, int>, 8> directions = {
+        {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}
+    };
 
-    for (std::pair<int, int> direction : directions)
+    for (const auto& dir : directions)
     {
-        int row = m_coords.first + direction.first;
-        int col = m_coords.second + direction.second;
+        int row = m_coords.first + dir.first;
+        int col = m_coords.second + dir.second;
 
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) // Vérifie que la case est dans l'échiquier
+        if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
             zone.push_back({row, col});
         }
@@ -208,7 +208,7 @@ std::vector<std::pair<int, int>> Piece::getKingMoves() const
     return zone;
 }
 
-void Piece::setType(PieceType newType)
+void Piece::move(const std::pair<int, int>& newCoords)
 {
-    m_type = newType;
+    m_coords = newCoords;
 }
