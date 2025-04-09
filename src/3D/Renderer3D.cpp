@@ -120,9 +120,9 @@ void Renderer3D::render() {  // La loop pour dessiner les éléments
 
     m_camera.processInput();
 
-    glm::mat4 view = m_camera.getViewMatrix();
+    const glm::mat4 view = m_camera.getViewMatrix();
     float aspectRatio = 16.0f / 9.0f;
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    const glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
     m_skybox.DrawSkybox(glm::value_ptr(view), glm::value_ptr(projection));
