@@ -60,7 +60,6 @@ void Chessboard::CreateBoard()
 {
     if (m_isGameOver)
     {
-        ImGui::Text(m_winnerMessage.c_str());
         return; // Pour ne plus pouvoir bouger les pièces
     }
 

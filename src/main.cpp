@@ -6,7 +6,7 @@
 
 int main()
 {
-    std::srand(static_cast<unsigned int>(std::time(0))); // une fois au début du programme
+    std::srand(static_cast<unsigned int>(std::time(0)));
 
     float value{0.f};
     App   app;
