@@ -31,7 +31,6 @@ GLuint LoadTexture(const char* path)
     int height    = *(int*)&(header[0x16]);
     int imageSize = *(int*)&(header[0x22]);
 
-    // Calculer la taille réelle de l'image avec 32 bits par pixel
     int correctedImageSize = width * height * 4;
 
     if (imageSize == 0)
@@ -48,16 +47,13 @@ GLuint LoadTexture(const char* path)
     }
     file.close();
 
-    // Retourner l'image verticalement
-    int                        rowSize = width * 4; // 4 octets par pixel (RGBA)
+    int                        rowSize = width * 4;
     std::vector<unsigned char> tempRow(rowSize);
 
     for (int y = 0; y < height / 2; y++)
     {
         unsigned char* row1 = &data[y * rowSize];
         unsigned char* row2 = &data[(height - 1 - y) * rowSize];
-
-        // Échanger row1 et row2
         std::memcpy(tempRow.data(), row1, rowSize);
         std::memcpy(row1, row2, rowSize);
         std::memcpy(row2, tempRow.data(), rowSize);
@@ -67,15 +63,12 @@ GLuint LoadTexture(const char* path)
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // Charger les données de l'image dans la texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data.data());
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // Paramètres de la texture
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Vérification des erreurs OpenGL
     GLenum error = glGetError();
     if (error != GL_NO_ERROR)
     {
@@ -87,13 +80,14 @@ GLuint LoadTexture(const char* path)
 
 void AllPieces::InitializeAllPieces()
 {
-    // Efface toutes les pièces existantes
     m_black_pieces.clear();
     m_white_pieces.clear();
+
     for (int j{0}; j < 8; j++)
     {
         m_black_pieces.push_back(Piece(false, {1, j}, PieceType::Pawn));
     }
+
     for (int i{0}; i < 2; i++)
     {
         m_black_pieces.push_back(Piece(false, {0, i * 7}, PieceType::Rook));
@@ -108,6 +102,7 @@ void AllPieces::InitializeAllPieces()
     {
         m_white_pieces.push_back(Piece(true, {6, j}, PieceType::Pawn));
     }
+
     for (int i{0}; i < 2; i++)
     {
         m_white_pieces.push_back(Piece(true, {7, i * 7}, PieceType::Rook));
@@ -118,7 +113,6 @@ void AllPieces::InitializeAllPieces()
     m_white_pieces.push_back(Piece(true, {7, 4}, PieceType::Queen));
     m_white_pieces.push_back(Piece(true, {7, 3}, PieceType::King));
 
-    // Charger les textures des pièces 2D
     piecePaths.push_back(std::make_pair("B_Pawn", "../../images/2D/Blacks/black-pawn.bmp"));
     piecePaths.push_back(std::make_pair("B_Rook", "../../images/2D/Blacks/black-rook.bmp"));
     piecePaths.push_back(std::make_pair("B_Knight", "../../images/2D/Blacks/black-knight.bmp"));
@@ -132,9 +126,9 @@ void AllPieces::InitializeAllPieces()
     piecePaths.push_back(std::make_pair("W_Queen", "../../images/2D/Whites/white-queen.bmp"));
     piecePaths.push_back(std::make_pair("W_King", "../../images/2D/Whites/white-king.bmp"));
 
-    for (size_t i = 0; i < piecePaths.size(); ++i)
+    for (const auto& path : piecePaths)
     {
-        m_textures[piecePaths[i].first] = LoadTexture(piecePaths[i].second.c_str());
+        m_textures[path.first] = LoadTexture(path.second.c_str());
     }
 }
 
@@ -201,23 +195,21 @@ Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
 
 void AllPieces::RemovePieceAt(std::pair<int, int> coords)
 {
-    for (size_t i = 0; i < m_black_pieces.size(); ++i)
+    for (auto& piece : m_black_pieces)
     {
-        if (m_black_pieces[i].getCoords() == coords)
+        if (piece.getCoords() == coords)
         {
-            // Marquer la pièce comme morte
-            m_black_pieces[i].setStatus(false); // Marquer la pièce comme morte
-            m_black_pieces[i].move({-1, -1});   // Déplacer la pièce hors du plateau
+            piece.setStatus(false);
+            piece.move({-1, -1});
         }
     }
 
-    for (size_t i = 0; i < m_white_pieces.size(); ++i)
+    for (auto& piece : m_white_pieces)
     {
-        if (m_white_pieces[i].getCoords() == coords)
+        if (piece.getCoords() == coords)
         {
-            // Marquer la pièce comme morte
-            m_white_pieces[i].setStatus(false); // Marquer la pièce comme morte
-            m_white_pieces[i].move({-1, -1});   // Déplacer la pièce hors du plateau
+            piece.setStatus(false);
+            piece.move({-1, -1});
         }
     }
 }
