@@ -2,9 +2,7 @@
 #include <imgui.h>
 #include <iostream>
 #include "../laws/maths.hpp"
-#include "quick_imgui/quick_imgui.hpp"
 
-// Variables globales pour la gestion des noms et du tirage
 static char        joueur1[32]     = "";
 static char        joueur2[32]     = "";
 static bool        noms_valides    = false;
@@ -22,7 +20,7 @@ void App::StartGame()
 {
     ImGui::Begin("Game");
 
-    // Interface de saisie des noms et tirage au sort
+    // Entrée des noms
     if (!noms_valides)
     {
         ImGui::InputText("Nom du joueur 1", joueur1, IM_ARRAYSIZE(joueur1));
@@ -33,7 +31,7 @@ void App::StartGame()
             noms_valides    = true;
             tirage_effectue = true;
 
-            // Loi de Bernoulli pour le tirage au sort
+            // Tirage au sort
             if (bernoulli(0.5f))
             {
                 joueur_blancs = joueur1;
@@ -49,7 +47,7 @@ void App::StartGame()
         ImGui::Text("%s commence avec les blancs !", joueur_blancs.c_str());
     }
 
-    // Si la partie est terminée, affiche le message et le bouton Rejouer
+    // Gestion de la fin
     if (m_chessboard.m_isGameOver)
     {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Fin de la partie !");
@@ -57,17 +55,18 @@ void App::StartGame()
 
         if (ImGui::Button("Rejouer"))
         {
+            // Réinitialisation les entrées
             joueur1[0]      = '\0';
             joueur2[0]      = '\0';
             noms_valides    = false;
             tirage_effectue = false;
             joueur_blancs   = "";
 
-            m_chessboard.InitializeBoardList(); // Réinitialise le plateau et les pièces
+            m_chessboard.InitializeBoardList();
         }
     }
 
-    // Toujours afficher le plateau
+    // Afficher le plateau une fois les noms validés
     if (tirage_effectue)
     {
         m_chessboard.CreateBoard();
@@ -77,7 +76,7 @@ void App::StartGame()
         ImGui::Text("Veuillez valider les noms pour commencer la partie.");
     }
 
-    // Afficher le pop-up de promotion si le flag est activé
+    // Gestion de la promotion
     if (m_chessboard.showPromotionPopup)
     {
         ImGui::OpenPopup("Promotion");

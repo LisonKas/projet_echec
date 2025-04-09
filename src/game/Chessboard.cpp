@@ -1,26 +1,31 @@
 #include "Chessboard.hpp"
 #include <imgui.h>
 #include <algorithm>
-#include <cmath>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "../laws/maths.hpp"
 #include "glad/glad.h"
-#include "quick_imgui/quick_imgui.hpp"
 
 // Création du plateau
 
+void Chessboard::Reinitialize()
+{
+    m_teamPlaying = true;
+    m_isGameOver  = false;
+    m_winnerMessage.clear();
+    m_boardlist.clear();
+    m_highlightedSquares.clear();
+    m_selectedPiece = {-1, -1};
+}
+
 void Chessboard::InitializeBoardList()
 {
-    m_teamPlaying = true;                    // Toujours commencer avec les Blancs
-    m_isGameOver  = false;                   // Réinitialise l'état du jeu
-    m_winnerMessage.clear();                 // Efface le message du gagnant
-    m_boardlist.clear();                     // Assure une réinitialisation complète du plateau
-    m_highlightedSquares.clear();            // Efface les cases mises en surbrillance
-    m_selectedPiece              = {-1, -1}; // Réinitialise la pièce sélectionnée
+    Reinitialize();
+
     std::vector<char> j_as_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int               id{1};
+
     for (int i{0}; i < 8; i++)
     {
         std::vector<Square> line_squares;
@@ -33,18 +38,21 @@ void Chessboard::InitializeBoardList()
 
             if (!is_light)
             {
-                new_square.m_dark_color = generateFancyDarkColor(); // Couleur unique fancy
+                new_square.m_dark_color = generateFancyDarkColor();
             }
+
             if (i == 0 || i == 1 || i == 6 || i == 7)
             {
                 new_square.m_is_occupied = true;
             }
+
             new_square.m_coords = std::pair<char, int>(j_as_chars[j], 8 - i);
             line_squares.push_back(new_square);
             id++;
         }
-        this->m_boardlist.push_back(line_squares);
+        m_boardlist.push_back(line_squares);
     }
+
     m_pieces.InitializeAllPieces();
 }
 
@@ -52,35 +60,27 @@ void Chessboard::CreateBoard()
 {
     if (m_isGameOver)
     {
-        ImGui::Text(m_winnerMessage.c_str());
-        return; // Empêche toute interaction avec le plateau
+        return; // Pour ne plus pouvoir bouger les pièces
     }
-    // Affiche le joueur actuel
-    ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
 
-    // Si la partie est terminée, affiche le message du gagnant tout en permettant de voir le plateau
-    if (m_isGameOver)
-    {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), m_winnerMessage.c_str()); // Message en rouge
-        // Continue l'affichage du plateau pour que l'utilisateur puisse encore le voir
-    }
+    ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
 
     for (int i{0}; i < 8; i++)
     {
         for (int j{0}; j < 8; j++)
         {
-            SetSquareColor(i, j); // Appliquer la couleur à la case
+            SetSquareColor(i, j);
 
             ImGui::PushID(m_boardlist[i][j].m_id);
             GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
-            // Vérifie si le clic droit est effectué, pour désélectionner une pièce
+            // Annulation avec clic droit
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
             {
                 ResetSelection();
                 ImGui::PopID();
                 ImGui::PopStyleColor();
-                continue; // Passe à la case suivante sans effectuer d'autres actions
+                continue;
             }
 
             if (piece_label != 0)
@@ -163,7 +163,7 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
 
         // Gestion de la promotion du pion
-        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7)) // Si le pion arrive à la dernière ligne
+        if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7))
         {
             std::cout << "Promoted!" << std::endl;
             PromotePawn(selectedPiece);
@@ -178,17 +178,18 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
 
     if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
     {
+        // Détection de la victoire
         if (capturedPiece->getType() == PieceType::King)
         {
             m_isGameOver    = true;
             m_winnerMessage = selectedPiece->getTeam() ? "Les Blancs gagnent !" : "Les Noirs gagnent !";
         }
-        m_pieces.RemovePieceAt(target); // Supprime la pièce capturée
+        m_pieces.RemovePieceAt(target);
         MovePiece(target);
     }
 }
 
-bool Chessboard::teamPlaying() const
+bool Chessboard::GetTeamPlaying() const
 {
     return m_teamPlaying;
 }
