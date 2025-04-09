@@ -49,23 +49,23 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     switch (m_type)
     {
     case PieceType::Pawn:
-        return getPawnMoves(board);
+        return getPawnZone(board);
     case PieceType::Rook:
-        return getRookMoves(board);
+        return getRookZone(board);
     case PieceType::Bishop:
-        return getBishopMoves(board);
+        return getBishopZone(board);
     case PieceType::Queen:
-        return getQueenMoves(board);
+        return getQueenZone(board);
     case PieceType::Knight:
-        return getKnightMoves();
+        return getKnightZone();
     case PieceType::King:
-        return getKingMoves();
+        return getKingZone();
     default:
         return {};
     }
 }
 
-std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getPawnZone(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
     int                              nextRow = m_coords.first + m_direction;
@@ -74,8 +74,6 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
     if (nextRow >= 0 && nextRow < 8 && !(*board)[nextRow][col].isOccupied())
     {
         zone.push_back({nextRow, col});
-
-        // 1ers déplacements
 
         if (m_coords.first == (m_team ? 6 : 1))
         {
@@ -87,9 +85,10 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
         }
     }
 
-    // Prises en diagonale
-    for (int shift : {-1, 1})
+    int shift;
+    for (int i = 0; i < 2; ++i)
     {
+        shift          = (i == 0) ? -1 : 1;
         int captureCol = col + shift;
         if (captureCol >= 0 && captureCol < 8 && (*board)[nextRow][captureCol].isOccupied())
         {
@@ -100,55 +99,59 @@ std::vector<std::pair<int, int>> Piece::getPawnMoves(std::vector<std::vector<Squ
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getRookMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getRookZone(std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>> zone;
-    // Respectivement haut, bas, gauche, droite
+    std::vector<std::pair<int, int>>             zone;
     constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}};
 
     int row = m_coords.first;
     int col = m_coords.second;
 
-    for (const std::pair<int, int>& direction : directions)
+    std::pair<int, int> direction;
+    for (int i = 0; i < directions.size(); ++i)
     {
+        direction  = directions[i];
         int rShift = direction.first;
         int cShift = direction.second;
 
-        for (int nextRow = row + rShift, nextCol = col + cShift; nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8; nextRow += rShift, nextCol += cShift)
+        int nextRow = row + rShift;
+        int nextCol = col + cShift;
+
+        while (nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8)
         {
             zone.push_back({nextRow, nextCol});
             if ((*board)[nextRow][nextCol].isOccupied())
                 break;
+
+            nextRow += rShift;
+            nextCol += cShift;
         }
     }
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getBishopZone(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
-    int                              row{0};
-    int                              col{0};
+    int                              row, col;
 
-    for (int rShift : {-1, 1})
+    int rShift, cShift;
+    for (int i = 0; i < 2; ++i)
     {
-        for (int cShift : {-1, 1})
+        rShift = (i == 0) ? -1 : 1;
+        for (int j = 0; j < 2; ++j)
         {
-            row = m_coords.first + rShift;
-            col = m_coords.second + cShift;
+            cShift = (j == 0) ? -1 : 1;
+            row    = m_coords.first + rShift;
+            col    = m_coords.second + cShift;
 
             while (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
-                if (!(*board)[row][col].isOccupied())
-                {
-                    zone.push_back({row, col});
-                }
-                else
-                {
-                    zone.push_back({row, col});
+                zone.push_back({row, col});
+                if ((*board)[row][col].isOccupied())
                     break;
-                }
+
                 row += rShift;
                 col += cShift;
             }
@@ -157,7 +160,7 @@ std::vector<std::pair<int, int>> Piece::getBishopMoves(std::vector<std::vector<S
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKnightMoves() const
+std::vector<std::pair<int, int>> Piece::getKnightZone() const
 {
     std::vector<std::pair<int, int>> zone;
 
@@ -165,10 +168,12 @@ std::vector<std::pair<int, int>> Piece::getKnightMoves() const
         {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
     };
 
-    for (const auto& direction : directions)
+    std::pair<int, int> direction;
+    for (int i = 0; i < directions.size(); ++i)
     {
-        int row = m_coords.first + direction.first;
-        int col = m_coords.second + direction.second;
+        direction = directions[i];
+        int row   = m_coords.first + direction.first;
+        int col   = m_coords.second + direction.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
@@ -179,29 +184,30 @@ std::vector<std::pair<int, int>> Piece::getKnightMoves() const
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getQueenMoves(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getQueenZone(std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
 
-    auto rookMoves = getRookMoves(board);
-    zone.insert(zone.end(), rookMoves.begin(), rookMoves.end());
+    auto rookZone = getRookZone(board);
+    zone.insert(zone.end(), rookZone.begin(), rookZone.end());
 
-    auto bishopMoves = getBishopMoves(board);
-    zone.insert(zone.end(), bishopMoves.begin(), bishopMoves.end());
+    auto bishopZone = getBishopZone(board);
+    zone.insert(zone.end(), bishopZone.begin(), bishopZone.end());
 
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getKingMoves() const
+std::vector<std::pair<int, int>> Piece::getKingZone() const
 {
-    std::vector<std::pair<int, int>> zone;
-    // Respectivement haut, bas, gauche, droite + diagonales
+    std::vector<std::pair<int, int>>             zone;
     constexpr std::array<std::pair<int, int>, 8> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}};
 
-    for (std::pair<int, int> direction : directions)
+    std::pair<int, int> direction;
+    for (int i = 0; i < directions.size(); ++i)
     {
-        int row = m_coords.first + direction.first;
-        int col = m_coords.second + direction.second;
+        direction = directions[i];
+        int row   = m_coords.first + direction.first;
+        int col   = m_coords.second + direction.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {

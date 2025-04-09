@@ -1,4 +1,5 @@
 #pragma once
+
 #include <utility>
 #include <vector>
 #include "../game/Square.hpp"
@@ -20,34 +21,34 @@ private:
     std::pair<int, int> m_coords;
     PieceType           m_type;
 
-    // DISPLAY
-    void displayMovement();
+    // INTERNAL
+    void                             displayMovement();
+    std::vector<std::pair<int, int>> getPawnZone(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getRookZone(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getBishopZone(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getQueenZone(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getKnightZone() const;
+    std::vector<std::pair<int, int>> getKingZone() const;
 
 public:
+    // CONSTRUCTORS / DESTRUCTOR
+    Piece() = default;
+    Piece(bool team, std::pair<int, int> coords, PieceType type);
+    ~Piece();
+
+    // GETTERS
+    std::pair<int, int>              getCoords() const;
+    bool                             getTeam() const;
+    bool                             getStatus();
+    PieceType                        getType() const;
+    std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* board) const;
+
+    // SETTERS
+    void setStatus(bool status);
+    void setType(PieceType newType);
+
     // ACTIONS
     void move(const std::pair<int, int>& newCoords);
     void take(Piece enemy);
     void promote();
-
-    // GETTERS
-    std::pair<int, int>              getCoords() const;
-    bool                             getStatus();
-    PieceType                        getType() const;
-    std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* chessboard) const;
-    bool                             getTeam() const;
-    std::vector<std::pair<int, int>> getRookMoves(std::vector<std::vector<Square>>* chessboard) const;
-    std::vector<std::pair<int, int>> getPawnMoves(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getBishopMoves(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getQueenMoves(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getKnightMoves() const;
-    std::vector<std::pair<int, int>> getKingMoves() const;
-    void                             setType(PieceType newType);
-    void setStatus(bool status);
-
-    // CONSTRUCTOR
-    Piece() = default;
-    Piece(bool team, std::pair<int, int> coords, PieceType type);
-
-    // DESTRUCTOR
-    ~Piece();
 };
