@@ -116,6 +116,8 @@ void Renderer3D::render() {  // La loop pour dessiner les éléments
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
+    glDisable(GL_CULL_FACE);
+
     m_camera.processInput();
 
     glm::mat4 view = m_camera.getViewMatrix();
