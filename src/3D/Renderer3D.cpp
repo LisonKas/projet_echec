@@ -2,11 +2,9 @@
 #include <iostream>
 #include <unordered_map>
 #include "glm/fwd.hpp"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-void Renderer3D::initialize() {
+void Renderer3D::initialize() { // Initialisation des ressources 3D
     m_skybox.InitializeSkybox();
     init_pieces();
     m_Shader = new Shader("../../src/3D/shaders/model.vs.glsl",  "../../src/3D/shaders/model.fs.glsl");
@@ -17,7 +15,11 @@ void Renderer3D::setPieces(AllPieces* pieces) {
     m_pieces = pieces;
 }
 
-void Renderer3D::init_pieces() {
+glm::vec3 Renderer3D::getBoardPosition(int col, int row) {  // Adapter les coords des pièces sur la 3D
+    return glm::vec3(-3.5f + col, 0.0f, -3.5f + row);
+}
+
+void Renderer3D::init_pieces() {  // Initialisation des chemins pour les modèles des pièces
     if (!m_pieces) return;
 
     auto loadPieceModel = [this](Piece& piece, const std::string& color) {
@@ -40,7 +42,7 @@ void Renderer3D::init_pieces() {
     for (Piece& p : m_pieces->m_black_pieces) loadPieceModel(p, "black");
 }
 
-void Renderer3D::update(AllPieces* pieces) {
+void Renderer3D::update(AllPieces* pieces) {  //permet de faire en sorte de garder les bonnes positions des pièces sans bouger tous les pointeurs dès qu'une pièce meurs
     m_pieces = pieces; 
 
     for (Piece& p : m_pieces->m_white_pieces) {
@@ -78,7 +80,7 @@ void Renderer3D::update(AllPieces* pieces) {
     }
 }
 
-std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
+std::string Renderer3D::getModelName(Piece& piece, const std::string& color) { 
     std::string modelName;
     switch (piece.getType()) {
         case PieceType::Pawn:   modelName = color + "_pawn"; break;
@@ -91,29 +93,25 @@ std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
     return modelName;
 }
 
-void Renderer3D::setPieceModel(Piece* piece){
+void Renderer3D::setPieceModel(Piece* piece) {  //Pour changer quand un pion est promote
     if (!piece) return;
 
-    // Déterminer la couleur avec m_team : true = white, false = black
     std::string color = piece->getTeam() ? "white" : "black";
     std::string modelName = getModelName(*piece, color);
 
-    // Supprimer l'ancien modèle s'il existe
     if (m_displayedPieces.find(piece) != m_displayedPieces.end()) {
         delete m_displayedPieces[piece];
         m_displayedPieces.erase(piece);
     }
 
-    // Construire les chemins vers les fichiers .obj et .mtl
     std::string default_path = "../../models/pieces/";
     std::string modelPath = default_path + (piece->getTeam() ? "Whites/" : "Blacks/") + modelName + ".obj";
     std::string mtlPath = default_path + (piece->getTeam() ? "Whites/" : "Blacks/") + modelName + ".mtl";
 
-    // Charger le nouveau modèle
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
-void Renderer3D::render() {
+void Renderer3D::render() {  // La loop pour dessiner les éléments
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -145,24 +143,18 @@ void Renderer3D::render() {
         int col = piece->getCoords().first % 8;
         int row = piece->getCoords().second % 8;
     
-        // glm::vec3 pos = getBoardPosition(row, col);
-        // glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
-        /////////////////////////////
         glm::vec3 targetPos = getBoardPosition(row, col);
 
-        // Récupère la position actuelle (sinon initialise à la cible directement)
         glm::vec3& currentPos = m_piecePositions[piece];
         if (currentPos == glm::vec3(0)) {
             currentPos = targetPos;
         }
 
-        // Interpolation : approche de la position cible
-        float speed = 5.0f * ImGui::GetIO().DeltaTime; // ou un facteur fixe genre 0.1f
+        float speed = 5.0f * ImGui::GetIO().DeltaTime; 
         currentPos = glm::mix(currentPos, targetPos, speed);
 
-        // Création de la matrice à partir de la position interpolée
+        // Mettre à jour la modèle matrix pour pas que les différentes pièces s'enmmêlent
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), currentPos);
-        //////////////////////////////////
         m_Shader->setMat4("model", &modelMatrix[0][0]);
         model->draw(*m_Shader);
     }

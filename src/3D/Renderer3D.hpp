@@ -3,7 +3,6 @@
 #include "Shader.hpp"
 #include "Skybox.hpp"
 #include "ObjModel.hpp"
-#include <vector>
 
 #include "../pieces/AllPieces.hpp" 
 
@@ -18,9 +17,7 @@ class Renderer3D {
 
         AllPieces* m_pieces = nullptr;
 
-        glm::vec3 getBoardPosition(int col, int row) {
-            return glm::vec3(-3.5f + col, 0.0f, -3.5f + row);
-        }
+        glm::vec3 getBoardPosition(int col, int row);
 
     public:
         void initialize();
