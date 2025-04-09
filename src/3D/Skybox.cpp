@@ -49,7 +49,7 @@ GLfloat skyboxVertices[] = {
     10.0f, -10.0f, 10.0f
 };
 
-// Définir les différents dossiers de skybox
+// Les différents dossiers de skybox
 std::vector<std::string> skybox_paths = {
     "../../images/3D/Skybox/skybox_stormy_weather/",
     "../../images/3D/Skybox/skybox_galaxy/",
@@ -61,8 +61,7 @@ std::vector<std::string> skybox_paths = {
 int         selected_index = select_index_uniform(skybox_paths.size());
 std::string default_path   = skybox_paths[selected_index];
 
-// std::string default_path = "../../images/3D/Skybox/skybox_stormy_weather/";
-
+// Noms des images de Skybox
 std::vector<std::string> faces = {
     "pz.bmp",
     "nz.bmp",
@@ -72,8 +71,7 @@ std::vector<std::string> faces = {
     "nx.bmp"
 };
 
-unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
-{
+unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels) {
     std::ifstream file(filename, std::ios::binary);
     if (!file)
     {
@@ -112,7 +110,7 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
 
     for (int i = 0; i < imageSize; i += *nrChannels)
     {
-        std::swap(data[i], data[i + 2]); // Inverse le rouge et le bleu
+        std::swap(data[i], data[i + 2]);
     }
 
     for (int i = 0; i < *height / 2; ++i)
@@ -129,8 +127,7 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
     return data;
 }
 
-void Skybox::InitializeSkybox()
-{
+void Skybox::InitializeSkybox() {  // Initialisation des VAO, VBO et du shader de la skybox
     glGenVertexArrays(1, &this->m_VAO);
     glGenBuffers(1, &this->m_VBO);
     glBindVertexArray(this->m_VAO);
@@ -147,13 +144,12 @@ void Skybox::InitializeSkybox()
     this->m_Shader = new Shader("../../src/3D/shaders/shader.vs.glsl", "../../src/3D/shaders/shader.fs.glsl");
 }
 
-void Skybox::DrawSkybox(const float* view, const float* projection)
-{
+void Skybox::DrawSkybox(const float* view, const float* projection) { // Apparition de la skybox
     glDisable(GL_DEPTH_TEST);
     m_Shader->use();
 
-    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "view"), 1, GL_FALSE, view);
-    glUniformMatrix4fv(glGetUniformLocation(m_Shader->ID, "projection"), 1, GL_FALSE, projection);
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->m_ID, "view"), 1, GL_FALSE, view);
+    glUniformMatrix4fv(glGetUniformLocation(m_Shader->m_ID, "projection"), 1, GL_FALSE, projection);
 
     glBindVertexArray(this->m_VAO);
     glActiveTexture(GL_TEXTURE0);
@@ -161,8 +157,7 @@ void Skybox::DrawSkybox(const float* view, const float* projection)
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-GLuint Skybox::loadCubemap()
-{
+GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -174,7 +169,7 @@ GLuint Skybox::loadCubemap()
         data = loadTexture((default_path + faces[i]).c_str(), &width, &height, &nrChannels);
         if (data)
         {
-            GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB; // Vérifie si l'image a un canal alpha
+            GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB; 
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
             delete[] data;
@@ -194,8 +189,7 @@ GLuint Skybox::loadCubemap()
     return textureID;
 }
 
-void Skybox::Destroy()
-{
+void Skybox::Destroy() {
     delete m_Shader;
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
