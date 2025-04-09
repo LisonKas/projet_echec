@@ -4,22 +4,29 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
 
+// Uniformes de textures et/ou couleurs
 uniform sampler2D texture1;
-uniform vec3 lightPos;
-uniform vec3 lightColor;
-
-uniform vec3 viewPos;
 uniform vec3 Kd;
 uniform vec3 Ka;
 uniform float Ks;
 uniform float Ns;
-uniform bool useTexture; // Nouvelle variable uniforme
+
+// Uniformes pour la lumière
+uniform vec3 lightPos;
+uniform vec3 lightColor;
+
+// Autres Uniformes
+uniform vec3 viewPos;
+uniform bool useTexture;
 
 out vec4 FragColor;
 
 void main()
 {
-    vec3 texColor = vec3(1.0); // Couleur par défaut si aucune texture n'est utilisée
+    // Couleurs de défaut
+    vec3 texColor = vec3(1.0);
+
+    // Restes de calculs
     if (useTexture) {
         texColor = texture(texture1, TexCoord).rgb;
     }

@@ -1,72 +1,65 @@
 #include "Camera.hpp"
 #include <iostream>
 
-std::unordered_map<int, bool> Camera::keyStates;
+std::unordered_map<int, bool> Camera::m_keyStates; // Pour enregistrer les actions des touches
 
 Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed)
-    : position(position), front(front), up(up), speed(speed), target(glm::vec3(0.0f)), radius(10.0f), theta(0.0f), phi(0.0f) {}
-
-Camera::Camera(glm::vec3 target, float radius, float speed)
-    : target(target), radius(radius), theta(0.0f), phi(glm::radians(30.0f)), speed(speed)
-{
-    updatePosition();
-}
+    : m_position(position), m_front(front), m_up(up), m_speed(speed), m_target(glm::vec3(0.0f)), m_radius(10.0f), m_theta(0.0f), m_phi(0.0f) {}
 
 glm::mat4 Camera::getViewMatrix() const
 {
-    return glm::lookAt(position, target, up);
+    return glm::lookAt(m_position, m_target, m_up);
 }
 
 void Camera::key_callback(int key, int scancode, int action, int mods)
 {
     if (action == 1)
     {
-        keyStates[scancode] = true;
+        m_keyStates[scancode] = true;
     }
     else if (action == 0)
     {
-        keyStates[scancode] = false;
-    }
-    // std::cout << "scancode " << scancode << std::endl;
-}
-
-void Camera::processInput()
-{
-    if (keyStates[336])
-    {
-        phi += 0.01f;
-        if (phi > glm::radians(89.0f))
-            phi = glm::radians(89.0f);
-        updatePosition();
-    }
-    if (keyStates[328])
-    {
-        phi -= 0.01f;
-        if (phi < glm::radians(1.0f))
-            phi = glm::radians(1.0f);
-        updatePosition();
-    }
-    if (keyStates[331])
-    {
-        theta += 0.01f;
-        updatePosition();
-    }
-    if (keyStates[333])
-    {
-        theta -= 0.01f;
-        updatePosition();
+        m_keyStates[scancode] = false;
     }
 }
 
-void Camera::updatePosition()
+void Camera::processInput()  // Calculs et réalisation des mouvements de la Caméra
 {
-    position.x = target.x + radius * sin(phi) * cos(theta);
-    position.y = target.y + radius * cos(phi);
-    position.z = target.z + radius * sin(phi) * sin(theta);
+    if (m_keyStates[336])
+    {
+        m_phi += 0.01f;
+        if (m_phi > glm::radians(89.0f))
+            m_phi = glm::radians(89.0f);
+        updatePosition();
+    }
+    if (m_keyStates[328])
+    {
+        m_phi -= 0.01f;
+        if (m_phi < glm::radians(1.0f))
+            m_phi = glm::radians(1.0f);
+        updatePosition();
+    }
+    if (m_keyStates[331])
+    {
+        m_theta += 0.01f;
+        updatePosition();
+    }
+    if (m_keyStates[333])
+    {
+        m_theta -= 0.01f;
+        updatePosition();
+    }
+}
 
-    front = glm::normalize(target - position);
+void Camera::updatePosition() // Adaptation de la position en fonction des mouvements de la caméra
+{
+    m_position.x = m_target.x + m_radius * sin(m_phi) * cos(m_theta);
+    m_position.y = m_target.y + m_radius * cos(m_phi);
+    m_position.z = m_target.z + m_radius * sin(m_phi) * sin(m_theta);
+
+    m_front = glm::normalize(m_target - m_position);
 }
 
 glm::vec3 Camera::getPosition() const {
-    return position; 
+    return m_position; 
 }

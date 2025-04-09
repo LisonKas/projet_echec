@@ -9,7 +9,7 @@
 void Renderer3D::initialize() {
     m_skybox.InitializeSkybox();
     init_pieces();
-    m_Shader = new Shader("../../src/3D/shaders/chessboard.vs.glsl",  "../../src/3D/shaders/chessboard.fs.glsl");
+    m_Shader = new Shader("../../src/3D/shaders/model.vs.glsl",  "../../src/3D/shaders/model.fs.glsl");
     m_chessboard = new ObjModel("../../models/lison_chessboard.obj", "../../models/lison_chessboard.mtl");
 }
 
