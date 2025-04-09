@@ -5,15 +5,15 @@
 #include <glm/glm.hpp>
 
 class Material {
-public:
-    std::string name;
-    glm::vec3 Ka; // Ambient color
-    glm::vec3 Kd; // Diffuse color
-    glm::vec3 Ks; // Specular color
-    float Ns;     // Specular exponent
-    GLuint textureID;
+    public:
+        std::string name;
+        glm::vec3 Ka; // Ambient color
+        glm::vec3 Kd; // Diffuse color
+        glm::vec3 Ks; // Specular color
+        float Ns;     // Specular exponent
+        GLuint textureID;
 
-    Material() : textureID(0) {}
+        Material() : textureID(0) {}
 
-    void loadTexture(const std::string& path);
+        void loadTexture(const std::string& path);
 };

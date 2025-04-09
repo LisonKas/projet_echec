@@ -33,7 +33,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     int success;
     char infoLog[512];
 
-    // Compilation du vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
@@ -43,7 +42,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
         std::cerr << "Erreur de compilation du vertex shader : " << infoLog << std::endl;
     }
 
-    // Compilation du fragment shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
@@ -53,7 +51,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
         std::cerr << "Erreur de compilation du fragment shader : " << infoLog << std::endl;
     }
 
-    // Création du programme shader
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
@@ -68,10 +65,15 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glDeleteShader(fragment);
 }
 
+Shader::~Shader() {
+    glDeleteProgram(ID);
+}
+
 void Shader::use() {
     glUseProgram(ID);
 }
 
+// SETTERS
 void Shader::setMat4(const std::string& name, const float* value) {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
@@ -88,8 +90,9 @@ void Shader::setInt(const std::string& name, int value) const {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-Shader::~Shader() {
-    glDeleteProgram(ID);
+void Shader::setBool(const std::string& name, bool value) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    glUniform1i(location, (int)value);
 }
 
 void Shader::checkCompileErrors(GLuint shader, std::string type) {

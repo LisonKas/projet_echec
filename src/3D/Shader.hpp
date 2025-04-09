@@ -8,20 +8,19 @@
 #include <iostream>
 
 class Shader {
-public:
-    GLuint ID;
+    public:
+        GLuint ID;
 
-    Shader(const char* vertexPath, const char* fragmentPath);
-    void use();
-    void setMat4(const std::string& name, const float* value);
-    void setVec3(const std::string& name, const glm::vec3& value) const;
-    void setFloat(const std::string& name, float value) const;
-    void setInt(const std::string& name, int value) const;
-    void setBool(const std::string& name, bool value) const {
-        GLint location = glGetUniformLocation(ID, name.c_str());
-        glUniform1i(location, (int)value);
-    }
-    ~Shader();
+        Shader(const char* vertexPath, const char* fragmentPath);
+        ~Shader();
+
+        void use();
+
+        void setMat4(const std::string& name, const float* value);
+        void setVec3(const std::string& name, const glm::vec3& value) const;
+        void setFloat(const std::string& name, float value) const;
+        void setInt(const std::string& name, int value) const;
+        void setBool(const std::string& name, bool value) const; 
 
     private:
         void checkCompileErrors(GLuint shader, std::string type);
