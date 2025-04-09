@@ -9,7 +9,7 @@
 
 class Shader {
     public:
-        GLuint ID;
+        GLuint m_ID;
 
         Shader(const char* vertexPath, const char* fragmentPath);
         ~Shader();
