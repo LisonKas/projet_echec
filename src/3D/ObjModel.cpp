@@ -4,9 +4,6 @@
 #include <iostream>
 #include <algorithm>
 #include "glm/fwd.hpp"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 ObjModel::ObjModel(const std::string& path, const std::string& mtlPath) {
     loadObj(path);
@@ -15,14 +12,14 @@ ObjModel::ObjModel(const std::string& path, const std::string& mtlPath) {
 }
 
 ObjModel::~ObjModel() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_EBO);
 }
 
 void ObjModel::draw(Shader& shader) { 
-    glBindVertexArray(VAO);
-    for (const auto& materialPair : materials) {
+    glBindVertexArray(m_VAO);
+    for (const auto& materialPair : m_materials) {
         const Material& material = materialPair.second;
         shader.setVec3("Ka", material.Ka);
         shader.setVec3("Kd", material.Kd);
@@ -38,8 +35,7 @@ void ObjModel::draw(Shader& shader) {
             shader.setInt("texture1", 0);
         }
 
-        // Draw the part of the mesh with this material
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
 }
@@ -84,11 +80,11 @@ void ObjModel::loadObj(const std::string& path) {
                 vss >> posIndex >> texIndex >> normIndex;
 
                 Vertex vert;
-                vert.position = temp_positions[posIndex - 1];
-                vert.texCoord = temp_texcoords[texIndex - 1];
-                vert.normal   = temp_normals[normIndex - 1];
-                vertices.push_back(vert);
-                indices.push_back(indices.size());
+                vert.m_position = temp_positions[posIndex - 1];
+                vert.m_texCoord = temp_texcoords[texIndex - 1];
+                vert.m_normal   = temp_normals[normIndex - 1];
+                m_vertices.push_back(vert);
+                m_indices.push_back(m_indices.size());
             }
         }
     }
@@ -109,42 +105,42 @@ void ObjModel::loadMtl(const std::string& path) {
 
         if (prefix == "newmtl") {
             iss >> currentMaterialName;
-            materials[currentMaterialName] = Material();
+            m_materials[currentMaterialName] = Material();
         } else if (prefix == "Ka") {
-            iss >> materials[currentMaterialName].Ka.r >> materials[currentMaterialName].Ka.g >> materials[currentMaterialName].Ka.b;
+            iss >> m_materials[currentMaterialName].Ka.r >> m_materials[currentMaterialName].Ka.g >> m_materials[currentMaterialName].Ka.b;
         } else if (prefix == "Kd") {
-            iss >> materials[currentMaterialName].Kd.r >> materials[currentMaterialName].Kd.g >> materials[currentMaterialName].Kd.b;
+            iss >> m_materials[currentMaterialName].Kd.r >> m_materials[currentMaterialName].Kd.g >> m_materials[currentMaterialName].Kd.b;
         } else if (prefix == "Ks") {
-            iss >> materials[currentMaterialName].Ks.r >> materials[currentMaterialName].Ks.g >> materials[currentMaterialName].Ks.b;
+            iss >> m_materials[currentMaterialName].Ks.r >> m_materials[currentMaterialName].Ks.g >> m_materials[currentMaterialName].Ks.b;
         } else if (prefix == "Ns") {
-            iss >> materials[currentMaterialName].Ns;
+            iss >> m_materials[currentMaterialName].Ns;
         } else if (prefix == "map_Kd") {
             std::string texturePath;
             iss >> texturePath;
-            materials[currentMaterialName].loadTexture(texturePath);
+            m_materials[currentMaterialName].loadTexture(texturePath);
         }
     }
 }
 
 void ObjModel::setupMesh() {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBindVertexArray(m_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), m_indices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_position));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_normal));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_texCoord));
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);

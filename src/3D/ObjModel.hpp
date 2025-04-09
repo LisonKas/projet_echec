@@ -9,25 +9,25 @@
 #include "Shader.hpp"
 
 class ObjModel {
-public:
-    ObjModel(const std::string& path, const std::string& mtlPath);
-    ~ObjModel();
+    public:
+        ObjModel(const std::string& path, const std::string& mtlPath);
+        ~ObjModel();
 
-    void draw(Shader& shader);
+        void draw(Shader& shader);
 
-private:
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec3 normal;
-        glm::vec2 texCoord;
-    };
+    private:
+        struct Vertex {
+            glm::vec3 m_position;
+            glm::vec3 m_normal;
+            glm::vec2 m_texCoord;
+        };
 
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-    std::unordered_map<std::string, Material> materials;
-    GLuint VAO = 0, VBO = 0, EBO = 0;
+        std::vector<Vertex> m_vertices;
+        std::vector<unsigned int> m_indices;
+        std::unordered_map<std::string, Material> m_materials;
+        GLuint m_VAO = 0, m_VBO = 0, m_EBO = 0;
 
-    void loadObj(const std::string& path);
-    void loadMtl(const std::string& path);
-    void setupMesh();
+        void loadObj(const std::string& path);
+        void loadMtl(const std::string& path);
+        void setupMesh();
 };
