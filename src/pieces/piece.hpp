@@ -21,27 +21,18 @@ private:
     std::pair<int, int> m_coords;
     PieceType           m_type;
 
-    // INTERNAL
-    void                             displayMovement();
-    std::vector<std::pair<int, int>> getPawnZone(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getRookZone(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getBishopZone(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getQueenZone(std::vector<std::vector<Square>>* board) const;
-    std::vector<std::pair<int, int>> getKnightZone() const;
-    std::vector<std::pair<int, int>> getKingZone() const;
-
 public:
     // CONSTRUCTORS / DESTRUCTOR
     Piece() = default;
-    Piece(bool team, std::pair<int, int> coords, PieceType type);
+    Piece(bool team, const std::pair<int, int>& coords, PieceType type);
     ~Piece();
 
     // GETTERS
-    std::pair<int, int>              getCoords() const;
+    const std::pair<int, int>&       getCoords() const;
     bool                             getTeam() const;
-    bool                             getStatus();
+    bool                             getStatus() const;
     PieceType                        getType() const;
-    std::vector<std::pair<int, int>> getZone(std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getZone(const std::vector<std::vector<Square>>* board) const;
 
     // SETTERS
     void setStatus(bool status);
@@ -49,6 +40,13 @@ public:
 
     // ACTIONS
     void move(const std::pair<int, int>& newCoords);
-    void take(Piece enemy);
-    void promote();
+
+private:
+    // DETECTION DES ZONES
+    std::vector<std::pair<int, int>> getPawnZone(const std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getRookZone(const std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getBishopZone(const std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getKnightZone() const;
+    std::vector<std::pair<int, int>> getQueenZone(const std::vector<std::vector<Square>>* board) const;
+    std::vector<std::pair<int, int>> getKingZone() const;
 };

@@ -1,37 +1,35 @@
 #include "piece.hpp"
 #include <array>
 
-// CONSTRUCTOR
-
-Piece::Piece(bool team, std::pair<int, int> coords, PieceType type)
+// CONSTRUCTORS
+Piece::Piece(bool team, const std::pair<int, int>& coords, PieceType type)
     : m_team(team), m_direction(1 - 2 * m_team), m_status(true), m_coords(coords), m_type(type) {}
 
 // DESTRUCTOR
-
 Piece::~Piece() {}
 
 // GETTERS
-
-std::pair<int, int> Piece::getCoords() const
+const std::pair<int, int>& Piece::getCoords() const
 {
     return m_coords;
 }
+
 PieceType Piece::getType() const
 {
     return m_type;
 }
+
 bool Piece::getTeam() const
 {
     return m_team;
 }
 
-bool Piece::getStatus()
+bool Piece::getStatus() const
 {
     return m_status;
 }
 
 // SETTERS
-
 void Piece::setStatus(bool status)
 {
     m_status = status;
@@ -42,9 +40,9 @@ void Piece::setType(PieceType newType)
     m_type = newType;
 }
 
-// DETECTION DES ZONES
+// DÉTECTION DES ZONES
 
-std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getZone(const std::vector<std::vector<Square>>* board) const
 {
     switch (m_type)
     {
@@ -65,16 +63,18 @@ std::vector<std::pair<int, int>> Piece::getZone(std::vector<std::vector<Square>>
     }
 }
 
-std::vector<std::pair<int, int>> Piece::getPawnZone(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getPawnZone(const std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
     int                              nextRow = m_coords.first + m_direction;
     int                              col     = m_coords.second;
 
+    // Déplacements en avant
     if (nextRow >= 0 && nextRow < 8 && !(*board)[nextRow][col].isOccupied())
     {
         zone.push_back({nextRow, col});
 
+        // 1er mouvement
         if (m_coords.first == (m_team ? 6 : 1))
         {
             int twoStepRow = nextRow + m_direction;
@@ -85,10 +85,10 @@ std::vector<std::pair<int, int>> Piece::getPawnZone(std::vector<std::vector<Squa
         }
     }
 
-    int shift;
+    // Captures en diagonal
     for (int i = 0; i < 2; ++i)
     {
-        shift          = (i == 0) ? -1 : 1;
+        int shift      = (i == 0) ? -1 : 1;
         int captureCol = col + shift;
         if (captureCol >= 0 && captureCol < 8 && (*board)[nextRow][captureCol].isOccupied())
         {
@@ -99,18 +99,17 @@ std::vector<std::pair<int, int>> Piece::getPawnZone(std::vector<std::vector<Squa
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getRookZone(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getRookZone(const std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>>             zone;
+    std::vector<std::pair<int, int>> zone;
+    // Respectivement haut, bas, gauche, droite
     constexpr std::array<std::pair<int, int>, 4> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}};
 
     int row = m_coords.first;
     int col = m_coords.second;
 
-    std::pair<int, int> direction;
-    for (int i = 0; i < directions.size(); ++i)
+    for (const auto& direction : directions)
     {
-        direction  = directions[i];
         int rShift = direction.first;
         int cShift = direction.second;
 
@@ -131,20 +130,17 @@ std::vector<std::pair<int, int>> Piece::getRookZone(std::vector<std::vector<Squa
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getBishopZone(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getBishopZone(const std::vector<std::vector<Square>>* board) const
 {
     std::vector<std::pair<int, int>> zone;
-    int                              row, col;
 
-    int rShift, cShift;
-    for (int i = 0; i < 2; ++i)
+    // Diagonales
+    for (int rShift : {-1, 1})
     {
-        rShift = (i == 0) ? -1 : 1;
-        for (int j = 0; j < 2; ++j)
+        for (int cShift : {-1, 1})
         {
-            cShift = (j == 0) ? -1 : 1;
-            row    = m_coords.first + rShift;
-            col    = m_coords.second + cShift;
+            int row = m_coords.first + rShift;
+            int col = m_coords.second + cShift;
 
             while (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
@@ -157,23 +153,22 @@ std::vector<std::pair<int, int>> Piece::getBishopZone(std::vector<std::vector<Sq
             }
         }
     }
+
     return zone;
 }
 
 std::vector<std::pair<int, int>> Piece::getKnightZone() const
 {
     std::vector<std::pair<int, int>> zone;
-
-    std::vector<std::pair<int, int>> directions = {
+    // Déplacements en L possibles
+    const std::vector<std::pair<int, int>> directions = {
         {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
     };
 
-    std::pair<int, int> direction;
-    for (int i = 0; i < directions.size(); ++i)
+    for (const auto& dir : directions)
     {
-        direction = directions[i];
-        int row   = m_coords.first + direction.first;
-        int col   = m_coords.second + direction.second;
+        int row = m_coords.first + dir.first;
+        int col = m_coords.second + dir.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
@@ -184,30 +179,25 @@ std::vector<std::pair<int, int>> Piece::getKnightZone() const
     return zone;
 }
 
-std::vector<std::pair<int, int>> Piece::getQueenZone(std::vector<std::vector<Square>>* board) const
+std::vector<std::pair<int, int>> Piece::getQueenZone(const std::vector<std::vector<Square>>* board) const
 {
-    std::vector<std::pair<int, int>> zone;
-
-    auto rookZone = getRookZone(board);
-    zone.insert(zone.end(), rookZone.begin(), rookZone.end());
-
-    auto bishopZone = getBishopZone(board);
+    std::vector<std::pair<int, int>> zone       = getRookZone(board);
+    std::vector<std::pair<int, int>> bishopZone = getBishopZone(board);
     zone.insert(zone.end(), bishopZone.begin(), bishopZone.end());
-
     return zone;
 }
 
 std::vector<std::pair<int, int>> Piece::getKingZone() const
 {
     std::vector<std::pair<int, int>>             zone;
-    constexpr std::array<std::pair<int, int>, 8> directions = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}};
+    constexpr std::array<std::pair<int, int>, 8> directions = {
+        {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}
+    };
 
-    std::pair<int, int> direction;
-    for (int i = 0; i < directions.size(); ++i)
+    for (const auto& dir : directions)
     {
-        direction = directions[i];
-        int row   = m_coords.first + direction.first;
-        int col   = m_coords.second + direction.second;
+        int row = m_coords.first + dir.first;
+        int col = m_coords.second + dir.second;
 
         if (row >= 0 && row < 8 && col >= 0 && col < 8)
         {
