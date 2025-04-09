@@ -155,6 +155,7 @@ void Skybox::DrawSkybox(const float* view, const float* projection) { // Apparit
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Texture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glEnable(GL_DEPTH_TEST);
 }
 
 GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
