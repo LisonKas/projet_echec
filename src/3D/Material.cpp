@@ -7,8 +7,6 @@
 void Material::loadTexture(const std::string& texturePath) {
     std::filesystem::path path(texturePath);
     
-    std::cout << "Loading texture: " << path.string() << std::endl;
-    
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         std::cerr << "Failed to open texture file: " << path.string() << std::endl;
@@ -27,6 +25,7 @@ void Material::loadTexture(const std::string& texturePath) {
     int imageSize   = *(int*)&(header[0x22]);
     int width       = *(int*)&(header[0x12]);
     int height      = *(int*)&(header[0x16]);
+    int bitCount   = *reinterpret_cast<short*>(&header[28]);
     
     if (imageSize == 0)    
         imageSize = width * height * 3; 
@@ -49,8 +48,13 @@ void Material::loadTexture(const std::string& texturePath) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data());
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (bitCount == 24)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data());
+    }
+    else {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data.data());
+    }
     
-    std::cout << "Texture loaded successfully: " << width << "x" << height << " (ID: " << textureID << ")" << std::endl;
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
