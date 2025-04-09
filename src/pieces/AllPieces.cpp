@@ -3,9 +3,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-// #include "../lois/Uniform_Discreet_Law.hpp"
 #include "piece.hpp"
-#include "quick_imgui/quick_imgui.hpp"
 
 std::vector<std::pair<std::string, std::string>> piecePaths;
 std::map<std::string, GLuint>                    m_textures;
@@ -94,94 +92,54 @@ void AllPieces::InitializeAllPieces()
     m_white_pieces.clear();
     for (int j{0}; j < 8; j++)
     {
-        this->m_black_pieces.push_back(Piece(false, {1, j}, PieceType::Pawn));
+        m_black_pieces.push_back(Piece(false, {1, j}, PieceType::Pawn));
     }
     for (int i{0}; i < 2; i++)
     {
-        this->m_black_pieces.push_back(Piece(false, {0, i * 7}, PieceType::Rook));
+        m_black_pieces.push_back(Piece(false, {0, i * 7}, PieceType::Rook));
         int pos_knight = i == 0 ? 1 : 6, pos_bishop = i == 0 ? 2 : 5;
-        this->m_black_pieces.push_back(Piece(false, {0, pos_knight}, PieceType::Knight));
-        this->m_black_pieces.push_back(Piece(false, {0, pos_bishop}, PieceType::Bishop));
+        m_black_pieces.push_back(Piece(false, {0, pos_knight}, PieceType::Knight));
+        m_black_pieces.push_back(Piece(false, {0, pos_bishop}, PieceType::Bishop));
     }
-    this->m_black_pieces.push_back(Piece(false, {0, 4}, PieceType::Queen));
-    this->m_black_pieces.push_back(Piece(false, {0, 3}, PieceType::King));
+    m_black_pieces.push_back(Piece(false, {0, 4}, PieceType::Queen));
+    m_black_pieces.push_back(Piece(false, {0, 3}, PieceType::King));
 
     for (int j{0}; j < 8; j++)
     {
-        this->m_white_pieces.push_back(Piece(true, {6, j}, PieceType::Pawn));
+        m_white_pieces.push_back(Piece(true, {6, j}, PieceType::Pawn));
     }
     for (int i{0}; i < 2; i++)
     {
-        this->m_white_pieces.push_back(Piece(true, {7, i * 7}, PieceType::Rook));
+        m_white_pieces.push_back(Piece(true, {7, i * 7}, PieceType::Rook));
         int pos_knight = i == 0 ? 1 : 6, pos_bishop = i == 0 ? 2 : 5;
-        this->m_white_pieces.push_back(Piece(true, {7, pos_knight}, PieceType::Knight));
-        this->m_white_pieces.push_back(Piece(true, {7, pos_bishop}, PieceType::Bishop));
+        m_white_pieces.push_back(Piece(true, {7, pos_knight}, PieceType::Knight));
+        m_white_pieces.push_back(Piece(true, {7, pos_bishop}, PieceType::Bishop));
     }
-    this->m_white_pieces.push_back(Piece(true, {7, 4}, PieceType::Queen));
-    this->m_white_pieces.push_back(Piece(true, {7, 3}, PieceType::King));
+    m_white_pieces.push_back(Piece(true, {7, 4}, PieceType::Queen));
+    m_white_pieces.push_back(Piece(true, {7, 3}, PieceType::King));
 
-    // load les textures de pieces 2D
-    piecePaths = {
-        {"B_Pawn", "../../images/2D/Blacks/black-pawn.bmp"},
-        {"B_Rook", "../../images/2D/Blacks/black-rook.bmp"},
-        {"B_Knight", "../../images/2D/Blacks/black-knight.bmp"},
-        {"B_Bishop", "../../images/2D/Blacks/black-bishop.bmp"},
-        {"B_Queen", "../../images/2D/Blacks/black-queen.bmp"},
-        {"B_King", "../../images/2D/Blacks/black-king.bmp"},
-        {"W_Pawn", "../../images/2D/Whites/white-pawn.bmp"},
-        {"W_Rook", "../../images/2D/Whites/white-rook.bmp"},
-        {"W_Knight", "../../images/2D/Whites/white-knight.bmp"},
-        {"W_Bishop", "../../images/2D/Whites/white-bishop.bmp"},
-        {"W_Queen", "../../images/2D/Whites/white-queen.bmp"},
-        {"W_King", "../../images/2D/Whites/white-king.bmp"}
-    };
+    // Charger les textures des pièces 2D
+    piecePaths.push_back(std::make_pair("B_Pawn", "../../images/2D/Blacks/black-pawn.bmp"));
+    piecePaths.push_back(std::make_pair("B_Rook", "../../images/2D/Blacks/black-rook.bmp"));
+    piecePaths.push_back(std::make_pair("B_Knight", "../../images/2D/Blacks/black-knight.bmp"));
+    piecePaths.push_back(std::make_pair("B_Bishop", "../../images/2D/Blacks/black-bishop.bmp"));
+    piecePaths.push_back(std::make_pair("B_Queen", "../../images/2D/Blacks/black-queen.bmp"));
+    piecePaths.push_back(std::make_pair("B_King", "../../images/2D/Blacks/black-king.bmp"));
+    piecePaths.push_back(std::make_pair("W_Pawn", "../../images/2D/Whites/white-pawn.bmp"));
+    piecePaths.push_back(std::make_pair("W_Rook", "../../images/2D/Whites/white-rook.bmp"));
+    piecePaths.push_back(std::make_pair("W_Knight", "../../images/2D/Whites/white-knight.bmp"));
+    piecePaths.push_back(std::make_pair("W_Bishop", "../../images/2D/Whites/white-bishop.bmp"));
+    piecePaths.push_back(std::make_pair("W_Queen", "../../images/2D/Whites/white-queen.bmp"));
+    piecePaths.push_back(std::make_pair("W_King", "../../images/2D/Whites/white-king.bmp"));
 
-    for (const auto& piecePath : piecePaths)
+    for (size_t i = 0; i < piecePaths.size(); ++i)
     {
-        m_textures[piecePath.first] = LoadTexture(piecePath.second.c_str());
+        m_textures[piecePaths[i].first] = LoadTexture(piecePaths[i].second.c_str());
     }
 }
 
-GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
+GLuint AllPieces::PiecesAppear(int x, int y)
 {
-    // for (const auto& piece : m_black_pieces)
-    // {
-    //     if (piece.getCoords() == std::make_pair(x, y))
-    //     {
-    //         switch (piece.getType())
-    //         {
-    //         case PieceType::Pawn: return "B_Pawn";
-    //         case PieceType::Rook: return "B_Rook";
-    //         case PieceType::Knight: return "B_Knight";
-    //         case PieceType::Bishop: return "B_Bishop";
-    //         case PieceType::Queen: return "B_Queen";
-    //         case PieceType::King: return "B_King";
-    //         default:
-    //             return "";
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // for (const auto& piece : m_white_pieces)
-    // {
-    //     if (piece.getCoords() == std::make_pair(x, y))
-    //     {
-    //         switch (piece.getType())
-    //         {
-    //         case PieceType::Pawn: return "W_Pawn";
-    //         case PieceType::Rook: return "W_Rook";
-    //         case PieceType::Knight: return "W_Knight";
-    //         case PieceType::Bishop: return "W_Bishop";
-    //         case PieceType::Queen: return "W_Queen";
-    //         case PieceType::King: return "W_King";
-    //         default:
-    //             return "";
-    //             break;
-    //         }
-    //     }
-    // }
-    // return "";
     for (const auto& piece : m_black_pieces)
     {
         if (piece.getCoords() == std::make_pair(x, y))
@@ -195,9 +153,7 @@ GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
             case PieceType::Bishop: textureKey += "Bishop"; break;
             case PieceType::Queen: textureKey += "Queen"; break;
             case PieceType::King: textureKey += "King"; break;
-            default:
-                textureKey += "";
-                break;
+            default: break;
             }
             return m_textures[textureKey];
         }
@@ -216,9 +172,7 @@ GLuint AllPieces::PiecesAppear(int x, int y) // GLuint ou //std::string
             case PieceType::Bishop: textureKey += "Bishop"; break;
             case PieceType::Queen: textureKey += "Queen"; break;
             case PieceType::King: textureKey += "King"; break;
-            default:
-                textureKey += "";
-                break;
+            default: break;
             }
             return m_textures[textureKey];
         }
@@ -247,18 +201,6 @@ Piece* AllPieces::GetPieceAt(std::pair<int, int> coords)
 
 void AllPieces::RemovePieceAt(std::pair<int, int> coords)
 {
-    // auto removePiece = [&](std::vector<Piece>& pieces) {
-    //     auto it = std::remove_if(pieces.begin(), pieces.end(), [&](const Piece& piece) {
-    //         return piece.getCoords() == coords;
-    //     });
-    //     if (it != pieces.end())
-    //     {
-    //         pieces.erase(it, pieces.end());
-    //     }
-    // };
-
-    // removePiece(m_black_pieces);
-    // removePiece(m_white_pieces);
     for (size_t i = 0; i < m_black_pieces.size(); ++i)
     {
         if (m_black_pieces[i].getCoords() == coords)
