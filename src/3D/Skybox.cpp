@@ -63,11 +63,11 @@ std::string default_path   = skybox_paths[selected_index];
 
 // Noms des images de Skybox
 std::vector<std::string> faces = {
-    "px.bmp",
+    "nz.bmp",
     "pz.bmp",
     "py.bmp",
     "ny.bmp",
-    "nz.bmp",
+    "px.bmp",
     "nx.bmp"
 };
 
