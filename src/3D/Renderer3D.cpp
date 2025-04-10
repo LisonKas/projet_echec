@@ -138,8 +138,7 @@ void Renderer3D::setPieceModel(Piece* piece)
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
-void Renderer3D::render()
-{
+void Renderer3D::render(bool teamPlaying) {
     // La loop pour dessiner les éléments
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,7 +163,13 @@ void Renderer3D::render()
     // uniform light
     m_Shader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 0.0f));
     m_Shader->setVec3("viewPos", m_camera.getPosition());
-    m_Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    if(teamPlaying){
+        m_Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+    else {
+        m_Shader->setVec3("lightColor", glm::vec3(0.5f, 0.8f, 0.5f));
+    }
+    
 
     m_chessboard->draw(*m_Shader);
 

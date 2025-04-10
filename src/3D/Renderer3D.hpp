@@ -24,7 +24,7 @@ private:
 public:
     void initialize();
     void init_pieces();
-    void render();
+    void render(bool teamPlaying);
     void close();
 
     void        setPieces(AllPieces* pieces);
