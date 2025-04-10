@@ -6,13 +6,11 @@ std::unordered_map<int, bool> Camera::m_keyStates; // Pour enregistrer les actio
 Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed)
     : m_position(position), m_front(front), m_up(up), m_speed(speed), m_target(glm::vec3(0.0f)), m_radius(10.0f), m_theta(0.0f), m_phi(0.0f) {}
 
-glm::mat4 Camera::getViewMatrix() const
-{
+glm::mat4 Camera::getViewMatrix() const {
     return glm::lookAt(m_position, m_target, m_up);
 }
 
-void Camera::key_callback(int key, int scancode, int action, int mods)
-{
+void Camera::key_callback(int key, int scancode, int action, int mods) {
     if (action == 1)
     {
         m_keyStates[scancode] = true;
@@ -23,8 +21,7 @@ void Camera::key_callback(int key, int scancode, int action, int mods)
     }
 }
 
-void Camera::processInput()  // Calculs et réalisation des mouvements de la Caméra
-{
+void Camera::processInput() { // Calculs et réalisation des mouvements de la Caméra 
     ////////////////// WINDOWS ////////////////// WINDOWS //////////////////////// WINDOWS /////////////////////////
     if (m_keyStates[336])
     {
@@ -80,8 +77,7 @@ void Camera::processInput()  // Calculs et réalisation des mouvements de la Cam
     ///////////////////   LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
 }
 
-void Camera::updatePosition() // Adaptation de la position en fonction des mouvements de la caméra
-{
+void Camera::updatePosition() { // Adaptation de la position en fonction des mouvements de la caméra
     m_position.x = m_target.x + m_radius * sin(m_phi) * cos(m_theta);
     m_position.y = m_target.y + m_radius * cos(m_phi);
     m_position.z = m_target.z + m_radius * sin(m_phi) * sin(m_theta);

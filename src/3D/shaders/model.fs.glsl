@@ -45,7 +45,7 @@ void main()
     vec3 specular2 = Ks * spec2 * lightColor2;
     
     vec3 texColor;
-    if (useTexture != 0) {
+    if (useTexture != 0) {  // Est-ce que mon vertex utilise une texture ?
         vec2 uv = TexCoord;
         texColor = texture(texture1, uv).rgb;
     } else {

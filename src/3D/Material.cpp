@@ -4,7 +4,7 @@
 #include <iostream>
 #include <filesystem>
 
-void Material::loadTexture(const std::string& texturePath) {
+void Material::loadTexture(const std::string& texturePath) {  // Load les textures de mtlFiles
     std::filesystem::path path(texturePath);
     
     std::ifstream file(path, std::ios::binary);

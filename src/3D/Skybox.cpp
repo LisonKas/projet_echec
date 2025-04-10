@@ -71,8 +71,7 @@ std::vector<std::string> faces = {
     "nx.bmp"
 };
 
-unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
-{
+unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels) {  // Load des textures pour la skybox
     std::ifstream file(filename, std::ios::binary);
     if (!file)
     {
@@ -136,8 +135,7 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
     return data;
 }
 
-void Skybox::InitializeSkybox()
-{ // Initialisation des VAO, VBO et du shader de la skybox
+void Skybox::InitializeSkybox() { // Initialisation des VAO, VBO et du shader de la skybox
     glGenVertexArrays(1, &this->m_VAO);
     glGenBuffers(1, &this->m_VBO);
     glBindVertexArray(this->m_VAO);
@@ -154,8 +152,7 @@ void Skybox::InitializeSkybox()
     this->m_Shader = new Shader("../../src/3D/shaders/shader.vs.glsl", "../../src/3D/shaders/shader.fs.glsl");
 }
 
-void Skybox::DrawSkybox(const float* view, const float* projection)
-{ // Apparition de la skybox
+void Skybox::DrawSkybox(const float* view, const float* projection) { // Apparition de la skybox
     glDisable(GL_DEPTH_TEST);
     m_Shader->use();
 
@@ -169,8 +166,7 @@ void Skybox::DrawSkybox(const float* view, const float* projection)
     glEnable(GL_DEPTH_TEST);
 }
 
-GLuint Skybox::loadCubemap()
-{ // Chargement des éléments de la skybox
+GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -202,8 +198,7 @@ GLuint Skybox::loadCubemap()
     return textureID;
 }
 
-void Skybox::Destroy()
-{
+void Skybox::Destroy() {
     delete m_Shader;
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
