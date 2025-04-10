@@ -39,33 +39,17 @@ float gaussian(int n)
     return std::clamp(result, 0.0f, 1.0f);
 }
 
-ImVec4 generateFancyDarkColor()
+// Loi exponentielle pour la promotion aléatoire
+float exponential(float lambda)
 {
-    float base = 0.1f;
-    float r    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
-    float g    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
-    float b    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
-
-    return ImVec4(r, g, b, 1.0f);
-}
-
-int tirageExponentialIndex(float lambda)
-{
-    float u = random(20); // Ton générateur binaire
-    float x = -std::log(u) / lambda;
-    return std::min(static_cast<int>(x), 3);
+    float u = random(20); // Génère un float entre 0 et 1
+    return -std::log(u) / lambda;
 }
 
 bool bernoulli(float p, int precision)
 {
     float r = random(precision);
     return r < p;
-}
-
-std::string promotionAleatoireExponentielle()
-{
-    std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
-    return pieces[tirageExponentialIndex()];
 }
 
 float random_uniform(int precision)

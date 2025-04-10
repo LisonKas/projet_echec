@@ -106,6 +106,16 @@ void App::resetGame()
     m_chessboard.InitializeBoardList();
 }
 
+std::string App::promotionAleatoireExponentielle()
+{
+    std::vector<std::string> pieces = {"Cavalier", "Fou", "Tour", "Reine"};
+
+    float x     = exponential();
+    int   index = std::min(static_cast<int>(x), 3);
+
+    return pieces[index];
+}
+
 void App::displayPromotion()
 {
     ImGui::OpenPopup("Promotion");
@@ -119,7 +129,6 @@ void App::displayPromotion()
         promotionButton("Fou", PieceType::Bishop);
         promotionButton("Cavalier", PieceType::Knight);
 
-        // Nouveau bouton de promotion aléatoire
         if (ImGui::Button("Promotion Aléatoire 🎲"))
         {
             promoteTo(promotionAleatoireExponentielle());

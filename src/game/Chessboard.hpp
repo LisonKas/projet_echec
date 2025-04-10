@@ -33,9 +33,10 @@ public:
     void ResetSelection();
 
     // Autres
-    void SetSquareColor(int i, int j);
-    void changeTurn();
-    bool GetTeamPlaying() const;
-    void PromotePawn(Piece* pawn);
-    void PlayCaptureSound();
+    void   SetSquareColor(int i, int j);
+    void   changeTurn();
+    bool   GetTeamPlaying() const;
+    void   PromotePawn(Piece* pawn);
+    void   PlayCaptureSound();
+    ImVec4 generateFancyDarkColor();
 };

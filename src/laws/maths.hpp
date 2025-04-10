@@ -12,13 +12,10 @@ bool bernoulli(float p, int precision = 20);
 
 float gaussian(int n = 6);
 
+float exponential(float lambda = 0.7675f);
+
 // Génère une couleur sombre et nuancée (utile pour l’échiquier)
 ImVec4 generateFancyDarkColor();
-
-// Tirage d’un entier ∈ {0,1,2,3} selon une loi exponentielle bornée
-int tirageExponentialIndex(float lambda = 0.7675f);
-
-std::string promotionAleatoireExponentielle();
 
 // Génère un float pseudo-aléatoire ∈ [0,1) (uniforme) avec une précision donnée
 float random_uniform(int precision = 20);

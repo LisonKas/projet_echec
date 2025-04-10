@@ -2,7 +2,6 @@
 #include "../3D/Renderer3D.hpp"
 #include "Chessboard.hpp"
 
-
 class App {
 private:
     Renderer3D m_renderer;
@@ -18,8 +17,9 @@ private:
     void promoteTo(const std::string& pieceChoisie);
 
 public:
-    void InitializeGame();
-    void StartGame();
-    void Update();
-    void CloseGame();
+    void        InitializeGame();
+    void        StartGame();
+    void        Update();
+    void        CloseGame();
+    std::string promotionAleatoireExponentielle();
 };

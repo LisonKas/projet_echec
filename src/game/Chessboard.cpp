@@ -27,6 +27,16 @@ void Chessboard::Reinitialize()
     m_selectedPiece = {-1, -1};
 }
 
+ImVec4 Chessboard::generateFancyDarkColor()
+{
+    float base = 0.1f;
+    float r    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
+    float g    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
+    float b    = std::clamp(base + gaussian() * 0.2f, 0.0f, 1.0f);
+
+    return ImVec4(r, g, b, 1.0f);
+}
+
 void Chessboard::InitializeBoardList()
 {
     Reinitialize();
