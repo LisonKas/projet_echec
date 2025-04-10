@@ -4,6 +4,7 @@
 #include "ObjModel.hpp"
 #include "Shader.hpp"
 #include "Skybox.hpp"
+#include <chrono>
 
 class Renderer3D {
 private:
@@ -20,6 +21,7 @@ private:
 
     std::map<Piece*, float> m_pieceSpeeds;    // Map pour stocker la vitesse de chaque pièce
     std::map<Piece*, float> m_pieceDurations; // Map pour stocker la durée de chaque déplacement de pièce
+    std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
 
 public:
     void initialize();

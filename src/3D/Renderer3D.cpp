@@ -139,6 +139,10 @@ void Renderer3D::setPieceModel(Piece* piece)
 }
 
 void Renderer3D::render(bool teamPlaying) {
+    float elapsed_time = std::chrono::duration<float>(
+        std::chrono::steady_clock::now() - m_startTime
+    ).count();
+
     // La loop pour dessiner les éléments
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -161,15 +165,17 @@ void Renderer3D::render(bool teamPlaying) {
     m_Shader->setMat4("projection", glm::value_ptr(projection));
     m_Shader->setMat4("model", &model[0][0]);
     // uniform light
-    m_Shader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 0.0f));
+    m_Shader->setVec3("lightPos1", glm::vec3(0.0f, 10.0f, 0.0f));
     m_Shader->setVec3("viewPos", m_camera.getPosition());
     if(teamPlaying){
-        m_Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_Shader->setVec3("lightColor1", glm::vec3(1.0f, 1.0f, 1.0f));
     }
     else {
-        m_Shader->setVec3("lightColor", glm::vec3(0.5f, 0.3f, 0.8f));
+        m_Shader->setVec3("lightColor1", glm::vec3(0.5f, 0.3f, 0.8f));
     }
     
+    m_Shader->setVec3("lightPos2", glm::vec3(6 * sin(elapsed_time * 0.8f), 2.0f, 6 * cos(elapsed_time * 0.8f)));
+    m_Shader->setVec3("lightColor2", glm::vec3(0.8f, 0.5f, 0.5f));
 
     m_chessboard->draw(*m_Shader);
 
