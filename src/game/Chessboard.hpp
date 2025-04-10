@@ -23,13 +23,6 @@ public:
     Piece*      selectedPawn       = nullptr; // Pion sélectionné pour promotion
 
 public:
-    // Constructeur avec initialisation du volume
-    Chessboard()
-        : m_soundVolume(50) {} // Volume initial à 50% (valeur entre 0 et 100)
-
-    // Setter pour changer le volume
-    void SetSoundVolume(int volume);
-
     // Création du plateau
     void Reinitialize();
     void InitializeBoardList();
