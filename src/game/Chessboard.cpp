@@ -9,6 +9,12 @@
 #include "../laws/maths.hpp"
 #include "glad/glad.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__linux__) || defined(__APPLE__)
+#include <filesystem>
+#endif
+
 // Création du plateau
 
 void Chessboard::Reinitialize()
@@ -62,7 +68,7 @@ void Chessboard::CreateBoard()
 {
     if (m_isGameOver)
     {
-        return; // Pour ne plus pouvoir bouger les pièces
+        return;
     }
 
     ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
@@ -76,7 +82,6 @@ void Chessboard::CreateBoard()
             ImGui::PushID(m_boardlist[i][j].m_id);
             GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
-            // Annulation avec clic droit
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
             {
                 ResetSelection();
@@ -119,11 +124,11 @@ void Chessboard::SetSquareColor(int i, int j)
 
     if (isHighlighted)
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f)); // Vert pour cases accessibles
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
     }
     else if (this->m_boardlist[i][j].m_color_light)
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f)); // Presque Blanc
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.9f, 0.9f, 1.0f));
     }
     else
     {
@@ -164,7 +169,6 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
         m_boardlist[destination.first][destination.second].m_is_occupied         = true;
         m_boardlist[m_selectedPiece.first][m_selectedPiece.second].m_is_occupied = false;
 
-        // Gestion de la promotion du pion
         if (selectedPiece->getType() == PieceType::Pawn && (destination.first == 0 || destination.first == 7) && !m_isGameOver)
         {
             std::cout << "Promoted!" << std::endl;
@@ -173,14 +177,26 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
     }
 }
 
+void Chessboard::SetSoundVolume(int volume)
+{
+    m_soundVolume = std::clamp(volume, 0, 100); // Assurer que le volume est entre 0 et 100
+}
+
 void Chessboard::PlayCaptureSound()
 {
+    SetSoundVolume(75); // Définit le volume à 75%
 #ifdef _WIN32
-    system("start /min ..\\..\\sound\\eat.wav");
+    // Windows : Volume réglé avec le contrôle du système
+    const char* path = "..\\..\\sound\\eat.wav";
+    ShellExecute(nullptr, "open", path, nullptr, nullptr, SW_HIDE);
 #elif __APPLE__
-    system("afplay ../../sound/eat.wav &");
-#else // Linux
-    system("aplay ../../sound/eat.wav &");
+    // macOS : Ajustement de la commande pour changer le volume global
+    std::string command = "osascript -e 'set volume output volume " + std::to_string(m_soundVolume) + "' && afplay \"" + std::string("../../sound/eat.wav") + "\" &";
+    system(command.c_str());
+#elif __linux__
+    // Linux : Utilisation de amixer pour régler le volume
+    std::string command = "amixer sset 'Master' " + std::to_string(m_soundVolume) + "% && aplay \"" + std::string("../../sound/eat.wav") + "\" &";
+    system(command.c_str());
 #endif
 }
 
@@ -192,7 +208,6 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
     if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
     {
         PlayCaptureSound();
-        // Détection de la victoire
         if (capturedPiece->getType() == PieceType::King)
         {
             m_isGameOver    = true;
@@ -215,7 +230,6 @@ void Chessboard::changeTurn()
 
 void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 {
-    // Si une pièce est sélectionnée et que le clic est sur une case valide
     if (m_selectedPiece != std::make_pair(-1, -1) && std::find(m_highlightedSquares.begin(), m_highlightedSquares.end(), clickedSquare) != m_highlightedSquares.end())
     {
         (m_pieces.GetPieceAt(clickedSquare)) ? CapturePiece(clickedSquare) : MovePiece(clickedSquare);
@@ -232,7 +246,6 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
         return;
     }
 
-    // Vérifie si c'est bien le tour de la couleur de la pièce sélectionnée
     if (selectedPiece->getTeam() != m_teamPlaying)
     {
         std::cerr << "Ce n'est pas votre tour !" << std::endl;
@@ -252,8 +265,6 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 void Chessboard::PromotePawn(Piece* pawn)
 {
     std::cout << "Popup Promotion appelé !" << std::endl;
-
-    // On active le flag pour afficher la promotion
     showPromotionPopup = true;
-    selectedPawn       = pawn; // On garde une référence à ce pion pour la promotion
+    selectedPawn       = pawn;
 }
