@@ -167,7 +167,7 @@ void Renderer3D::render(bool teamPlaying) {
         m_Shader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     }
     else {
-        m_Shader->setVec3("lightColor", glm::vec3(0.5f, 0.8f, 0.5f));
+        m_Shader->setVec3("lightColor", glm::vec3(0.5f, 0.3f, 0.8f));
     }
     
 
