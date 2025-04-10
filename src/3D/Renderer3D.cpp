@@ -138,30 +138,6 @@ void Renderer3D::setPieceModel(Piece* piece)
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
-float Renderer3D::calculateSpeed(Piece* piece, float distance)
-{
-    // Si c'est la première fois que la pièce se déplace, calculer la durée et la vitesse
-    if (m_pieceDurations.find(piece) == m_pieceDurations.end())
-    {
-        // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
-        float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
-
-        // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
-        float speed = distance / duration;
-
-        // Stocker la vitesse et la durée dans une map
-        m_pieceSpeeds[piece]    = speed;
-        m_pieceDurations[piece] = duration;
-
-        return speed;
-    }
-    else
-    {
-        // Si la pièce a déjà une vitesse calculée, la retourner
-        return m_pieceSpeeds[piece];
-    }
-}
-
 void Renderer3D::render(bool teamPlaying)
 {
     float elapsed_time = std::chrono::duration<float>(
@@ -229,8 +205,23 @@ void Renderer3D::render(bool teamPlaying)
             // Calculer la distance à parcourir
             float distance = glm::distance(currentPos, targetPos);
 
-            // Calculer la vitesse nécessaire pour le mouvement
-            float speed = calculateSpeed(piece, distance);
+            // Si c'est la première fois que la pièce se déplace, calculer la durée et la vitesse
+            if (m_pieceDurations.find(piece) == m_pieceDurations.end())
+            {
+                // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
+                float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
+
+                // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
+                float speed = distance / duration;
+
+                // Stocker la vitesse et la durée dans une map
+                m_pieceSpeeds[piece]    = speed;
+                m_pieceDurations[piece] = duration;
+            }
+
+            // Utiliser la vitesse stockée pour le mouvement
+            float speed = m_pieceSpeeds[piece];
+            std::cout << speed << std::endl;
 
             // Mettre à jour la position de la pièce en fonction de la vitesse
             currentPos = glm::mix(currentPos, targetPos, speed * ImGui::GetIO().DeltaTime);
