@@ -1,10 +1,11 @@
 #pragma once
+#include <chrono>
 #include "../pieces/AllPieces.hpp"
 #include "Camera.hpp"
 #include "ObjModel.hpp"
 #include "Shader.hpp"
 #include "Skybox.hpp"
-#include <chrono>
+
 
 class Renderer3D {
 private:
@@ -19,8 +20,8 @@ private:
 
     glm::vec3 getBoardPosition(int col, int row);
 
-    std::map<Piece*, float> m_pieceSpeeds;    // Map pour stocker la vitesse de chaque pièce
-    std::map<Piece*, float> m_pieceDurations; // Map pour stocker la durée de chaque déplacement de pièce
+    std::map<Piece*, float>               m_pieceSpeeds;    // Map pour stocker la vitesse de chaque pièce
+    std::map<Piece*, float>               m_pieceDurations; // Map pour stocker la durée de chaque déplacement de pièce
     std::chrono::steady_clock::time_point m_startTime = std::chrono::steady_clock::now();
 
 public:
@@ -34,4 +35,5 @@ public:
     void        update(AllPieces* pieces);
     std::string getModelName(Piece& piece, const std::string& color);
     void        setPieceModel(Piece* piece);
+    float       calculateSpeed(Piece* piece, float distance);
 };

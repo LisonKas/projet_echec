@@ -138,10 +138,36 @@ void Renderer3D::setPieceModel(Piece* piece)
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
-void Renderer3D::render(bool teamPlaying) {
+float Renderer3D::calculateSpeed(Piece* piece, float distance)
+{
+    // Si c'est la première fois que la pièce se déplace, calculer la durée et la vitesse
+    if (m_pieceDurations.find(piece) == m_pieceDurations.end())
+    {
+        // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
+        float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
+
+        // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
+        float speed = distance / duration;
+
+        // Stocker la vitesse et la durée dans une map
+        m_pieceSpeeds[piece]    = speed;
+        m_pieceDurations[piece] = duration;
+
+        return speed;
+    }
+    else
+    {
+        // Si la pièce a déjà une vitesse calculée, la retourner
+        return m_pieceSpeeds[piece];
+    }
+}
+
+void Renderer3D::render(bool teamPlaying)
+{
     float elapsed_time = std::chrono::duration<float>(
-        std::chrono::steady_clock::now() - m_startTime
-    ).count();
+                             std::chrono::steady_clock::now() - m_startTime
+    )
+                             .count();
 
     // La loop pour dessiner les éléments
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -167,13 +193,15 @@ void Renderer3D::render(bool teamPlaying) {
     // uniform light
     m_Shader->setVec3("lightPos1", glm::vec3(0.0f, 10.0f, 0.0f));
     m_Shader->setVec3("viewPos", m_camera.getPosition());
-    if(teamPlaying){
+    if (teamPlaying)
+    {
         m_Shader->setVec3("lightColor1", glm::vec3(1.0f, 1.0f, 1.0f));
     }
-    else {
+    else
+    {
         m_Shader->setVec3("lightColor1", glm::vec3(0.5f, 0.3f, 0.8f));
     }
-    
+
     m_Shader->setVec3("lightPos2", glm::vec3(6 * sin(elapsed_time * 0.8f), 2.0f, 6 * cos(elapsed_time * 0.8f)));
     m_Shader->setVec3("lightColor2", glm::vec3(0.8f, 0.5f, 0.5f));
 
@@ -201,22 +229,8 @@ void Renderer3D::render(bool teamPlaying) {
             // Calculer la distance à parcourir
             float distance = glm::distance(currentPos, targetPos);
 
-            // Si c'est la première fois que la pièce se déplace, calculer la durée et la vitesse
-            if (m_pieceDurations.find(piece) == m_pieceDurations.end())
-            {
-                // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
-                float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
-
-                // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
-                float speed = distance / duration;
-
-                // Stocker la vitesse et la durée dans une map
-                m_pieceSpeeds[piece]    = speed;
-                m_pieceDurations[piece] = duration;
-            }
-
-            // Utiliser la vitesse stockée pour le mouvement
-            float speed = m_pieceSpeeds[piece];
+            // Calculer la vitesse nécessaire pour le mouvement
+            float speed = calculateSpeed(piece, distance);
 
             // Mettre à jour la position de la pièce en fonction de la vitesse
             currentPos = glm::mix(currentPos, targetPos, speed * ImGui::GetIO().DeltaTime);
