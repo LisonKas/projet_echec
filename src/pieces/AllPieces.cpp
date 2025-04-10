@@ -54,9 +54,17 @@ GLuint LoadTexture(const char* path)
     {
         unsigned char* row1 = &data[y * rowSize];
         unsigned char* row2 = &data[(height - 1 - y) * rowSize];
+        ////////////////// WINDOWS ////////////////// WINDOWS //////////////////////// WINDOWS /////////////////////////
         std::memcpy(tempRow.data(), row1, rowSize);
         std::memcpy(row1, row2, rowSize);
         std::memcpy(row2, tempRow.data(), rowSize);
+        ///////////////// LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
+        /*
+            std::memcpy(tempRow.data(), row1, rowSize);
+            std::memcpy(row1, row2, rowSize);
+            std::memcpy(row2, tempRow.data(), rowSize);
+        */
+        /////////////// LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
     }
 
     GLuint textureID;

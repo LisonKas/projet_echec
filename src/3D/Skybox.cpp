@@ -118,10 +118,18 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
         unsigned char* topRow    = data + i * (*width) * (*nrChannels);
         unsigned char* bottomRow = data + (*height - 1 - i) * (*width) * (*nrChannels);
 
-        std::vector<unsigned char> tempRow(*width * *nrChannels);
+        std::vector<unsigned char> tempRow(*width * *nrChannels); 
+        ////////////////// WINDOWS ////////////////// WINDOWS //////////////////////// WINDOWS /////////////////////////
         std::memcpy(tempRow.data(), topRow, *width * *nrChannels);
         std::memcpy(topRow, bottomRow, *width * *nrChannels);
         std::memcpy(bottomRow, tempRow.data(), *width * *nrChannels);
+        /////////////////// LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
+        /*
+            memcpy(tempRow.data(), topRow, *width * *nrChannels);
+            memcpy(topRow, bottomRow, *width * *nrChannels);
+            memcpy(bottomRow, tempRow.data(), *width * *nrChannels);
+        */
+        ////////// LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
     }
 
     return data;

@@ -25,6 +25,7 @@ void Camera::key_callback(int key, int scancode, int action, int mods)
 
 void Camera::processInput()  // Calculs et réalisation des mouvements de la Caméra
 {
+    ////////////////// WINDOWS ////////////////// WINDOWS //////////////////////// WINDOWS /////////////////////////
     if (m_keyStates[336])
     {
         m_phi += 0.01f;
@@ -49,6 +50,34 @@ void Camera::processInput()  // Calculs et réalisation des mouvements de la Cam
         m_theta -= 0.01f;
         updatePosition();
     }
+    ///////////////////   LINUX ////////////////// LINUX //////////////////////// LINUX ///////////////////////// 
+    /*
+    if (m_keyStates[116])
+    {
+        m_phi += 0.01f;
+        if (m_phi > glm::radians(89.0f))
+            m_phi = glm::radians(89.0f);
+        updatePosition();
+    }
+    if (m_keyStates[111])
+    {
+        m_phi -= 0.01f;
+        if (m_phi < glm::radians(1.0f))
+            m_phi = glm::radians(1.0f);
+        updatePosition();
+    }
+    if (m_keyStates[113])
+    {
+        m_theta += 0.01f;
+        updatePosition();
+    }
+    if (m_keyStates[114])
+    {
+        m_theta -= 0.01f;
+        updatePosition();
+    }
+        */
+    ///////////////////   LINUX ////////////////// LINUX //////////////////////// LINUX /////////////////////////
 }
 
 void Camera::updatePosition() // Adaptation de la position en fonction des mouvements de la caméra
