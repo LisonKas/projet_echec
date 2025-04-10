@@ -5,22 +5,26 @@
 #include "glm/fwd.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-void Renderer3D::initialize() { // Initialisation des ressources 3D
+void Renderer3D::initialize()
+{ // Initialisation des ressources 3D
     m_skybox.InitializeSkybox();
     init_pieces();
     m_Shader     = new Shader("../../src/3D/shaders/model.vs.glsl", "../../src/3D/shaders/model.fs.glsl");
     m_chessboard = new ObjModel("../../models/lison_chessboard.obj", "../../models/lison_chessboard.mtl");
 }
 
-void Renderer3D::setPieces(AllPieces* pieces) {
+void Renderer3D::setPieces(AllPieces* pieces)
+{
     m_pieces = pieces;
 }
 
-glm::vec3 Renderer3D::getBoardPosition(int col, int row) { // Adapter les coords des pièces sur la 3D
+glm::vec3 Renderer3D::getBoardPosition(int col, int row)
+{ // Adapter les coords des pièces sur la 3D
     return glm::vec3(-3.5f + col, 0.0f, -3.5f + row);
 }
 
-void Renderer3D::init_pieces() { // Initialisation des chemins pour les modèles des pièces
+void Renderer3D::init_pieces()
+{ // Initialisation des chemins pour les modèles des pièces
     if (!m_pieces)
         return;
 
@@ -47,7 +51,8 @@ void Renderer3D::init_pieces() { // Initialisation des chemins pour les modèles
         loadPieceModel(p, "black");
 }
 
-void Renderer3D::update(AllPieces* pieces) { // Permet de faire en sorte de garder les bonnes positions des pièces sans bouger tous les pointeurs dès qu'une pièce meurt
+void Renderer3D::update(AllPieces* pieces)
+{ // Permet de faire en sorte de garder les bonnes positions des pièces sans bouger tous les pointeurs dès qu'une pièce meurt
     m_pieces = pieces;
 
     for (Piece& p : m_pieces->m_white_pieces)
@@ -97,20 +102,23 @@ void Renderer3D::update(AllPieces* pieces) { // Permet de faire en sorte de gard
     }
 }
 
-std::string Renderer3D::getModelName(Piece& piece, const std::string& color) {
+std::string Renderer3D::getModelName(Piece& piece, const std::string& color)
+{
     std::string modelName;
-    switch (piece.getType()) {
-        case PieceType::Pawn: modelName = color + "_pawn"; break;
-        case PieceType::Rook: modelName = color + "_rook"; break;
-        case PieceType::Knight: modelName = color + "_knight"; break;
-        case PieceType::Bishop: modelName = color + "_bishop"; break;
-        case PieceType::Queen: modelName = color + "_queen"; break;
-        case PieceType::King: modelName = color + "_king"; break;
+    switch (piece.getType())
+    {
+    case PieceType::Pawn: modelName = color + "_pawn"; break;
+    case PieceType::Rook: modelName = color + "_rook"; break;
+    case PieceType::Knight: modelName = color + "_knight"; break;
+    case PieceType::Bishop: modelName = color + "_bishop"; break;
+    case PieceType::Queen: modelName = color + "_queen"; break;
+    case PieceType::King: modelName = color + "_king"; break;
     }
     return modelName;
 }
 
-void Renderer3D::setPieceModel(Piece* piece) { // Pour changer quand un pion est promote
+void Renderer3D::setPieceModel(Piece* piece)
+{ // Pour changer quand un pion est promote
     if (!piece)
         return;
 
@@ -130,7 +138,8 @@ void Renderer3D::setPieceModel(Piece* piece) { // Pour changer quand un pion est
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
-float Renderer3D::calculateSpeed(Piece* piece, float distance) { // Calculer la speed en fonction de la décision du random 
+float Renderer3D::calculateSpeed(Piece* piece, float distance)
+{ // Calculer la speed en fonction de la décision du random
     // Détection du 1er déplacement
     if (m_pieceDurations.find(piece) == m_pieceDurations.end())
     {
@@ -149,7 +158,8 @@ float Renderer3D::calculateSpeed(Piece* piece, float distance) { // Calculer la 
     }
 }
 
-void Renderer3D::render(bool teamPlaying) {  // Rendu des éléments
+void Renderer3D::render(bool teamPlaying)
+{ // Rendu des éléments
     float elapsed_time = std::chrono::duration<float>(
                              std::chrono::steady_clock::now() - m_startTime
     )
@@ -215,7 +225,6 @@ void Renderer3D::render(bool teamPlaying) {  // Rendu des éléments
             float distance = glm::distance(currentPos, targetPos);
 
             float speed = calculateSpeed(piece, distance);
-            std::cout << speed << std::endl;
 
             currentPos = glm::mix(currentPos, targetPos, speed * ImGui::GetIO().DeltaTime);
         }
@@ -232,7 +241,8 @@ void Renderer3D::render(bool teamPlaying) {  // Rendu des éléments
     }
 }
 
-void Renderer3D::close() {
+void Renderer3D::close()
+{
     m_skybox.Destroy();
 
     delete m_chessboard;
