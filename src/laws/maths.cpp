@@ -126,3 +126,17 @@ float logNormalMapped(float mu, float sigma, float minSpeed, float maxSpeed, int
 
     return mappedSpeed;
 }
+
+int generatePoisson(float lambda)
+{
+    int   count = 0;
+    float L     = std::exp(-lambda); // Calcul de exp(-lambda)
+    float p     = 1.0f;              // Probabilité de l'événement
+    do
+    {
+        p *= random(20); // Tire un nombre aléatoire uniformément sur [0, 1)
+        count++;         // Incrémente le nombre d'événements
+    } while (p > L); // Continue tant que la probabilité est supérieure à L
+
+    return count - 1; // Soustrait 1 pour obtenir le nombre d'événements
+}
