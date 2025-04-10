@@ -177,26 +177,16 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
     }
 }
 
-void Chessboard::SetSoundVolume(int volume)
-{
-    m_soundVolume = std::clamp(volume, 0, 100); // Assurer que le volume est entre 0 et 100
-}
-
 void Chessboard::PlayCaptureSound()
 {
-    SetSoundVolume(75); // Définit le volume à 75%
 #ifdef _WIN32
     // Windows : Volume réglé avec le contrôle du système
     const char* path = "..\\..\\sound\\eat.wav";
     ShellExecute(nullptr, "open", path, nullptr, nullptr, SW_HIDE);
 #elif __APPLE__
-    // macOS : Ajustement de la commande pour changer le volume global
-    std::string command = "osascript -e 'set volume output volume " + std::to_string(m_soundVolume) + "' && afplay \"" + std::string("../../sound/eat.wav") + "\" &";
-    system(command.c_str());
-#elif __linux__
-    // Linux : Utilisation de amixer pour régler le volume
-    std::string command = "amixer sset 'Master' " + std::to_string(m_soundVolume) + "% && aplay \"" + std::string("../../sound/eat.wav") + "\" &";
-    system(command.c_str());
+    system("afplay ../../sound/eat.wav &");
+#else // Linux
+    system("aplay ../../sound/eat.wav &");
 #endif
 }
 
