@@ -179,14 +179,35 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
 
 void Chessboard::PlayCaptureSound()
 {
+    // Choisir un fichier audio en fonction de la loi de Poisson
+    int         numEvents = generatePoisson(2.0f); // Par exemple, lambda = 2 pour une moyenne de 2 événements
+    std::string fileToPlay;
+
+    // En fonction du nombre d'événements générés, on choisit un fichier
+    switch (numEvents)
+    {
+    case 0:
+        fileToPlay = "..\\..\\sound\\munch.wav";
+        break;
+    case 1:
+        fileToPlay = "..\\..\\sound\\error.wav";
+        break;
+    case 2:
+        fileToPlay = "..\\..\\sound\\minecraft.wav";
+        break;
+    default:
+        fileToPlay = "..\\..\\sound\\pop.wav";
+        break;
+    }
+
 #ifdef _WIN32
-    // Windows : Volume réglé avec le contrôle du système
-    const char* path = "..\\..\\sound\\eat.wav";
-    ShellExecute(nullptr, "open", path, nullptr, nullptr, SW_HIDE);
+    ShellExecute(nullptr, "open", fileToPlay.c_str(), nullptr, nullptr, SW_HIDE);
 #elif __APPLE__
-    system("afplay ../../sound/eat.wav &");
+    std::string command = "afplay " + fileToPlay + " &";
+    system(command.c_str());
 #else // Linux
-    system("aplay ../../sound/eat.wav &");
+    std::string command = "aplay " + fileToPlay + " &";
+    system(command.c_str());
 #endif
 }
 

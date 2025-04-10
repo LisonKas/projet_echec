@@ -31,3 +31,5 @@ float random_uniform(int precision = 20);
 int select_index_uniform(int nb_choices);
 
 float logNormalMapped(float mu, float sigma, float minSpeed, float maxSpeed, int precision = 20);
+
+int generatePoisson(float lambda);
