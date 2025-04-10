@@ -1,7 +1,9 @@
 #include "Chessboard.hpp"
 #include <imgui.h>
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
+#include <thread>
 #include <utility>
 #include <vector>
 #include "../laws/maths.hpp"
@@ -171,6 +173,17 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
     }
 }
 
+void Chessboard::PlayCaptureSound()
+{
+#ifdef _WIN32
+    system("start /min ..\\..\\sound\\eat.wav");
+#elif __APPLE__
+    system("afplay ../../sound/eat.wav &");
+#else // Linux
+    system("aplay ../../sound/eat.wav &");
+#endif
+}
+
 void Chessboard::CapturePiece(const std::pair<int, int>& target)
 {
     Piece* selectedPiece = m_pieces.GetPieceAt(m_selectedPiece);
@@ -178,6 +191,7 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
 
     if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
     {
+        PlayCaptureSound();
         // Détection de la victoire
         if (capturedPiece->getType() == PieceType::King)
         {

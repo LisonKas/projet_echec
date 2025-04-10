@@ -37,4 +37,5 @@ public:
     void changeTurn();
     bool GetTeamPlaying() const;
     void PromotePawn(Piece* pawn);
+    void PlayCaptureSound();
 };
