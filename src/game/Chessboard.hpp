@@ -9,20 +9,17 @@
 class Chessboard {
 private:
     std::vector<std::vector<Square>> m_boardlist;
-    std::pair<int, int>              m_selectedPiece{-1, -1}; // Coordonnées de la pièce sélectionnée
-    std::vector<std::pair<int, int>> m_highlightedSquares;    // Cases à surligner
-
-    int m_soundVolume; // Variable pour le volume du son
+    std::pair<int, int>              m_selectedPiece{-1, -1};
+    std::vector<std::pair<int, int>> m_highlightedSquares;
 
 public:
     AllPieces   m_pieces;
     bool        m_isGameOver = false;
     std::string m_winnerMessage;
-    bool        m_teamPlaying{true};          // true si c'est le tour des blancs, false pour les noirs
-    bool        showPromotionPopup = false;   // Flag pour afficher la promotion du pion
-    Piece*      selectedPawn       = nullptr; // Pion sélectionné pour promotion
+    bool        m_teamPlaying{true}; // 0 = noir, 1 = blanc
+    bool        showPromotionPopup = false;
+    Piece*      selectedPawn       = nullptr;
 
-public:
     // Création du plateau
     void Reinitialize();
     void InitializeBoardList();
@@ -40,7 +37,5 @@ public:
     void changeTurn();
     bool GetTeamPlaying() const;
     void PromotePawn(Piece* pawn);
-
-    // Lecture du son avec le volume
     void PlayCaptureSound();
 };

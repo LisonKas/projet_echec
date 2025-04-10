@@ -52,7 +52,7 @@ void Renderer3D::init_pieces()
 }
 
 void Renderer3D::update(AllPieces* pieces)
-{ // permet de faire en sorte de garder les bonnes positions des pièces sans bouger tous les pointeurs dès qu'une pièce meurs
+{ // Permet de faire en sorte de garder les bonnes positions des pièces sans bouger tous les pointeurs dès qu'une pièce meurt
     m_pieces = pieces;
 
     for (Piece& p : m_pieces->m_white_pieces)

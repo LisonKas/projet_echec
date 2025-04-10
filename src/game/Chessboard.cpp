@@ -68,7 +68,7 @@ void Chessboard::CreateBoard()
 {
     if (m_isGameOver)
     {
-        return;
+        return; // Pour ne plus pouvoir bouger les pièces
     }
 
     ImGui::Text(m_teamPlaying ? "Tour des Blancs" : "Tour des Noirs");
@@ -82,6 +82,7 @@ void Chessboard::CreateBoard()
             ImGui::PushID(m_boardlist[i][j].m_id);
             GLuint piece_label = m_pieces.PiecesAppear(i, j);
 
+            // Annulation avec clic droit
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
             {
                 ResetSelection();
@@ -219,6 +220,8 @@ void Chessboard::CapturePiece(const std::pair<int, int>& target)
     if (selectedPiece && capturedPiece && selectedPiece->getTeam() != capturedPiece->getTeam())
     {
         PlayCaptureSound();
+
+        // Détection de la victoire
         if (capturedPiece->getType() == PieceType::King)
         {
             m_isGameOver    = true;
