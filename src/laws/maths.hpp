@@ -10,11 +10,7 @@ float random(int precision);
 // Loi de Bernoulli avec probabilité p ∈ [0,1]
 bool bernoulli(float p, int precision = 20);
 
-// Génère une valeur suivant une loi normale centrée sur 0.1 pour les couleurs sombres
-float generateGaussian();
-
-// Approximation d’une loi normale standard sur [0,1], avec un nombre de tirages ajustable
-float gaussian_approx(int n = 6);
+float gaussian(int n = 6);
 
 // Génère une couleur sombre et nuancée (utile pour l’échiquier)
 ImVec4 generateFancyDarkColor();
