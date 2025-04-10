@@ -138,6 +138,26 @@ void Renderer3D::setPieceModel(Piece* piece)
     m_displayedPieces[piece] = new ObjModel(modelPath, mtlPath);
 }
 
+float Renderer3D::calculateSpeed(Piece* piece, float distance)
+{
+    // Détection du 1er déplacement
+    if (m_pieceDurations.find(piece) == m_pieceDurations.end())
+    {
+        float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100);
+
+        float speed = distance / duration;
+
+        m_pieceSpeeds[piece]    = speed;
+        m_pieceDurations[piece] = duration;
+
+        return speed;
+    }
+    else
+    {
+        return m_pieceSpeeds[piece];
+    }
+}
+
 void Renderer3D::render(bool teamPlaying)
 {
     float elapsed_time = std::chrono::duration<float>(
@@ -199,43 +219,23 @@ void Renderer3D::render(bool teamPlaying)
             currentPos = targetPos;
         }
 
-        // Si la pièce n'est pas à sa position cible
+        // Vitesse aléatoire
         if (glm::distance(currentPos, targetPos) > 0.01f)
         {
-            // Calculer la distance à parcourir
             float distance = glm::distance(currentPos, targetPos);
 
-            // Si c'est la première fois que la pièce se déplace, calculer la durée et la vitesse
-            if (m_pieceDurations.find(piece) == m_pieceDurations.end())
-            {
-                // Utiliser logNormalMapped pour obtenir la durée du déplacement (en secondes)
-                float duration = logNormalMapped(-1.0f, 0.5f, 1.0f, 3.0f, 100); // Durée entre 1 et 3 secondes
-
-                // Calculer la vitesse nécessaire pour que le mouvement dure la durée calculée
-                float speed = distance / duration;
-
-                // Stocker la vitesse et la durée dans une map
-                m_pieceSpeeds[piece]    = speed;
-                m_pieceDurations[piece] = duration;
-            }
-
-            // Utiliser la vitesse stockée pour le mouvement
-            float speed = m_pieceSpeeds[piece];
+            float speed = calculateSpeed(piece, distance);
             std::cout << speed << std::endl;
 
-            // Mettre à jour la position de la pièce en fonction de la vitesse
             currentPos = glm::mix(currentPos, targetPos, speed * ImGui::GetIO().DeltaTime);
         }
         else
         {
             currentPos = targetPos;
-
-            // Une fois que la pièce a atteint la destination, supprimer les informations stockées
             m_pieceSpeeds.erase(piece);
             m_pieceDurations.erase(piece);
         }
 
-        // Mettre à jour la matrice modèle pour dessiner la pièce
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), currentPos);
         m_Shader->setMat4("model", &modelMatrix[0][0]);
         model->draw(*m_Shader);

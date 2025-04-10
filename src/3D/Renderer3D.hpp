@@ -35,4 +35,5 @@ public:
     void        update(AllPieces* pieces);
     std::string getModelName(Piece& piece, const std::string& color);
     void        setPieceModel(Piece* piece);
+    float       calculateSpeed(Piece* piece, float distance);
 };
