@@ -71,7 +71,8 @@ std::vector<std::string> faces = {
     "nx.bmp"
 };
 
-unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels) {
+unsigned char* loadTexture(const std::string& filename, int* width, int* height, int* nrChannels)
+{
     std::ifstream file(filename, std::ios::binary);
     if (!file)
     {
@@ -118,7 +119,7 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
         unsigned char* topRow    = data + i * (*width) * (*nrChannels);
         unsigned char* bottomRow = data + (*height - 1 - i) * (*width) * (*nrChannels);
 
-        std::vector<unsigned char> tempRow(*width * *nrChannels); 
+        std::vector<unsigned char> tempRow(*width * *nrChannels);
         ////////////////// WINDOWS ////////////////// WINDOWS //////////////////////// WINDOWS /////////////////////////
         std::memcpy(tempRow.data(), topRow, *width * *nrChannels);
         std::memcpy(topRow, bottomRow, *width * *nrChannels);
@@ -135,7 +136,8 @@ unsigned char* loadTexture(const std::string& filename, int* width, int* height,
     return data;
 }
 
-void Skybox::InitializeSkybox() {  // Initialisation des VAO, VBO et du shader de la skybox
+void Skybox::InitializeSkybox()
+{ // Initialisation des VAO, VBO et du shader de la skybox
     glGenVertexArrays(1, &this->m_VAO);
     glGenBuffers(1, &this->m_VBO);
     glBindVertexArray(this->m_VAO);
@@ -152,7 +154,8 @@ void Skybox::InitializeSkybox() {  // Initialisation des VAO, VBO et du shader d
     this->m_Shader = new Shader("../../src/3D/shaders/shader.vs.glsl", "../../src/3D/shaders/shader.fs.glsl");
 }
 
-void Skybox::DrawSkybox(const float* view, const float* projection) { // Apparition de la skybox
+void Skybox::DrawSkybox(const float* view, const float* projection)
+{ // Apparition de la skybox
     glDisable(GL_DEPTH_TEST);
     m_Shader->use();
 
@@ -166,7 +169,8 @@ void Skybox::DrawSkybox(const float* view, const float* projection) { // Apparit
     glEnable(GL_DEPTH_TEST);
 }
 
-GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
+GLuint Skybox::loadCubemap()
+{ // Chargement des éléments de la skybox
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -178,7 +182,7 @@ GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
         data = loadTexture((default_path + faces[i]).c_str(), &width, &height, &nrChannels);
         if (data)
         {
-            GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB; 
+            GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
             delete[] data;
@@ -198,7 +202,8 @@ GLuint Skybox::loadCubemap() { // Chargement des éléments de la skybox
     return textureID;
 }
 
-void Skybox::Destroy() {
+void Skybox::Destroy()
+{
     delete m_Shader;
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);

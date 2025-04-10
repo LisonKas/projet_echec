@@ -73,7 +73,7 @@ void App::handleNameInput()
 void App::whoPlaysFirst()
 {
     // Tirage au sort
-    if (bernoulli(0.5f))
+    if (bernoulli())
     {
         joueur_blancs = joueur1;
     }
