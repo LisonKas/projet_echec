@@ -85,7 +85,7 @@ std::vector<std::pair<int, int>> Piece::getPawnZone(const std::vector<std::vecto
         }
     }
 
-    // Captures en diagonal
+    // Captures en diagonales
     for (int i = 0; i < 2; ++i)
     {
         int shift      = (i == 0) ? -1 : 1;

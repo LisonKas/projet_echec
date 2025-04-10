@@ -57,7 +57,7 @@ std::vector<std::string> skybox_paths = {
     "../../images/3D/Skybox/skybox_aurora/"
 };
 
-// Sélection de la skybox au lancement
+// Sélection aléatoire de la skybox au lancement
 int         selected_index = select_index_uniform(skybox_paths.size());
 std::string default_path   = skybox_paths[selected_index];
 

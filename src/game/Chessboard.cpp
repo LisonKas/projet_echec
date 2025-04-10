@@ -1,9 +1,7 @@
 #include "Chessboard.hpp"
 #include <imgui.h>
 #include <algorithm>
-#include <cstdlib>
 #include <iostream>
-#include <thread>
 #include <utility>
 #include <vector>
 #include "../laws/maths.hpp"
@@ -26,6 +24,8 @@ void Chessboard::Reinitialize()
     m_highlightedSquares.clear();
     m_selectedPiece = {-1, -1};
 }
+
+// Couleurs aléatoires des cases 2D
 
 ImVec4 Chessboard::generateFancyDarkColor()
 {
@@ -188,13 +188,13 @@ void Chessboard::MovePiece(const std::pair<int, int>& destination)
     }
 }
 
+// Choix aléatoire des bruitages
+
 void Chessboard::PlayCaptureSound()
 {
-    // Choisir un fichier audio en fonction de la loi de Poisson
-    int         numEvents = generatePoisson(2.0f); // Par exemple, lambda = 2 pour une moyenne de 2 événements
+    int         numEvents = generatePoisson(2.0f);
     std::string fileToPlay;
 
-    // En fonction du nombre d'événements générés, on choisit un fichier
     switch (numEvents)
     {
     case 0:
@@ -288,7 +288,6 @@ void Chessboard::HandlePieceMove(const std::pair<int, int>& clickedSquare)
 
 void Chessboard::PromotePawn(Piece* pawn)
 {
-    std::cout << "Popup Promotion appelé !" << std::endl;
     showPromotionPopup = true;
     selectedPawn       = pawn;
 }

@@ -6,15 +6,13 @@ class App {
 private:
     Renderer3D m_renderer;
     Chessboard m_chessboard;
-
-    // Nouvelles fonctions privées
-    void handleNameInput();
-    void whoPlaysFirst();
-    void handleGameOver();
-    void resetGame();
-    void displayPromotion();
-    void promotionButton(const char* label, PieceType type);
-    void promoteTo(const std::string& pieceChoisie);
+    void       handleNameInput();
+    void       whoPlaysFirst();
+    void       handleGameOver();
+    void       resetGame();
+    void       displayPromotion();
+    void       promotionButton(const char* label, PieceType type);
+    void       promoteTo(const std::string& pieceChoisie);
 
 public:
     void        InitializeGame();
