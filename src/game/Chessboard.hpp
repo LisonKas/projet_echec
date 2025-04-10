@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include "../pieces/AllPieces.hpp"
@@ -11,6 +12,8 @@ private:
     std::pair<int, int>              m_selectedPiece{-1, -1}; // Coordonnées de la pièce sélectionnée
     std::vector<std::pair<int, int>> m_highlightedSquares;    // Cases à surligner
 
+    int m_soundVolume; // Variable pour le volume du son
+
 public:
     AllPieces   m_pieces;
     bool        m_isGameOver = false;
@@ -20,6 +23,13 @@ public:
     Piece*      selectedPawn       = nullptr; // Pion sélectionné pour promotion
 
 public:
+    // Constructeur avec initialisation du volume
+    Chessboard()
+        : m_soundVolume(50) {} // Volume initial à 50% (valeur entre 0 et 100)
+
+    // Setter pour changer le volume
+    void SetSoundVolume(int volume);
+
     // Création du plateau
     void Reinitialize();
     void InitializeBoardList();
@@ -37,4 +47,7 @@ public:
     void changeTurn();
     bool GetTeamPlaying() const;
     void PromotePawn(Piece* pawn);
+
+    // Lecture du son avec le volume
+    void PlayCaptureSound();
 };

@@ -103,3 +103,26 @@ int select_index_uniform(int nb_choices)
     }
     return nb_choices - 1; // Par sécurité
 }
+
+float logNormalMapped(float mu, float sigma, float minSpeed, float maxSpeed, int precision)
+{
+    std::srand(static_cast<unsigned int>(std::time(0))); // Réinitialisation à chaque appel
+
+    float u1 = random(precision);
+    float u2 = random(precision);
+
+    // Loi normale centrée réduite via Box-Muller
+    float z = std::sqrt(-2.0f * std::log(u1)) * std::cos(2 * M_PI * u2);
+
+    // Loi log-normale
+    float raw = std::exp(mu + sigma * z);
+
+    // Clamper pour éviter les valeurs trop extrêmes
+    float clamped = std::clamp(raw, 0.1f, 3.0f); // bornes raisonnables pour la vitesse brute
+
+    // Mapping linéaire dans [minSpeed, maxSpeed]
+    float normalized  = (clamped - 0.1f) / (3.0f - 0.1f);
+    float mappedSpeed = minSpeed + normalized * (maxSpeed - minSpeed);
+
+    return mappedSpeed;
+}
